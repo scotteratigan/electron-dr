@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <title>DragonRealms Electron</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- <div id="game">
+    <div>Welcome to DragonRealms Electron / NodeDR</div>
+  </div> -->
+  <textarea cols=90>Welcome to DragonRealms Electron / NodeDR</textarea>
+  <div>
+    <input type="text" id="commands">
+    <button type="button" id="submit-command">SEND</button>
+    <button type="button" id="clear-text">CLEAR</button>
+  </div>
+  <!-- You can also require other files to run in this process -->
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

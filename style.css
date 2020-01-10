@@ -1,0 +1,16 @@
+textarea {
+  height: 75vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: 1px solid black;
+  margin: 2px;
+  padding: 4px;
+}
+
+input {
+  width: 67vw;
+}
+
+button {
+  width: 10vw;
+}

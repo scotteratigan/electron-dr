@@ -1,0 +1,5 @@
+Gaining a new rank of exp during a pulse:
+<component id='exp Skinning'><b>        Skinning:    5 00% perusing     </b></component>
+<component id='exp Skinning'>        Skinning:    5 00% perusing     </component>
+You've gained a new rank in your skinning ability.
+<prompt time="1578775125">&gt;</prompt>

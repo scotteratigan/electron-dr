@@ -32,15 +32,7 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
-        // {
-        //   label: "Get Key", click: () => getGameKey(key => {
-        //     console.log('gameKey is now:', gameKey);
-        //   })
-        // },
-        { label: "TEST", click: () => test("script") },
-        {
-          label: "Play DR", click: () => hardWire()
-        },
+        { label: "Play", click: () => hardWire() },
         { role: isMac ? 'close' : 'quit' },
       ]
     },
@@ -114,15 +106,12 @@ function hardWire() {
       mainWindow.webContents.send('gametext', message);
       // todo: figure out how to send to main window
     });
-    // redefine the .on function here to pass game commands.
-    ipcMain.on('asynchronous-message', (event, command) => {
+    ipcMain.on("asynchronous-message", (event, command) => {
       // Command received from Player
-      // todo: what exactly is event object here?
-      // if (command.startsWith("#connect")) {}
-      if (command.startsWith(".")) {
-        console.log('prepare to launch script!');
-        return;
-      }
+      // if (command.startsWith(".")) {
+      //   console.log('prepare to launch script!');
+      //   return;
+      // }
       console.log(command);
       game.postMessage(command);
     })

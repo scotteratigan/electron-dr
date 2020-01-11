@@ -1,26 +1,65 @@
-// connects to DR
 "use strict";
 require("dotenv").config();
 const net = require("net");
-const { parentPort: pp } = require("worker_threads");
+const { parentPort: frontEnd } = require("worker_threads");
 const client = new net.Socket();
 const getConnectKey = require("./sge");
 
 // no need for export, this will be executed via worker thread
 
-pp.on("message", message => {
-  console.log("gamejs Received message:", message);
-  sendCommandToGame(message);
-  // pp.postMessage({ pong: message });
-  // todo: test throwing an error here
+// Initialization Stuff:
+const globals = {
+  health: 100,
+  exp: {}
+}
+let parseXML = () => { };
+loadXMLparser(); // loads or re-loads the parseXML function
 
-  // pp.postError("test");
-  // console.log("inside script, message is:", message);
-  // if (message === "You fall over.")
-  //   pp.postMessage({ command: "stand" });
-  // else pp.postMessage({ resonpse: "ignore" });
+// Actions / Runtime:
+
+// Message from client:
+frontEnd.on("message", command => {
+  if (command.startsWith(".")) {
+    console.log('prepare to launch script!');
+    return;
+  }
+  if (command.startsWith("#xml")) {
+    frontEnd.postMessage('*** Reloading XML Parser. ***');
+    return loadXMLparser();
+  }
+  if (command.startsWith("#var")) {
+    // todo: consider sending messages as objects so we could target different windows?
+    return frontEnd.postMessage(globals);
+  }
+
+  sendCommandToGame(command);
 });
 let buffer = "";
+
+// Game sends data:
+client.on("data", data => {
+  // detects incomplete data fragments - if line does not end with \r\n,
+  // the data is split and we need to wait for the next packet before displaying/parsing all the data
+  // This happens most frequently with logon text which is sent in huge chunks
+  let gameStr = buffer + data.toString(); // todo: use actual buffer here?
+  if (!gameStr.match(/\r\n$/)) {
+    buffer += gameStr;
+    return;
+  }
+  buffer = "";
+  // Parse XML for updates:
+  parseXML(gameStr);
+  // Send game data back to Main.js to pass on to client:
+  frontEnd.postMessage(gameStr);
+});
+
+client.on("close", function () {
+  console.log("Connection closed.");
+  frontEnd.postMessage("Connection closed.");
+  process.exit(0); // todo: test this
+});
+
+// Actual Connect process:
 
 getConnectKey((connectKey, ip, port) => {
   console.log("Received connect key:", connectKey);
@@ -38,27 +77,27 @@ getConnectKey((connectKey, ip, port) => {
   });
 });
 
-client.on("data", data => {
-  // detects incomplete data fragments - if line does not end with \r\n, the data is split and we need to await the next packet before displaying/parsing all the data
-  let gameStr = buffer + data.toString(); // todo: use actual buffer here?
-  if (!gameStr.match(/\r\n$/)) {
-    buffer += gameStr;
-    return;
-  }
-  buffer = "";
-
-  // console.log(gameStr);
-  pp.postMessage(gameStr); // send game data back to Main.js
-});
-
-client.on("close", function () {
-  console.log("Connection closed");
-  process.exit(0); // todo: test this
-});
+// Helper Functions:
 
 function sendCommandToGame(commands) {
   commands.split(";").forEach(command => {
     client.write(command + "\n");
     console.log("COMMAND: " + command);
   });
+}
+
+function globalUpdated(global, detail) {
+  console.log("Global trigger on XML:", global, "with detail", "detail");
+}
+
+function loadXMLparser() {
+  parseXML = () => { };
+  for (const fullPath in require.cache) {
+    if (fullPath.endsWith("xml.js"))
+      delete require.cache[fullPath];
+  }
+  const setupXMLparser = require("./xml.js");
+  parseXML = setupXMLparser(globals, globalUpdated);
+  console.log('displaying cache:')
+
 }

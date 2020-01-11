@@ -1,9 +1,5 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// No Node.js APIs are available in this process because
-// `nodeIntegration` is turned off. Use `preload.js` to
-// selectively enable features needed in the rendering
-// process.
+// No Node.js APIs are available in this process because `nodeIntegration` is turned off.
+// Use `preload.js` to selectively enable features needed in the rendering process.
 
 const { ipcRenderer } = require('electron')
 
@@ -15,33 +11,22 @@ let cmdLookupIndex = 1;
 const maxCmdHistory = 50;
 const minLengthCmdToSave = 2;
 
-ipcRenderer.on('gametext', (event, message) => {
-  console.info(message);
-  appendGameText(message);
-})
-
 const submitBtn = document.querySelector("button#submit-command");
 const clearTextBtn = document.querySelector("button#clear-text");
 const input = document.querySelector("input#commands");
 const gameText = document.querySelector("div#game");
-// const textArea = document.querySelector("textarea");
 
+// Event Listeners:
 submitBtn.addEventListener("click", sendCommandText);
-clearTextBtn.addEventListener("click", () => {
-  gameText.innerHTML = "";
-})
-input.addEventListener("keydown", e => {
-  if (e.key === "Enter") return sendCommandText();
-  if (e.key === "ArrowUp") return retrievePreviousCommand();
-  if (e.key === "ArrowDown") return retrieveNextCommand();
-  // console.log(e.key)
-
-});
+clearTextBtn.addEventListener("click", clearGameText);
+document.addEventListener("keydown", navigateByKeypad, true);
+input.addEventListener("keydown", interceptInputSpecialKeys);
+ipcRenderer.on('gametext', processMsgFromServer);
 
 function sendCommandText() {
   const text = input.value;
   if (!text.length) return;
-  input.select(); // select the text
+  input.select();
   sendText(text);
 }
 
@@ -59,9 +44,9 @@ function appendGameText(text) {
   const newParagraph = document.createElement("p");
   newParagraph.innerHTML = cleanedText;
   gameText.appendChild(newParagraph);
-  setTimeout(() => {
-    gameText.scrollTop = gameText.scrollHeight
-  }, 0);
+  // setTimeout(() => {
+  gameText.scrollTop = gameText.scrollHeight
+  // }, 0);
 }
 
 function addCmdToHistory(cmd) {
@@ -72,6 +57,12 @@ function addCmdToHistory(cmd) {
   cmdIndex++;
   if (Object.keys(cmdHistory).length > maxCmdHistory)
     delete cmdHistory[cmdIndex - maxCmdHistory - 1];
+}
+
+function interceptInputSpecialKeys(e) {
+  if (e.key === "Enter") return sendCommandText();
+  if (e.key === "ArrowUp") return retrievePreviousCommand();
+  if (e.key === "ArrowDown") return retrieveNextCommand();
 }
 
 function retrievePreviousCommand() {
@@ -92,7 +83,7 @@ function retrieveNextCommand() {
   else cmdLookupIndex--;
 }
 
-document.addEventListener("keydown", e => {
+function navigateByKeypad(e) {
   if (e.keyCode >= 96 && e.keyCode <= 105) {
     e.preventDefault();
     e.stopPropagation();
@@ -135,13 +126,26 @@ document.addEventListener("keydown", e => {
     default:
       return;
   }
-}, true);
+}
+
+function clearGameText() {
+  gameText.innerHTML = "";
+}
+
+function processMsgFromServer(event, msg) {
+  if (typeof msg === "object") {
+    // Would need to parse to text before adding to game window. This is fine for now.
+    return console.log(msg);
+  }
+  console.log(msg);
+  appendGameText(msg);
+}
 
 function replaceXMLwithHTML(str) {
-  if (str.startsWith("<output")) {
-    str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
-    str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
-  }
+  str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
+  str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
+  str = str.replace(/<pushBold\/>/g, '<span class="bold">');
+  str = str.replace(/<popBold\/>/g, "</span>");
   return str;
 }
 
@@ -161,8 +165,6 @@ function hideXML(str) {
   str = str.replace(/<\/?d>/g, "");
   str = str.replace(/<compass>.*<\/compass>/, "");
   str = str.replace(/<nav\/>/, "");
-  str = str.replace(/<pushBold\/>/g, "");
-  str = str.replace(/<popBold\/>/g, "");
   str = str.replace(/<streamWindow .+\/>/g, "");
   str = str.replace(/<right.*<\/right>/, "");
   str = str.replace(/<left.*<\/left>/, "");

@@ -65,20 +65,36 @@ button {
 
 #compass-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-grow: 0;
 }
 
-.compass-row {
+.compass-column {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .compass-square {
   width: 25px;
   height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-[data-direction-exists="false"] > svg {
-  fill: rgba(0, 0, 0, 0);
+.compass-square {
+  text-align: center;
+  color: rgba(0, 0, 0, .10);
+  /* fill: rgba(255, 255, 255, 0); */
+}
+
+.compass-square[data-direction-exists="true"]:hover {
+  color: blue;
+  cursor: pointer;
+}
+
+[data-direction-exists="true"] {
+  color: black;
+  /* fill: black; */
 }

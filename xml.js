@@ -58,7 +58,19 @@ function setupXMLparser(globals, globalUpdated) {
 }
 
 function parseExits(line, globals, globalUpdated) {
-  const exits = {};
+  const exits = {
+    north: false,
+    northeast: false,
+    east: false,
+    southeast: false,
+    south: false,
+    southwest: false,
+    west: false,
+    northwest: false,
+    up: false,
+    down: false,
+    out: false
+  };
   const portalMatches = line.match(/<d>(\w+)<\/d>/g);
   // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
   portalMatches.forEach(portalStr => {

@@ -100,7 +100,7 @@ function hardWire() {
     const game = new Worker("./game.js", {});
     game.on("message", message => {
       // Text received from game.
-      console.log(message);
+      // console.log('main.js:', message.value);
       mainWindow.webContents.send('gametext', message);
       // todo: figure out how to send to main window
     });
@@ -110,7 +110,7 @@ function hardWire() {
       //   console.log('prepare to launch script!');
       //   return;
       // }
-      console.log(command);
+      // console.log(command);
       game.postMessage(command);
     })
   }

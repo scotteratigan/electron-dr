@@ -14,17 +14,27 @@ const minLengthCmdToSave = 2;
 const submitBtn = document.querySelector("button#submit-command");
 const input = document.querySelector("input#commands");
 const gameText = document.querySelector("div#game");
+const compassContainer = document.querySelector("#compass-container");
 
-const directions = {
-  nw: document.querySelector("#northwest")
-}
-
-directions.nw.setAttribute("data-direction-exists", false);
+const dirElms = {
+  n: document.querySelector("#north"),
+  ne: document.querySelector("#northeast"),
+  e: document.querySelector("#east"),
+  se: document.querySelector("#southeast"),
+  s: document.querySelector("#south"),
+  sw: document.querySelector("#southwest"),
+  w: document.querySelector("#west"),
+  nw: document.querySelector("#northwest"),
+  up: document.querySelector("#up"),
+  down: document.querySelector("#down"),
+  out: document.querySelector("#out")
+};
 
 // Event Listeners:
 submitBtn.addEventListener("click", enterCommand);
 document.addEventListener("keydown", navigateByKeypad, true);
 input.addEventListener("keydown", interceptInputSpecialKeys);
+compassContainer.addEventListener("click", navigateByCompass);
 ipcRenderer.on('gametext', processMsgFromServer);
 
 function enterCommand() {
@@ -87,6 +97,11 @@ function retrieveNextCommand() {
   else cmdLookupIndex--;
 }
 
+function navigateByCompass(e) {
+  const direction = e.srcElement.id
+  passCmdToServer(direction);
+}
+
 function navigateByKeypad(e) {
   if (e.keyCode >= 96 && e.keyCode <= 105) {
     e.preventDefault();
@@ -137,12 +152,13 @@ function clearGameText() {
 }
 
 function processMsgFromServer(event, msg) {
-  if (typeof msg === "object") {
-    // Would need to parse to text before adding to game window. This is fine for now.
-    return console.log(msg);
+  const { type, value = null } = msg;
+  if (type === "gametext") {
+    console.log(value);
+    return appendGameText(value);
   }
-  console.log(msg);
-  appendGameText(msg);
+  if (type === "globals") return console.log(msg);
+  if (type === "compass update") return updateCompass(value);
 }
 
 function replaceXMLwithHTML(str) {
@@ -179,4 +195,19 @@ function hideXML(str) {
   str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
   str = str.replace(/^\s*\n/mg, ""); // empty lines
   return str;
+}
+
+function updateCompass(exits) {
+  console.log('exits:', exits);
+  dirElms.n.setAttribute("data-direction-exists", exits.north);
+  dirElms.ne.setAttribute("data-direction-exists", exits.northeast);
+  dirElms.e.setAttribute("data-direction-exists", exits.east);
+  dirElms.se.setAttribute("data-direction-exists", exits.southeast);
+  dirElms.s.setAttribute("data-direction-exists", exits.south);
+  dirElms.sw.setAttribute("data-direction-exists", exits.southwest);
+  dirElms.w.setAttribute("data-direction-exists", exits.west);
+  dirElms.nw.setAttribute("data-direction-exists", exits.northwest);
+  dirElms.up.setAttribute("data-direction-exists", exits.up);
+  dirElms.down.setAttribute("data-direction-exists", exits.down);
+  dirElms.out.setAttribute("data-direction-exists", exits.out);
 }

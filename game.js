@@ -21,12 +21,11 @@ frontEnd.on("message", command => {
     return;
   }
   if (command.startsWith("#xml")) {
-    frontEnd.postMessage('text', '*** Reloading XML Parser. ***');
+    frontEnd.postMessage({ type: "gametext", value: "*** Reloading XML Parser. ***" });
     return loadXMLparser();
   }
   if (command.startsWith("#var")) {
-    // todo: consider sending messages as objects so we could target different windows?
-    return frontEnd.postMessage(globals);
+    return frontEnd.postMessage({ type: "globals", value: globals });
   }
 
   sendCommandToGame(command);
@@ -52,12 +51,12 @@ client.on("data", data => {
   }
 
   // Send game data back to Main.js to pass on to client:
-  frontEnd.postMessage(gameStr);
+  frontEnd.postMessage({ type: "gametext", value: gameStr });
 });
 
 client.on("close", function () {
   console.log("Connection closed.");
-  frontEnd.postMessage("Connection closed.");
+  frontEnd.postMessage({ type: "gametext", value: "Connection closed." });
   process.exit(0); // todo: test this
 });
 
@@ -90,7 +89,7 @@ function sendCommandToGame(commands) {
 
 function globalUpdated(global, detail) {
   console.log("Global trigger on XML:", global, "with detail", detail);
-  frontEnd.postMessage()
+  if (global === "exits") frontEnd.postMessage({ type: "compass update", value: globals.exits });
 }
 
 function loadXMLparser() {

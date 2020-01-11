@@ -53,19 +53,12 @@ function sendText(str) {
 
 function appendGameText(text) {
   let cleanedText = replaceXMLwithHTML(text);
-  cleanedText = hideXML(text);
+  cleanedText = hideXML(cleanedText);
   if (!cleanedText) return;
-  // const newDiv = document.createElement("div");
-  // newDiv.textContent = text;
-  // gameText.appendChild(newDiv);
-  // window.scrollTo(0, gameText.scrollHeight);
-
-  // textArea.value += cleanedText;
-  // setTimeout(() => {
-  //   textArea.scrollTop = textArea.scrollHeight
-  // }, 0);
   cleanedText = cleanedText.replace(/[\r\n]+/g, "<br>")
-  gameText.innerHTML += cleanedText + "<br>";
+  const newParagraph = document.createElement("p");
+  newParagraph.innerHTML = cleanedText;
+  gameText.appendChild(newParagraph);
   setTimeout(() => {
     gameText.scrollTop = gameText.scrollHeight
   }, 0);
@@ -145,9 +138,10 @@ document.addEventListener("keydown", e => {
 }, true);
 
 function replaceXMLwithHTML(str) {
-  str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
-  str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
-  console.log('replaced...')
+  if (str.startsWith("<output")) {
+    str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
+    str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
+  }
   return str;
 }
 
@@ -180,5 +174,3 @@ function hideXML(str) {
   str = str.replace(/^\s*\n/mg, ""); // empty lines
   return str;
 }
-
-//  still not working: <prompt time="1578644812">&gt;</prompt>

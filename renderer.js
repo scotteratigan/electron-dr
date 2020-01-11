@@ -23,12 +23,12 @@ ipcRenderer.on('gametext', (event, message) => {
 const submitBtn = document.querySelector("button#submit-command");
 const clearTextBtn = document.querySelector("button#clear-text");
 const input = document.querySelector("input#commands");
-// const gameText = document.querySelector("div#game");
-const textArea = document.querySelector("textarea");
+const gameText = document.querySelector("div#game");
+// const textArea = document.querySelector("textarea");
 
 submitBtn.addEventListener("click", sendCommandText);
 clearTextBtn.addEventListener("click", () => {
-  textArea.value = "";
+  gameText.innerHTML = "";
 })
 input.addEventListener("keydown", e => {
   if (e.key === "Enter") return sendCommandText();
@@ -52,15 +52,22 @@ function sendText(str) {
 }
 
 function appendGameText(text) {
-  const cleanedText = hideXML(text);
+  let cleanedText = replaceXMLwithHTML(text);
+  cleanedText = hideXML(text);
   if (!cleanedText) return;
   // const newDiv = document.createElement("div");
   // newDiv.textContent = text;
   // gameText.appendChild(newDiv);
   // window.scrollTo(0, gameText.scrollHeight);
-  textArea.value += cleanedText;
+
+  // textArea.value += cleanedText;
+  // setTimeout(() => {
+  //   textArea.scrollTop = textArea.scrollHeight
+  // }, 0);
+  cleanedText = cleanedText.replace(/[\r\n]+/g, "<br>")
+  gameText.innerHTML += cleanedText + "<br>";
   setTimeout(() => {
-    textArea.scrollTop = textArea.scrollHeight
+    gameText.scrollTop = gameText.scrollHeight
   }, 0);
 }
 
@@ -137,6 +144,13 @@ document.addEventListener("keydown", e => {
   }
 }, true);
 
+function replaceXMLwithHTML(str) {
+  str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
+  str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
+  console.log('replaced...')
+  return str;
+}
+
 function hideXML(str) {
   str = str.replace(/<clearStream id=.\S+.[^>]*\/>/g, "");
   str = str.replace(/<clearContainer id=.\S+.\/>/, "");
@@ -162,8 +176,6 @@ function hideXML(str) {
   str = str.replace(/<d cmd="\S*">/g, ""); // useful for later, this is a command link
   str = str.replace(/<roundTime value='\d+'\/>/, "");
   str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, "");
-  str = str.replace(/<output class="mono"\/>/, "<"); // beginning of monospace, cool
-  str = str.replace(/<output class=""\/>/, ""); // end of monospace
   str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
   str = str.replace(/^\s*\n/mg, ""); // empty lines
   return str;

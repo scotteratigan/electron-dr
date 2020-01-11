@@ -4,21 +4,26 @@
 <head>
   <meta charset="UTF-8">
   <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';"> -->
+  <meta http-equiv="Content-Security-Policy"
+    content="style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
   <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   <title>DragonRealms Electron</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Gelasio:400,700|Source+Code+Pro:400,700&display=swap"
+    rel="stylesheet">
 </head>
 
 <body>
-  <!-- <div id="game">
-    <div>Welcome to DragonRealms Electron / NodeDR</div>
-  </div> -->
-  <textarea cols=90>Welcome to DragonRealms Electron / NodeDR</textarea>
-  <div>
-    <input type="text" id="commands">
-    <button type="button" id="submit-command">SEND</button>
-    <button type="button" id="clear-text">CLEAR</button>
+  <div id="container">
+    <div id="game">
+      Welcome to DragonRealms Electron / NodeDR<br>
+    </div>
+    <div id="command-bar">
+      <input type="text" id="commands">
+      <button type="button" id="submit-command">SEND</button>
+      <button type="button" id="clear-text">CLEAR</button>
+    </div>
   </div>
   <!-- You can also require other files to run in this process -->
   <script src="./renderer.js"></script>

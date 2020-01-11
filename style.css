@@ -1,16 +1,56 @@
-textarea {
-  height: 75vh;
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Gelasio', serif;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+}
+
+#command-bar {
+  display: flex;
+}
+
+#game {
+  /* min-height: 75vh; */
   overflow-y: scroll;
   overflow-x: hidden;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin: 2px;
   padding: 4px;
+  background-color: whitesmoke;
+  flex-grow: 1;
+  white-space: pre; /* preserve whitespace (not working) */
+}
+
+p {
+  margin: 0;
+  padding: 0;
 }
 
 input {
-  width: 67vw;
+  height: 1.2rem;
+  flex-grow: 1;
+  min-width: 10px;
+  /* width: 67vw; */
+  margin-left: 5px;
 }
 
 button {
-  width: 10vw;
+  /* width: 10vw; */
+  flex-grow: 0;
+}
+
+.monospace {
+  font-family: 'Source Code Pro', monospace;
 }

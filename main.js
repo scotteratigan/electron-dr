@@ -3,8 +3,6 @@ const { app, BrowserWindow, Menu } = require('electron')
 const { Worker } = require("worker_threads"); // to run game server
 const { ipcMain } = require('electron'); // to talk to the browser window
 const path = require('path')
-// const getGameKey = require('./sge');
-const test = require("./test.js");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -24,7 +22,7 @@ function createWindow() {
 
   });
   mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('ping', 'whoooooooh!')
+    // What should I do on load?
   })
 
   const isMac = process.platform === 'darwin'
@@ -62,7 +60,7 @@ function createWindow() {
   Menu.setApplicationMenu(menu);
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('client/index.html')
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()

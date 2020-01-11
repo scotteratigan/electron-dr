@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';"> -->
+  <meta http-equiv="Content-Security-Policy"
+    content="style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <title>DragonRealms Electron</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Gelasio:400,600|Source+Code+Pro:400,600&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <div id="container">
+    <div id="game">
+      Welcome to DragonRealms Electron / NodeDR<br>
+    </div>
+    <div id="command-bar">
+      <input type="text" id="commands" autofocus>
+      <button type="button" id="submit-command">SEND</button>
+      <!-- <img src="arrow-up.svg"> -->
+      <div id="compass-container">
+        <div class="compass-row">
+          <div class="compass-square" id="northwest">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+              <path
+                d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z" />
+              </svg>
+          </div>
+          <div class="compass-square" id="north">n</div>
+          <div class="compass-square" id="northeast">ne</div>
+        </div>
+        <div class="compass-row">
+          <div class="compass-square" id="west">w</div>
+          <div class="compass-square" id="out">o</div class="compass-square">
+          <div class="compass-square" id="east">e</div class="compass-square">
+        </div>
+        <div class="compass-row">
+          <div class="compass-square" id="southwest">se</div class="compass-square">
+          <div class="compass-square" id="south">s</div class="compass-square">
+          <div class="compass-square" id="east">e</div class="compass-square">
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- You can also require other files to run in this process -->
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

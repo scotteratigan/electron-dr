@@ -8,10 +8,7 @@ const getConnectKey = require("./sge");
 // no need for export, this will be executed via worker thread
 
 // Initialization Stuff:
-const globals = {
-  health: 100,
-  exp: {}
-}
+const globals = {};
 let parseXML = () => { };
 loadXMLparser(); // loads or re-loads the parseXML function
 
@@ -24,7 +21,7 @@ frontEnd.on("message", command => {
     return;
   }
   if (command.startsWith("#xml")) {
-    frontEnd.postMessage('*** Reloading XML Parser. ***');
+    frontEnd.postMessage('text', '*** Reloading XML Parser. ***');
     return loadXMLparser();
   }
   if (command.startsWith("#var")) {
@@ -48,7 +45,12 @@ client.on("data", data => {
   }
   buffer = "";
   // Parse XML for updates:
-  parseXML(gameStr);
+  try {
+    parseXML(gameStr);
+  } catch (err) {
+    console.error('Uncaught error parsing xml:', err);
+  }
+
   // Send game data back to Main.js to pass on to client:
   frontEnd.postMessage(gameStr);
 });
@@ -87,17 +89,17 @@ function sendCommandToGame(commands) {
 }
 
 function globalUpdated(global, detail) {
-  console.log("Global trigger on XML:", global, "with detail", "detail");
+  console.log("Global trigger on XML:", global, "with detail", detail);
+  frontEnd.postMessage()
 }
 
 function loadXMLparser() {
   parseXML = () => { };
+  // Todo: replace with non-iterative solution. Need to find how to get root directory.
   for (const fullPath in require.cache) {
     if (fullPath.endsWith("xml.js"))
       delete require.cache[fullPath];
   }
   const setupXMLparser = require("./xml.js");
   parseXML = setupXMLparser(globals, globalUpdated);
-  console.log('displaying cache:')
-
 }

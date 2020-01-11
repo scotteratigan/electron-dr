@@ -1,7 +1,7 @@
 // No Node.js APIs are available in this process because `nodeIntegration` is turned off.
 // Use `preload.js` to selectively enable features needed in the rendering process.
 
-const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron');
 
 let cmdHistory = {
   0: ""
@@ -12,26 +12,31 @@ const maxCmdHistory = 50;
 const minLengthCmdToSave = 2;
 
 const submitBtn = document.querySelector("button#submit-command");
-const clearTextBtn = document.querySelector("button#clear-text");
 const input = document.querySelector("input#commands");
 const gameText = document.querySelector("div#game");
 
+const directions = {
+  nw: document.querySelector("#northwest")
+}
+
+directions.nw.setAttribute("data-direction-exists", false);
+
 // Event Listeners:
-submitBtn.addEventListener("click", sendCommandText);
-clearTextBtn.addEventListener("click", clearGameText);
+submitBtn.addEventListener("click", enterCommand);
 document.addEventListener("keydown", navigateByKeypad, true);
 input.addEventListener("keydown", interceptInputSpecialKeys);
 ipcRenderer.on('gametext', processMsgFromServer);
 
-function sendCommandText() {
+function enterCommand() {
   const text = input.value;
   if (!text.length) return;
   input.select();
-  sendText(text);
+  passCmdToServer(text);
 }
 
-function sendText(str) {
+function passCmdToServer(str) {
   addCmdToHistory(str);
+  if (str.startsWith("#clear")) return clearGameText();
   ipcRenderer.send('asynchronous-message', str);
   appendGameText("> " + str + "\n");
 }
@@ -43,10 +48,9 @@ function appendGameText(text) {
   cleanedText = cleanedText.replace(/[\r\n]+/g, "<br>")
   const newParagraph = document.createElement("p");
   newParagraph.innerHTML = cleanedText;
+  // todo: start removing when too many children
   gameText.appendChild(newParagraph);
-  // setTimeout(() => {
   gameText.scrollTop = gameText.scrollHeight
-  // }, 0);
 }
 
 function addCmdToHistory(cmd) {
@@ -60,7 +64,7 @@ function addCmdToHistory(cmd) {
 }
 
 function interceptInputSpecialKeys(e) {
-  if (e.key === "Enter") return sendCommandText();
+  if (e.key === "Enter") return enterCommand();
   if (e.key === "ArrowUp") return retrievePreviousCommand();
   if (e.key === "ArrowDown") return retrieveNextCommand();
 }
@@ -91,37 +95,37 @@ function navigateByKeypad(e) {
   // todo: prevent typing this in input bar
   switch (e.keyCode) {
     case 104:
-      sendText("north");
+      passCmdToServer("north");
       break;
     case 105:
-      sendText("northeast");
+      passCmdToServer("northeast");
       break;
     case 102:
-      sendText("east");
+      passCmdToServer("east");
       break;
     case 99:
-      sendText("southeast");
+      passCmdToServer("southeast");
       break;
     case 98:
-      sendText("south");
+      passCmdToServer("south");
       break;
     case 97:
-      sendText("southwest");
+      passCmdToServer("southwest");
       break;
     case 100:
-      sendText("west");
+      passCmdToServer("west");
       break;
     case 103:
-      sendText("northwest");
+      passCmdToServer("northwest");
       break;
     case 101:
-      sendText("out");
+      passCmdToServer("out");
       break;
     case 110:
-      sendText("up");
+      passCmdToServer("up");
       break;
     case 96:
-      sendText("down");
+      passCmdToServer("down");
       break;
     default:
       return;

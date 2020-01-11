@@ -62,3 +62,23 @@ button {
 .bold {
   font-weight: 600;
 }
+
+#compass-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+}
+
+.compass-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.compass-square {
+  width: 25px;
+  height: 25px;
+}
+
+[data-direction-exists="false"] > svg {
+  fill: rgba(0, 0, 0, 0);
+}

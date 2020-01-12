@@ -44,6 +44,7 @@ const roomElms = {
 const goNouns = {
   // default to go action on click, alternate is get for now
   "bank": true,
+  "bridge": true,
   "door": true,
   "footpath": true,
   "gap": true,
@@ -326,6 +327,7 @@ function getPlayerName(str) {
 }
 
 function generateClickCommand(noun) {
+  // if monsterbold, launch attack on click?
   if (goNouns[noun]) return "go " + noun;
   return "get " + noun;
 }

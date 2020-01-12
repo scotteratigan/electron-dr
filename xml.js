@@ -93,9 +93,15 @@ function parseRoomPlayers(line, globals, globalUpdated) {
   // <component id='room players'>Also here: Eblar.</component>
   const roomPlayersMatch = line.match(/<component id='room players'>(.*)<\/component>/);
   if (!roomPlayersMatch) return;
-  globals.room.playersString = roomPlayersMatch[1];
-  const playersArray = stringListToArray(roomPlayersMatch[1].replace(/^Also here: /, "").replace(/\.$/, ""));
-  globals.room.playersArray = playersArray;
+  if (roomPlayersMatch[1] === "") {
+    globals.room.playersString = "";
+    globals.room.playersArray = [];
+  }
+  else {
+    globals.room.playersString = roomPlayersMatch[1];
+    const playersArray = stringListToArray(roomPlayersMatch[1].replace(/^Also here: /, "").replace(/\.$/, ""));
+    globals.room.playersArray = playersArray;
+  }
   globalUpdated("room players");
 }
 

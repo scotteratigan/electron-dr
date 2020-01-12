@@ -91,7 +91,7 @@ button {
 
 .compass-square[data-direction-exists="true"]:hover {
   color: blue;
-  cursor: pointer;
+  cursor: default;
 }
 
 [data-direction-exists="true"] {
@@ -103,4 +103,5 @@ button {
 .room-exit-item:hover,
 .room-player:hover {
   text-decoration: underline;
+  cursor: default;
 }

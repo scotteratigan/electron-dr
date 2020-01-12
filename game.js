@@ -74,7 +74,8 @@ getConnectKey((connectKey, ip, port) => {
     }, 200);
     setTimeout(() => {
       client.write("l\n");
-    }, 500); // testing shorter timeout here
+    }, 400); // 300 seemed to fail
+    // todo: can we await specific text responses before sending this stuff instead of a timeout
   });
 });
 

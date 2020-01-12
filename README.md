@@ -16,7 +16,6 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 
 - Further xml work
-  - hands
   - roundtime
   - kneeling / prone / standing indicator
   - worn inventory
@@ -40,3 +39,15 @@ CHARACTER=Zoha
 - Dynamically loaded triggers?
 
 - Map system?
+
+Roundtime notes:
+using global RT
+2 variables, one to track time when rt expires
+other to track current remaining roundtime
+roundtimeEnds
+roundtime
+
+in addition, there's current game time
+<prompt time="1578855547">
+
+- Ensure prompt time matches system time, or calculate offset

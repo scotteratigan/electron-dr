@@ -36,12 +36,13 @@ const expLookup = {
   "mind lock": 34
 }
 
-function setupXMLparser(globals, globalUpdated) {
+function setupXMLparser(globals, xmlUpdateEvent) {
   console.log('XML version loaded: 8');
   globals.exp = {};
   globals.room = {};
   globals.rightHand = {};
   globals.leftHand = {};
+  globals.roundTime = 0;
   console.log('globals reset');
   return function parseXML(str) {
     // First, do multi-line parsing (like inventory)
@@ -51,19 +52,21 @@ function setupXMLparser(globals, globalUpdated) {
     lines.forEach(line => {
       if (!line.startsWith("<")) return;
       if (line.startsWith("<component id='exp"))
-        return parseExp(line, globals, globalUpdated);
+        return parseExp(line, globals, xmlUpdateEvent);
       if (line.startsWith("<streamWindow id='room"))
         return parseRoomName(line, globals);
       if (line.startsWith("<component id='room desc"))
         return parseRoomDescription(line, globals);
       if (line.startsWith("<component id='room objs"))
-        return parseRoomObjects(line, globals, globalUpdated);
+        return parseRoomObjects(line, globals, xmlUpdateEvent);
       if (line.startsWith("<component id='room players"))
-        return parseRoomPlayers(line, globals, globalUpdated);
+        return parseRoomPlayers(line, globals, xmlUpdateEvent);
       if (line.startsWith("<component id='room exits"))
-        return parseRoomExits(line, globals, globalUpdated);
+        return parseRoomExits(line, globals, xmlUpdateEvent);
       if (line.startsWith("<left") || line.startsWith("<right"))
-        return parseHeldItem(line, globals, globalUpdated);
+        return parseHeldItem(line, globals, xmlUpdateEvent);
+      if (line.startsWith("<roundTime"))
+        return parseRoundtime(line, globals, xmlUpdateEvent);
     });
 
     // pick up something in a hand. note this actually starts line
@@ -75,7 +78,30 @@ function setupXMLparser(globals, globalUpdated) {
   }
 }
 
-function parseHeldItem(line, globals, globalUpdated) {
+function parseRoundtime(line, globals, xmlUpdateEvent) {
+  const rtMatch = line.match(/<roundTime value='(\d+)'\/>/);
+  if (!rtMatch) return console.error('Unable to match RT:', line);
+  const rtEnds = parseInt(rtMatch[1]);
+  countdownRT(rtEnds, globals, xmlUpdateEvent);
+}
+
+function countdownRT(rtEnds, globals, xmlUpdateEvent) {
+  const rtEndTime = new Date(rtEnds * 1000);
+  const currentTime = new Date();
+  currentTime.setMilliseconds(0);
+  const roundTime = ((rtEndTime.getTime() - currentTime.getTime()) / 1000) + 1;
+  globals.roundTime = roundTime;
+  xmlUpdateEvent("roundTime");
+  let rtInterval = setInterval(() => {
+    globals.roundTime -= 1;
+    xmlUpdateEvent("roundTime");
+    if (globals.roundTime <= 0) {
+      clearInterval(rtInterval);
+    }
+  }, 1000)
+}
+
+function parseHeldItem(line, globals, xmlUpdateEvent) {
   const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
   if (!handMatch) { // Hand is empty in this case
     const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/);
@@ -87,7 +113,7 @@ function parseHeldItem(line, globals, globalUpdated) {
       id: "",
       item: ""
     };
-    return globalUpdated("hand", hand);
+    return xmlUpdateEvent("hand", hand);
   };
   const hand = handMatch[1];
   const itemId = handMatch[2];
@@ -99,7 +125,7 @@ function parseHeldItem(line, globals, globalUpdated) {
     id: "#" + itemId, // can't reference items without # so might as well include from start
     item: itemDescription
   };
-  globalUpdated("hand", hand);
+  xmlUpdateEvent("hand", hand);
 }
 
 function parseRoomName(line, globals) {
@@ -116,7 +142,7 @@ function parseRoomDescription(line, globals) {
   }
 }
 
-function parseRoomObjects(line, globals, globalUpdated) {
+function parseRoomObjects(line, globals, xmlUpdateEvent) {
   if (line === globals.room.objectsString) return; // when would this happen?
   const roomObjsMatch = line.match(/<component id='room objs'>You also see (.+)\.<\/component>/);
   if (!roomObjsMatch) {
@@ -127,10 +153,10 @@ function parseRoomObjects(line, globals, globalUpdated) {
     globals.room.objectsArray = objectsArray;
     globals.room.objectsString = line;
   }
-  globalUpdated("room objects");
+  xmlUpdateEvent("room objects");
 }
 
-function parseRoomPlayers(line, globals, globalUpdated) {
+function parseRoomPlayers(line, globals, xmlUpdateEvent) {
   // <component id='room players'>Also here: Eblar.</component>
   const roomPlayersMatch = line.match(/<component id='room players'>(.*)<\/component>/);
   if (!roomPlayersMatch) return;
@@ -143,10 +169,10 @@ function parseRoomPlayers(line, globals, globalUpdated) {
     const playersArray = stringListToArray(roomPlayersMatch[1].replace(/^Also here: /, "").replace(/\.$/, ""));
     globals.room.playersArray = playersArray;
   }
-  globalUpdated("room players");
+  xmlUpdateEvent("room players");
 }
 
-function parseRoomExits(line, globals, globalUpdated) {
+function parseRoomExits(line, globals, xmlUpdateEvent) {
   const exits = {
     north: false,
     northeast: false,
@@ -173,10 +199,10 @@ function parseRoomExits(line, globals, globalUpdated) {
   });
   globals.room.exits = exits;
   globals.room.exits.array = exitArray;
-  globalUpdated("room");
+  xmlUpdateEvent("room");
 }
 
-function parseExp(line, globals, globalUpdated) {
+function parseExp(line, globals, xmlUpdateEvent) {
   // not sure if exp should fire an updated event per line - might want to display all exp gained in a single line
   let expType = "pulse";
   if (line.includes("whisper")) {
@@ -193,7 +219,7 @@ function parseExp(line, globals, globalUpdated) {
     if (!globals.exp[skill]) globals.exp[skill] = {};
     globals.exp[skill].rank = rank;
     globals.exp[skill].rate = rate;
-    globalUpdated(expType, skill);
+    xmlUpdateEvent(expType, skill);
   } catch (err) {
     console.error("Error parsing exp:", err);
   }

@@ -16,6 +16,7 @@ const gameText = document.querySelector("#game");
 const compassContainer = document.querySelector("#compass-container");
 const rightHandDisplay = document.querySelector("#right-hand");
 const leftHandDisplay = document.querySelector("#left-hand");
+const roundtimeDisplay = document.querySelector("#roundtime");
 
 const dirElms = {
   n: document.querySelector("#north"),
@@ -179,7 +180,7 @@ function processMsgFromServer(event, msg) {
     return appendGameText(detail);
   }
   console.log("non-text event fired. type:", type, "detail:", detail);
-  if (type === "globals") return console.log("GLOBALS:\n", globals);
+  if (type === "roundTime") return updateRoundTime(globals.roundTime)
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
   if (type === "room players") return updateRoomPlayers(globals.room);
@@ -188,9 +189,12 @@ function processMsgFromServer(event, msg) {
       ? updateHand("right", globals.rightHand)
       : updateHand("left", globals.leftHand);
   }
+  if (type === "globals") return console.log("GLOBALS:\n", globals);
 
   console.log('Unknown event fired:', type);
 }
+
+
 
 function replaceXMLwithHTML(str) {
   // also, multi-line replacements
@@ -261,6 +265,10 @@ function updateHand(hand, { id, noun, item }) {
   if (!item) return handDisplayElm.textContent = "";
   const handHTML = `<span class="held-item" onclick="passCmdToServer('stow ${id}')">${item}</span>`;
   handDisplayElm.innerHTML = handHTML;
+}
+
+function updateRoundTime(roundTime) {
+  roundtimeDisplay.textContent = roundTime > 0 ? roundTime : "";
 }
 
 function generateClickableRoomplayers(playersArray) {

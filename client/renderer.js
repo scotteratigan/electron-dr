@@ -30,6 +30,11 @@ const dirElms = {
   out: document.querySelector("#out")
 };
 
+const roomElms = {
+  name: document.querySelector("#room-name"),
+  description: document.querySelector("#room-description")
+};
+
 // Event Listeners:
 submitBtn.addEventListener("click", enterCommand);
 document.addEventListener("keydown", navigateByKeypad, true);
@@ -157,9 +162,11 @@ function processMsgFromServer(event, msg) {
     console.log(value);
     return appendGameText(value);
   }
-  if (type === "globals") return console.log(msg);
-  if (type === "compass update") return updateCompass(value);
+  if (type === "globals") return console.log("GLOBALS:\n", msg.value);
+  if (type === "room update") return updateRoom(value);
 }
+
+
 
 function replaceXMLwithHTML(str) {
   str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
@@ -195,6 +202,13 @@ function hideXML(str) {
   str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
   str = str.replace(/^\s*\n/mg, ""); // empty lines
   return str;
+}
+
+function updateRoom(room) {
+  const { name, description, exits } = room;
+  updateCompass(exits);
+  roomElms.name.textContent = `[${name}]`;
+  roomElms.description.textContent = description;
 }
 
 function updateCompass(exits) {

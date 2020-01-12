@@ -57,7 +57,7 @@ client.on("data", data => {
 client.on("close", function () {
   console.log("Connection closed.");
   frontEnd.postMessage({ type: "gametext", value: "Connection closed." });
-  process.exit(0); // todo: test this
+  process.exit(0);
 });
 
 // Actual Connect process:
@@ -89,7 +89,7 @@ function sendCommandToGame(commands) {
 
 function globalUpdated(global, detail) {
   console.log("Global trigger on XML:", global, "with detail", detail);
-  if (global === "exits") frontEnd.postMessage({ type: "compass update", value: globals.exits });
+  if (global === "room") frontEnd.postMessage({ type: "room update", value: globals.room });
 }
 
 function loadXMLparser() {

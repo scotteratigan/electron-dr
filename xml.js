@@ -40,6 +40,7 @@ function setupXMLparser(globals, globalUpdated) {
   console.log('XML version loaded: 8');
   globals.exp = {};
   globals.exits = {};
+  globals.room = {};
   console.log('globals reset');
   return function parseXML(str) {
     // First, do multi-line parsing (like inventory)
@@ -50,14 +51,32 @@ function setupXMLparser(globals, globalUpdated) {
       if (!line.startsWith("<")) return;
       if (line.startsWith("<component id='exp"))
         return parseExp(line, globals, globalUpdated);
+      if (line.startsWith("<streamWindow id='room"))
+        return parseRoomName(line, globals);
+      if (line.startsWith("<component id='room desc"))
+        return parseRoomDescription(line, globals);
       if (line.startsWith("<component id='room exits"))
-        return parseExits(line, globals, globalUpdated);
+        return parseRoomExits(line, globals, globalUpdated);
     });
 
   }
 }
 
-function parseExits(line, globals, globalUpdated) {
+function parseRoomName(line, globals) {
+  const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);
+  if (roomNameMatch && roomNameMatch[1]) {
+    return globals.room.name = roomNameMatch[1];
+  }
+}
+
+function parseRoomDescription(line, globals) {
+  const roomDescriptionMatch = line.match(/<component id='room desc'>(.*)<\/component>/);
+  if (roomDescriptionMatch && roomDescriptionMatch[1]) {
+    return globals.room.description = roomDescriptionMatch[1];
+  }
+}
+
+function parseRoomExits(line, globals, globalUpdated) {
   const exits = {
     north: false,
     northeast: false,
@@ -77,8 +96,8 @@ function parseExits(line, globals, globalUpdated) {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);
     if (dirMatch && dirMatch[1]) exits[dirMatch[1]] = true;
   });
-  globals.exits = exits;
-  globalUpdated("exits");
+  globals.room.exits = exits;
+  globalUpdated("room"); // todo: switch this to room
 }
 
 function parseExp(line, globals, globalUpdated) {

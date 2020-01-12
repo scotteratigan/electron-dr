@@ -222,6 +222,15 @@ function updateRoom(room) {
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
   roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
+  console.log('exits.array:', exits.array);
+  roomElms.exits.innerHTML = generateClickableRoomExits(exits.array);
+}
+
+function generateClickableRoomExits(exitsArray) {
+  if (!exitsArray.length) return "Obvious exits: none";
+  return "Obvious exits: " + exitsArray.map(exit => (
+    `<span class="room-exit-item" onclick="passCmdToServer('${exit}')">${exit}</span>`
+  )).join(" | ");
 }
 
 function generateClickableRoomObjects(objArr) {

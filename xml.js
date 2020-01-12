@@ -39,7 +39,6 @@ const expLookup = {
 function setupXMLparser(globals, globalUpdated) {
   console.log('XML version loaded: 8');
   globals.exp = {};
-  globals.exits = {};
   globals.room = {};
   console.log('globals reset');
   return function parseXML(str) {
@@ -99,15 +98,21 @@ function parseRoomExits(line, globals, globalUpdated) {
     northwest: false,
     up: false,
     down: false,
-    out: false
+    out: false,
+    array: []
   };
   const portalMatches = line.match(/<d>(\w+)<\/d>/g);
   // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
+  const exitArray = [];
   portalMatches.forEach(portalStr => {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);
-    if (dirMatch && dirMatch[1]) exits[dirMatch[1]] = true;
+    if (dirMatch && dirMatch[1]) {
+      exits[dirMatch[1]] = true;
+      exitArray.push(dirMatch[1]);
+    }
   });
   globals.room.exits = exits;
+  globals.room.exits.array = exitArray;
   globalUpdated("room"); // todo: switch this to room
 }
 

@@ -99,6 +99,7 @@ button {
   /* fill: black; */
 }
 
-.room-object-item:hover {
+.room-object-item:hover,
+.room-exit-item:hover {
   text-decoration: underline;
 }

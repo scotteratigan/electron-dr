@@ -32,8 +32,22 @@ const dirElms = {
 
 const roomElms = {
   name: document.querySelector("#room-name"),
-  description: document.querySelector("#room-description")
+  description: document.querySelector("#room-description"),
+  objects: document.querySelector("#room-objects"),
+  exits: document.querySelector("#room-exits")
 };
+
+const goNouns = {
+  // default to go action on click, alternate is get for now
+  "bank": true,
+  "door": true,
+  "footpath": true,
+  "gap": true,
+  "gate": true,
+  "path": true,
+  "shop": true,
+  "trail": true
+}
 
 // Event Listeners:
 submitBtn.addEventListener("click", enterCommand);
@@ -166,8 +180,6 @@ function processMsgFromServer(event, msg) {
   if (type === "room update") return updateRoom(value);
 }
 
-
-
 function replaceXMLwithHTML(str) {
   str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
   str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
@@ -205,14 +217,22 @@ function hideXML(str) {
 }
 
 function updateRoom(room) {
-  const { name, description, exits } = room;
+  const { name, description, exits, objectsArray } = room;
   updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
+  roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
+}
+
+function generateClickableRoomObjects(objArr) {
+  return "You also see: " + objArr.map(roomObj => {
+    const noun = getObjNoun(roomObj);
+    const clickCommand = generateClickCommand(noun);
+    return `<span class="room-object-item" onclick="passCmdToServer('${clickCommand}')">${roomObj}</span>`;
+  }).join(" | ");
 }
 
 function updateCompass(exits) {
-  console.log('exits:', exits);
   dirElms.n.setAttribute("data-direction-exists", exits.north);
   dirElms.ne.setAttribute("data-direction-exists", exits.northeast);
   dirElms.e.setAttribute("data-direction-exists", exits.east);
@@ -224,4 +244,15 @@ function updateCompass(exits) {
   dirElms.up.setAttribute("data-direction-exists", exits.up);
   dirElms.down.setAttribute("data-direction-exists", exits.down);
   dirElms.out.setAttribute("data-direction-exists", exits.out);
+}
+
+function getObjNoun(str) {
+  const nounMatch = str.match(/.+ (\S+)$/);
+  if (nounMatch && nounMatch[1]) return nounMatch[1];
+  return str;
+}
+
+function generateClickCommand(noun) {
+  if (goNouns[noun]) return "go " + noun;
+  return "get " + noun;
 }

@@ -98,3 +98,7 @@ button {
   color: black;
   /* fill: black; */
 }
+
+.room-object-item:hover {
+  text-decoration: underline;
+}

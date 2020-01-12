@@ -10,3 +10,35 @@ ACCOUNT=accountName
 PASSWORD=hunter2
 INSTANCE=DR
 CHARACTER=Zoha
+
+## Todos
+
+- Further xml work
+  - complete room stuff (players, object)
+  - hands
+  - roundtime
+  - worn inventory
+  - stowed inventory
+  - store list
+
+- Basic script system w/ pauses for now
+
+- Support to enter your own account info
+- SUpport for multiple accounts
+
+
+
+- Non-xml parsing
+  - assess
+  - attack parsing
+  - info / stat parsing
+  - exp command (useful to set vars at login)
+
+- Skinning system (dynamically loading css variables)
+  - Think light or dark mode to start
+
+- Dynamically loaded triggers?
+
+- Redo archtecture so that 'game' component simply passes messages and any logic can be dynamically reloaded (similar to how xml parsing is implemented) (maybe not needed?)
+
+- Map system?

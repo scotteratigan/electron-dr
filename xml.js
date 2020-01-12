@@ -55,6 +55,8 @@ function setupXMLparser(globals, globalUpdated) {
         return parseRoomName(line, globals);
       if (line.startsWith("<component id='room desc"))
         return parseRoomDescription(line, globals);
+      if (line.startsWith("<component id='room objs"))
+        return parseRoomObjects(line, globals);
       if (line.startsWith("<component id='room exits"))
         return parseRoomExits(line, globals, globalUpdated);
     });
@@ -74,6 +76,15 @@ function parseRoomDescription(line, globals) {
   if (roomDescriptionMatch && roomDescriptionMatch[1]) {
     return globals.room.description = roomDescriptionMatch[1];
   }
+}
+
+function parseRoomObjects(line, globals) {
+  if (line === globals.room.objectsString) return; // when would this happen?
+  const roomObjsMatch = line.match(/<component id='room objs'>You also see (.+)\.<\/component>/);
+  if (!roomObjsMatch) return; // would this happen?
+  const objectsArray = stringListToArray(roomObjsMatch[1]);
+  globals.room.objectsArray = objectsArray;
+  globals.room.objectsString = line;
 }
 
 function parseRoomExits(line, globals, globalUpdated) {
@@ -125,6 +136,12 @@ function parseExp(line, globals, globalUpdated) {
 function formatSkillName(str) {
   // "Medium Edged" returns "mediumEdged"
   return str.substring(0, 1).toLowerCase() + str.substring(1).replace(" ", "");
+}
+
+function stringListToArray(str) {
+  // todo: special logic for items like ball and chain
+  str = str.replace(" and ", ", ");
+  return str.split(", ");
 }
 
 module.exports = setupXMLparser;

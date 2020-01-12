@@ -179,6 +179,8 @@ function processMsgFromServer(event, msg) {
   }
   if (type === "globals") return console.log("GLOBALS:\n", msg.value);
   if (type === "room update") return updateRoom(value);
+  if (type === "room objects") return updateRoomObjects(value);
+  if (type === "room players") return updateRoomPlayers(value);
 }
 
 function replaceXMLwithHTML(str) {
@@ -218,13 +220,21 @@ function hideXML(str) {
 }
 
 function updateRoom(room) {
-  const { name, description, exits, objectsArray, playersArray } = room;
+  const { name, description, exits } = room;
   updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
-  roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
-  roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
   roomElms.exits.innerHTML = generateClickableRoomExits(exits.array);
+}
+
+function updateRoomObjects(room) {
+  const { objectsArray } = room;
+  roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
+}
+
+function updateRoomPlayers(room) {
+  const { playersArray } = room;
+  roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
 }
 
 function generateClickableRoomplayers(playersArray) {
@@ -232,7 +242,7 @@ function generateClickableRoomplayers(playersArray) {
   return "Also here: " + playersArray.map(playerFullName => {
     const playerName = getPlayerName(playerFullName);
     return `<span class="room-player" onclick="passCmdToServer('look at ${playerName}')">${playerFullName}</span>`
-  });
+  }).join(" | ");
 }
 
 function generateClickableRoomExits(exitsArray) {

@@ -55,9 +55,9 @@ function setupXMLparser(globals, globalUpdated) {
       if (line.startsWith("<component id='room desc"))
         return parseRoomDescription(line, globals);
       if (line.startsWith("<component id='room objs"))
-        return parseRoomObjects(line, globals);
+        return parseRoomObjects(line, globals, globalUpdated);
       if (line.startsWith("<component id='room players"))
-        return parseRoomPlayers(line, globals);
+        return parseRoomPlayers(line, globals, globalUpdated);
       if (line.startsWith("<component id='room exits"))
         return parseRoomExits(line, globals, globalUpdated);
     });
@@ -79,22 +79,24 @@ function parseRoomDescription(line, globals) {
   }
 }
 
-function parseRoomObjects(line, globals) {
+function parseRoomObjects(line, globals, globalUpdated) {
   if (line === globals.room.objectsString) return; // when would this happen?
   const roomObjsMatch = line.match(/<component id='room objs'>You also see (.+)\.<\/component>/);
   if (!roomObjsMatch) return; // would this happen?
   const objectsArray = stringListToArray(roomObjsMatch[1]);
   globals.room.objectsArray = objectsArray;
   globals.room.objectsString = line;
+  globalUpdated("room objects");
 }
 
-function parseRoomPlayers(line, globals) {
+function parseRoomPlayers(line, globals, globalUpdated) {
   // <component id='room players'>Also here: Eblar.</component>
   const roomPlayersMatch = line.match(/<component id='room players'>(.*)<\/component>/);
   if (!roomPlayersMatch) return;
   globals.room.playersString = roomPlayersMatch[1];
   const playersArray = stringListToArray(roomPlayersMatch[1].replace(/^Also here: /, "").replace(/\.$/, ""));
   globals.room.playersArray = playersArray;
+  globalUpdated("room players");
 }
 
 function parseRoomExits(line, globals, globalUpdated) {

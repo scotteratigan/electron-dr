@@ -13,10 +13,12 @@ CHARACTER=Zoha
 
 ## Todos
 
+- Pipe sge server messages to main window
+
 - Further xml work
-  - complete room stuff (players, object)
   - hands
   - roundtime
+  - kneeling / prone / standing indicator
   - worn inventory
   - stowed inventory
   - store list
@@ -24,9 +26,7 @@ CHARACTER=Zoha
 - Basic script system w/ pauses for now
 
 - Support to enter your own account info
-- SUpport for multiple accounts
-
-
+- Support for multiple accounts
 
 - Non-xml parsing
   - assess

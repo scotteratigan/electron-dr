@@ -75,6 +75,7 @@ function appendGameText(text) {
   let cleanedText = replaceXMLwithHTML(text);
   cleanedText = hideXML(cleanedText);
   if (!cleanedText) return;
+  console.log('CLEANED TEXT:', cleanedText);
   cleanedText = cleanedText.replace(/[\r\n]+/g, "<br>")
   const newParagraph = document.createElement("p");
   newParagraph.innerHTML = cleanedText;
@@ -184,6 +185,11 @@ function processMsgFromServer(event, msg) {
 }
 
 function replaceXMLwithHTML(str) {
+  // also, multi-line replacements
+  // login wall-of-text:
+  str = str.replace(/<mode id="GAME"\/>.*<\/settings>/g, "");
+  // The above is sending 5-6 times, how to prevent? longer pause on connect?
+  // now the subs
   str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
   str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
   str = str.replace(/<pushBold\/>/g, '<span class="bold">');
@@ -214,8 +220,13 @@ function hideXML(str) {
   str = str.replace(/<d cmd="\S*">/g, ""); // useful for later, this is a command link
   str = str.replace(/<roundTime value='\d+'\/>/, "");
   str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, "");
-  str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
+  // str = str.replace(/<compDef .+<\/compDef>/, ""); // login, sends exp skills
+  // str = str.replace(/<mode id="GAME"\/>/, ""); // login, useless...
+  // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
+  // str = str.replace(/<exposeContainer id='stow'\/>/); //login...
+  // str = str.replace(/<container id='.+' title=".+" target='.+' location='.+' save='.+' resident='.+'\/>/); // login - note this sends ID of stow container? maybe?
   str = str.replace(/^\s*\n/mg, ""); // empty lines
+  str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
   return str;
 }
 

@@ -9,6 +9,10 @@ body, html {
   font-size: 12px;
 }
 
+h3 {
+  margin: 0.25rem 1rem;
+}
+
 #container {
   display: flex;
   flex-direction: column;
@@ -22,17 +26,16 @@ body, html {
   display: flex;
 }
 
+#room {
+  padding: 4px;
+}
+
 #game {
-  /* min-height: 75vh; */
   overflow-y: scroll;
   overflow-x: hidden;
-  /* border: 1px solid black; */
-  margin: 2px;
   padding: 4px;
   background-color: whitesmoke;
   flex-grow: 1;
-  /* preserve whitespace (not working) */
-  /* white-space: pre; */
   white-space: pre-wrap;
 }
 
@@ -55,7 +58,7 @@ input {
   font-size: 0.85rem;
 }
 
-.bold {
+strong {
   font-weight: 600;
 }
 
@@ -93,8 +96,13 @@ input {
   color: black;
 }
 
-.room-object-item:hover,
-.room-exit-item:hover,
+.room-mob {
+  font-weight: 700;
+}
+
+.room-item:hover,
+.room-mob:hover,
+.room-exit:hover,
 .room-player:hover,
 .held-item:hover {
   text-decoration: underline;

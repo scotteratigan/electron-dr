@@ -36,13 +36,16 @@ const dirElms = {
 const roomElms = {
   name: document.querySelector("#room-name"),
   description: document.querySelector("#room-description"),
-  objects: document.querySelector("#room-objects"),
+  items: document.querySelector("#room-items"),
+  mobs: document.querySelector("#room-mobs"),
   players: document.querySelector("#room-players"),
   exits: document.querySelector("#room-exits")
 };
 
 const goNouns = {
   // default to go action on click, alternate is get for now
+  "arch": true,
+  "archway": true,
   "bank": true,
   "bridge": true,
   "door": true,
@@ -204,8 +207,10 @@ function replaceXMLwithHTML(str) {
   // now the subs
   str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
   str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
-  str = str.replace(/<pushBold\/>/g, '<span class="bold">');
-  str = str.replace(/<popBold\/>/g, "</span>");
+  // str = str.replace(/<pushBold\/>/g, '<span class="bold">');
+  // str = str.replace(/<popBold\/>/g, "</span>");
+  str = str.replace(/<pushBold\/>/g, '<strong>');
+  str = str.replace(/<popBold\/>/g, "</strong>");
   return str;
 }
 
@@ -251,13 +256,53 @@ function updateRoom(room) {
 }
 
 function updateRoomObjects(room) {
-  const { objectsArray } = room;
-  roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
+  const { items, mobs } = room;
+  roomElms.items.innerHTML = generateClickableRoomItems(items);
+  roomElms.mobs.innerHTML = generateClickableRoomMobs(mobs);
+  console.log('mobs:', mobs);
 }
 
 function updateRoomPlayers(room) {
   const { playersArray } = room;
   roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
+}
+
+
+
+function generateClickableRoomplayers(playersArray) {
+  if (!playersArray.length) return "Also here: no one.";
+  return "Also here: " + playersArray.map(playerFullName => {
+    const playerName = getPlayerName(playerFullName);
+    return `<span class="room-player" onclick="passCmdToServer('look at ${playerName}')">${playerFullName}</span>`
+  }).join(" | ");
+}
+
+function generateClickableRoomExits(exitsArray) {
+  if (!exitsArray.length) return "Obvious exits: none";
+  return "Obvious exits: " + exitsArray.map(exit => (
+    `<span class="room-exit" onclick="passCmdToServer('${exit}')">${exit}</span>`
+  )).join(" | ");
+}
+
+function generateClickableRoomItems(itemArray) {
+  const items = itemArray.length;
+  if (!items) return "0 Items";
+  const prefix = items > 1 ? `${items} Items: ` : "1 Item: ";
+  return prefix + itemArray.map(roomObj => {
+    const noun = getObjNoun(roomObj).toLowerCase();
+    const clickCommand = generateClickCommand(noun);
+    return `<span class="room-item" onclick="passCmdToServer('${clickCommand}')">${roomObj}</span>`;
+  }).join(" | ");
+}
+
+function generateClickableRoomMobs(mobArray) {
+  const mobs = mobArray.length;
+  if (!mobs) return "0 Mobs";
+  const prefix = mobs > 1 ? `${mobs} Mobs: ` : "1 Mob: ";
+  return prefix + mobArray.map(mobName => {
+    const noun = getObjNoun(mobName).toLowerCase();
+    return `<span class="room-mob" onclick="passCmdToServer('advance ${noun}')">${mobName}</span>`;
+  }).join(" | ");
 }
 
 function updateHand(hand, { id, noun, item }) {
@@ -273,30 +318,6 @@ function updateRoundTime(roundTime) {
 
 function updateBodyPosition(bodyPosition) {
   bodyPositionDisplay.textContent = bodyPosition;
-}
-
-function generateClickableRoomplayers(playersArray) {
-  if (!playersArray.length) return "Also here: no one.";
-  return "Also here: " + playersArray.map(playerFullName => {
-    const playerName = getPlayerName(playerFullName);
-    return `<span class="room-player" onclick="passCmdToServer('look at ${playerName}')">${playerFullName}</span>`
-  }).join(" | ");
-}
-
-function generateClickableRoomExits(exitsArray) {
-  if (!exitsArray.length) return "Obvious exits: none";
-  return "Obvious exits: " + exitsArray.map(exit => (
-    `<span class="room-exit-item" onclick="passCmdToServer('${exit}')">${exit}</span>`
-  )).join(" | ");
-}
-
-function generateClickableRoomObjects(objArr) {
-  if (!objArr.length) return "You also see: nothing.";
-  else return "You also see: " + objArr.map(roomObj => {
-    const noun = getObjNoun(roomObj).toLowerCase();
-    const clickCommand = generateClickCommand(noun);
-    return `<span class="room-object-item" onclick="passCmdToServer('${clickCommand}')">${roomObj}</span>`;
-  }).join(" | ");
 }
 
 function updateCompass(exits) {

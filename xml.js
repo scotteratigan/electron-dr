@@ -36,6 +36,8 @@ const expLookup = {
   "mind lock": 34
 }
 
+let rtInterval = null;
+
 function setupXMLparser(globals, xmlUpdateEvent) {
   console.log('XML version loaded: 8');
   globals.exp = {};
@@ -102,10 +104,11 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   const rtEndTime = new Date(rtEnds * 1000);
   const currentTime = new Date();
   currentTime.setMilliseconds(0);
-  const roundTime = ((rtEndTime.getTime() - currentTime.getTime()) / 1000) + 1;
+  const roundTime = (rtEndTime.getTime() - currentTime.getTime()) / 1000;
   globals.roundTime = roundTime;
   xmlUpdateEvent("roundTime");
-  let rtInterval = setInterval(() => {
+  clearInterval(rtInterval); // don't want 2 at once
+  rtInterval = setInterval(() => {
     globals.roundTime -= 1;
     xmlUpdateEvent("roundTime");
     if (globals.roundTime <= 0) {
@@ -156,15 +159,25 @@ function parseRoomDescription(line, globals) {
 }
 
 function parseRoomObjects(line, globals, xmlUpdateEvent) {
-  if (line === globals.room.objectsString) return; // when would this happen?
   const roomObjsMatch = line.match(/<component id='room objs'>You also see (.+)\.<\/component>/);
   if (!roomObjsMatch) {
-    globals.room.objectsArray = [];
-    globals.room.objectsString = "";
+    globals.room.items = [];
+    globals.room.mobs = [];
+    globals.room.monsterCount = 0;
   } else {
     const objectsArray = stringListToArray(roomObjsMatch[1]);
-    globals.room.objectsArray = objectsArray;
-    globals.room.objectsString = line;
+    const items = [];
+    const mobs = [];
+    objectsArray.forEach(object => {
+      if (object.startsWith("<pushBold/>")) {
+        mobs.push(object.replace(/<pushBold\/>(.*)<popBold\/>/, "$1"));
+      } else items.push(object);
+    });
+    console.log('items:', items);
+    console.log('mobs:', mobs);
+    globals.room.items = items;
+    globals.room.mobs = mobs;
+    globals.room.monsterCount = mobs.length;
   }
   xmlUpdateEvent("room objects");
 }
@@ -244,8 +257,9 @@ function formatSkillName(str) {
 }
 
 function stringListToArray(str) {
-  // todo: special logic for items like ball and chain
-  str = str.replace(" and ", ", ");
+  // only match up to 5 words after " and " to help misfires on "a strong and stately mature oak" (TGSE)
+  // will still break if this is last item in room
+  str = str.replace(/ and (\S+\s?\S*\s?\S*\s?\S*\s?\S*)$/, ", $1");
   return str.split(", ");
 }
 

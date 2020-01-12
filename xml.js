@@ -77,7 +77,18 @@ function setupXMLparser(globals, globalUpdated) {
 
 function parseHeldItem(line, globals, globalUpdated) {
   const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
-  if (!handMatch) return;
+  if (!handMatch) { // Hand is empty in this case
+    const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/);
+    if (!emptyHandMatch) return;
+    const hand = emptyHandMatch[1];
+    const handKey = hand === "left" ? "leftHand" : "rightHand";
+    globals[handKey] = {
+      noun: "",
+      id: "",
+      item: ""
+    };
+    return globalUpdated("hand", hand);
+  };
   const hand = handMatch[1];
   const itemId = handMatch[2];
   const itemNoun = handMatch[3];
@@ -88,9 +99,8 @@ function parseHeldItem(line, globals, globalUpdated) {
     id: "#" + itemId, // can't reference items without # so might as well include from start
     item: itemDescription
   };
-  globalUpdated(handKey); // either rightHand or leftHand
+  globalUpdated("hand", hand);
 }
-
 
 function parseRoomName(line, globals) {
   const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);

@@ -14,8 +14,8 @@ const minLengthCmdToSave = 2;
 const input = document.querySelector("input#commands");
 const gameText = document.querySelector("div#game");
 const compassContainer = document.querySelector("#compass-container");
-const rightHand = document.querySelector("div#right-hand");
-const leftHand = document.querySelector("div#left-hand");
+const rightHandDisplay = document.querySelector("div#right-hand");
+const leftHandDisplay = document.querySelector("div#left-hand");
 
 const dirElms = {
   n: document.querySelector("#north"),
@@ -178,12 +178,19 @@ function processMsgFromServer(event, msg) {
     console.log(detail);
     return appendGameText(detail);
   }
+  console.log("non-text event fired. type:", type, "detail:", detail);
   if (type === "globals") return console.log("GLOBALS:\n", globals);
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
   if (type === "room players") return updateRoomPlayers(globals.room);
-  // if (type === "rightHand") return updateRightHand(globals.rightHand);
-  // if (type === "leftHand") return updateLeftHand(globals.leftHand);
+  if (type === "hand") {
+    console.log('hand event detected.')
+    return detail === "right"
+      ? updateRightHand(globals.rightHand)
+      : updateLeftHand(globals.leftHand);
+  }
+
+  console.log('Unknown event fired:', type);
 }
 
 function replaceXMLwithHTML(str) {
@@ -251,12 +258,11 @@ function updateRoomPlayers(room) {
 }
 
 function updateRightHand(rightHand) {
-  // rightHand
-
+  rightHandDisplay.textContent = `Right Hand: ${rightHand.item}`;
 }
 
 function updateLeftHand(leftHand) {
-  // leftHand
+  leftHandDisplay.textContent = `Left Hand: ${leftHand.item}`;
 }
 
 function generateClickableRoomplayers(playersArray) {

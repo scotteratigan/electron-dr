@@ -118,6 +118,13 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
 }
 
 function parseHeldItem(line, globals, xmlUpdateEvent) {
+  // 3 cases
+  // hand is holding item, hand is emptied, hand gets item then empties (passthrough)
+  // (which is a line with 2 xml statements)
+
+  const handPassthroughMatch = line.match(/<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/);
+  if (handPassthroughMatch) return; // no point in firing a change event, hand didn't change essentially
+
   const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
   if (!handMatch) { // Hand is empty in this case
     const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/);
@@ -130,7 +137,7 @@ function parseHeldItem(line, globals, xmlUpdateEvent) {
       item: ""
     };
     return xmlUpdateEvent("hand", hand);
-  };
+  }
   const hand = handMatch[1];
   const itemId = handMatch[2];
   const itemNoun = handMatch[3];

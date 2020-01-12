@@ -97,7 +97,8 @@ input {
 
 .room-object-item:hover,
 .room-exit-item:hover,
-.room-player:hover {
+.room-player:hover,
+.held-item:hover {
   text-decoration: underline;
   cursor: default;
 }

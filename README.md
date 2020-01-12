@@ -16,13 +16,13 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 
 - Further xml work
-  - roundtime
-  - kneeling / prone / standing indicator
   - worn inventory
   - stowed inventory
   - store list
 
 - Basic script system w/ pauses for now
+
+- Logging
 
 - Support to enter your own account info
 - Support for multiple accounts
@@ -33,21 +33,13 @@ CHARACTER=Zoha
   - info / stat parsing
   - exp command (useful to set vars at login)
 
+- Better visual for RT display and bodyPosition
+
 - Skinning system (dynamically loading css variables)
   - Think light or dark mode to start
 
 - Dynamically loaded triggers?
 
 - Map system?
-
-Roundtime notes:
-using global RT
-2 variables, one to track time when rt expires
-other to track current remaining roundtime
-roundtimeEnds
-roundtime
-
-in addition, there's current game time
-<prompt time="1578855547">
 
 - Ensure prompt time matches system time, or calculate offset

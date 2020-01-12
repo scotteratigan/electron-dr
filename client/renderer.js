@@ -17,6 +17,7 @@ const compassContainer = document.querySelector("#compass-container");
 const rightHandDisplay = document.querySelector("#right-hand");
 const leftHandDisplay = document.querySelector("#left-hand");
 const roundtimeDisplay = document.querySelector("#roundtime");
+const bodyPositionDisplay = document.querySelector("#body-position");
 
 const dirElms = {
   n: document.querySelector("#north"),
@@ -190,11 +191,9 @@ function processMsgFromServer(event, msg) {
       : updateHand("left", globals.leftHand);
   }
   if (type === "globals") return console.log("GLOBALS:\n", globals);
-
+  if (type === "bodyPosition") return updateBodyPosition(globals.bodyPosition);
   console.log('Unknown event fired:', type);
 }
-
-
 
 function replaceXMLwithHTML(str) {
   // also, multi-line replacements
@@ -269,6 +268,10 @@ function updateHand(hand, { id, noun, item }) {
 
 function updateRoundTime(roundTime) {
   roundtimeDisplay.textContent = roundTime > 0 ? roundTime : "";
+}
+
+function updateBodyPosition(bodyPosition) {
+  bodyPositionDisplay.textContent = bodyPosition;
 }
 
 function generateClickableRoomplayers(playersArray) {

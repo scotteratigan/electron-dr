@@ -100,3 +100,14 @@ input {
   text-decoration: underline;
   cursor: default;
 }
+
+#roundtime {
+  display: inline-block;
+  text-align: center;
+  width: 25px;
+}
+
+#body-position {
+  display: inline-block;
+  width: 50px;
+}

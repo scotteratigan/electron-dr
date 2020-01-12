@@ -43,6 +43,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.rightHand = {};
   globals.leftHand = {};
   globals.roundTime = 0;
+  // I don't like the idea of 5 variables to track this:
+  globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   console.log('globals reset');
   return function parseXML(str) {
     // First, do multi-line parsing (like inventory)
@@ -67,6 +69,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseHeldItem(line, globals, xmlUpdateEvent);
       if (line.startsWith("<roundTime"))
         return parseRoundtime(line, globals, xmlUpdateEvent);
+      if (line.startsWith("<indicator"))
+        return parseBodyPosition(line, globals, xmlUpdateEvent);
     });
 
     // pick up something in a hand. note this actually starts line
@@ -76,6 +80,15 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     // I should check the string length and value before parsing out each time
 
   }
+}
+
+function parseBodyPosition(line, globals, xmlUpdateEvent) {
+  // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
+  const bodyPositionMatch = line.match(/<indicator.+id="Icon(\w+)" visible="y"/);
+  if (!bodyPositionMatch) return console.error('Unable to determine verticality.')
+  const bodyPosition = bodyPositionMatch[1].toLowerCase();
+  globals.bodyPosition = bodyPosition;
+  xmlUpdateEvent("bodyPosition");
 }
 
 function parseRoundtime(line, globals, xmlUpdateEvent) {

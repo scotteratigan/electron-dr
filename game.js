@@ -88,12 +88,14 @@ function sendCommandToGame(commands) {
   });
 }
 
-function globalUpdated(global, detail) {
+function globalUpdated(global, detail = "") {
+  // note: detail currently only sent on exp update
   // todo: make global object fully available on each update?
   // console.log("Global trigger on XML:", global, "with detail", detail);
-  if (global === "room") frontEnd.postMessage({ type: "room update", value: globals.room });
-  if (global === "room objects") frontEnd.postMessage({ type: "room objects", value: globals.room });
-  if (global === "room players") frontEnd.postMessage({ type: "room players", value: globals.room });
+  frontEnd.postMessage({ type: global, detail, value: globals });
+  // if (global === "room") frontEnd.postMessage({ type: "room", value: globals.room });
+  // if (global === "room objects") frontEnd.postMessage({ type: "room objects", value: globals.room });
+  // if (global === "room players") frontEnd.postMessage({ type: "room players", value: globals.room });
 }
 
 function loadXMLparser() {

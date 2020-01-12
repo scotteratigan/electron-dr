@@ -39,6 +39,4 @@ CHARACTER=Zoha
 
 - Dynamically loaded triggers?
 
-- Redo archtecture so that 'game' component simply passes messages and any logic can be dynamically reloaded (similar to how xml parsing is implemented) (maybe not needed?)
-
 - Map system?

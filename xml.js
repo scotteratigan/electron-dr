@@ -40,6 +40,8 @@ function setupXMLparser(globals, globalUpdated) {
   console.log('XML version loaded: 8');
   globals.exp = {};
   globals.room = {};
+  globals.rightHand = {};
+  globals.leftHand = {};
   console.log('globals reset');
   return function parseXML(str) {
     // First, do multi-line parsing (like inventory)
@@ -60,10 +62,35 @@ function setupXMLparser(globals, globalUpdated) {
         return parseRoomPlayers(line, globals, globalUpdated);
       if (line.startsWith("<component id='room exits"))
         return parseRoomExits(line, globals, globalUpdated);
+      if (line.startsWith("<left") || line.startsWith("<right"))
+        return parseHeldItem(line, globals, globalUpdated);
     });
+
+    // pick up something in a hand. note this actually starts line
+    // <left exist="4717291" noun="moss">moss</left><
+    // <right exist="4717193" noun="stem">stem</right>
+    // for worn items, that gets resent a lot for no reason,
+    // I should check the string length and value before parsing out each time
 
   }
 }
+
+function parseHeldItem(line, globals, globalUpdated) {
+  const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
+  if (!handMatch) return;
+  const hand = handMatch[1];
+  const itemId = handMatch[2];
+  const itemNoun = handMatch[3];
+  const itemDescription = handMatch[4];
+  const handKey = hand === "left" ? "leftHand" : "rightHand";
+  globals[handKey] = {
+    noun: itemNoun,
+    id: itemId,
+    item: itemDescription
+  };
+  globalUpdated(handKey); // either rightHand or leftHand
+}
+
 
 function parseRoomName(line, globals) {
   const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);
@@ -82,10 +109,14 @@ function parseRoomDescription(line, globals) {
 function parseRoomObjects(line, globals, globalUpdated) {
   if (line === globals.room.objectsString) return; // when would this happen?
   const roomObjsMatch = line.match(/<component id='room objs'>You also see (.+)\.<\/component>/);
-  if (!roomObjsMatch) return; // would this happen?
-  const objectsArray = stringListToArray(roomObjsMatch[1]);
-  globals.room.objectsArray = objectsArray;
-  globals.room.objectsString = line;
+  if (!roomObjsMatch) {
+    globals.room.objectsArray = [];
+    globals.room.objectsString = "";
+  } else {
+    const objectsArray = stringListToArray(roomObjsMatch[1]);
+    globals.room.objectsArray = objectsArray;
+    globals.room.objectsString = line;
+  }
   globalUpdated("room objects");
 }
 
@@ -132,10 +163,11 @@ function parseRoomExits(line, globals, globalUpdated) {
   });
   globals.room.exits = exits;
   globals.room.exits.array = exitArray;
-  globalUpdated("room"); // todo: switch this to room
+  globalUpdated("room");
 }
 
 function parseExp(line, globals, globalUpdated) {
+  // not sure if exp should fire an updated event per line - might want to display all exp gained in a single line
   let expType = "pulse";
   if (line.includes("whisper")) {
     line = line.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
@@ -148,10 +180,10 @@ function parseExp(line, globals, globalUpdated) {
     const rank = parseFloat(expMatch[2] + "." + expMatch[3]);
     const rateWord = expMatch[4].trim();
     const rate = expLookup[rateWord]
-    globalUpdated(expType, skill);
     if (!globals.exp[skill]) globals.exp[skill] = {};
     globals.exp[skill].rank = rank;
     globals.exp[skill].rate = rate;
+    globalUpdated(expType, skill);
   } catch (err) {
     console.error("Error parsing exp:", err);
   }

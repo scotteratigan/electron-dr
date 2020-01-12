@@ -179,9 +179,9 @@ function processMsgFromServer(event, msg) {
     return appendGameText(value);
   }
   if (type === "globals") return console.log("GLOBALS:\n", msg.value);
-  if (type === "room update") return updateRoom(value);
-  if (type === "room objects") return updateRoomObjects(value);
-  if (type === "room players") return updateRoomPlayers(value);
+  if (type === "room") return updateRoom(value.room);
+  if (type === "room objects") return updateRoomObjects(value.room);
+  if (type === "room players") return updateRoomPlayers(value.room);
 }
 
 function replaceXMLwithHTML(str) {
@@ -264,7 +264,8 @@ function generateClickableRoomExits(exitsArray) {
 }
 
 function generateClickableRoomObjects(objArr) {
-  return "You also see: " + objArr.map(roomObj => {
+  if (!objArr.length) return "You also see: nothing.";
+  else return "You also see: " + objArr.map(roomObj => {
     const noun = getObjNoun(roomObj).toLowerCase();
     const clickCommand = generateClickCommand(noun);
     return `<span class="room-object-item" onclick="passCmdToServer('${clickCommand}')">${roomObj}</span>`;

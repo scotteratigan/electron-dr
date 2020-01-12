@@ -254,7 +254,7 @@ function generateClickableRoomExits(exitsArray) {
 
 function generateClickableRoomObjects(objArr) {
   return "You also see: " + objArr.map(roomObj => {
-    const noun = getObjNoun(roomObj);
+    const noun = getObjNoun(roomObj).toLowerCase();
     const clickCommand = generateClickCommand(noun);
     return `<span class="room-object-item" onclick="passCmdToServer('${clickCommand}')">${roomObj}</span>`;
   }).join(" | ");

@@ -11,10 +11,11 @@ let cmdLookupIndex = 1;
 const maxCmdHistory = 50;
 const minLengthCmdToSave = 2;
 
-const submitBtn = document.querySelector("button#submit-command");
 const input = document.querySelector("input#commands");
 const gameText = document.querySelector("div#game");
 const compassContainer = document.querySelector("#compass-container");
+const rightHand = document.querySelector("div#right-hand");
+const leftHand = document.querySelector("div#left-hand");
 
 const dirElms = {
   n: document.querySelector("#north"),
@@ -51,7 +52,6 @@ const goNouns = {
 }
 
 // Event Listeners:
-submitBtn.addEventListener("click", enterCommand);
 document.addEventListener("keydown", navigateByKeypad, true);
 input.addEventListener("keydown", interceptInputSpecialKeys);
 compassContainer.addEventListener("click", navigateByCompass);
@@ -173,15 +173,17 @@ function clearGameText() {
 }
 
 function processMsgFromServer(event, msg) {
-  const { type, value = null } = msg;
+  const { type, detail, globals } = msg;
   if (type === "gametext") {
-    console.log(value);
-    return appendGameText(value);
+    console.log(detail);
+    return appendGameText(detail);
   }
-  if (type === "globals") return console.log("GLOBALS:\n", msg.value);
-  if (type === "room") return updateRoom(value.room);
-  if (type === "room objects") return updateRoomObjects(value.room);
-  if (type === "room players") return updateRoomPlayers(value.room);
+  if (type === "globals") return console.log("GLOBALS:\n", globals);
+  if (type === "room") return updateRoom(globals.room);
+  if (type === "room objects") return updateRoomObjects(globals.room);
+  if (type === "room players") return updateRoomPlayers(globals.room);
+  // if (type === "rightHand") return updateRightHand(globals.rightHand);
+  // if (type === "leftHand") return updateLeftHand(globals.leftHand);
 }
 
 function replaceXMLwithHTML(str) {
@@ -246,6 +248,15 @@ function updateRoomObjects(room) {
 function updateRoomPlayers(room) {
   const { playersArray } = room;
   roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
+}
+
+function updateRightHand(rightHand) {
+  // rightHand
+
+}
+
+function updateLeftHand(leftHand) {
+  // leftHand
 }
 
 function generateClickableRoomplayers(playersArray) {

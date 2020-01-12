@@ -21,11 +21,11 @@ frontEnd.on("message", command => {
     return;
   }
   if (command.startsWith("#xml")) {
-    frontEnd.postMessage({ type: "gametext", value: "*** Reloading XML Parser. ***" });
+    frontEnd.postMessage({ type: "gametext", detail: "*** Reloading XML Parser. ***" });
     return loadXMLparser();
   }
   if (command.startsWith("#var")) {
-    return frontEnd.postMessage({ type: "globals", value: globals });
+    return frontEnd.postMessage({ type: "globals", globals });
   }
 
   sendCommandToGame(command);
@@ -51,12 +51,12 @@ client.on("data", data => {
   }
 
   // Send game data back to Main.js to pass on to client:
-  frontEnd.postMessage({ type: "gametext", value: gameStr });
+  frontEnd.postMessage({ type: "gametext", detail: gameStr });
 });
 
 client.on("close", function () {
   console.log("Connection closed.");
-  frontEnd.postMessage({ type: "gametext", value: "Connection closed." });
+  frontEnd.postMessage({ type: "gametext", detail: "Connection closed." });
   process.exit(0);
 });
 
@@ -92,7 +92,7 @@ function globalUpdated(global, detail = "") {
   // note: detail currently only sent on exp update
   // todo: make global object fully available on each update?
   // console.log("Global trigger on XML:", global, "with detail", detail);
-  frontEnd.postMessage({ type: global, detail, value: globals });
+  frontEnd.postMessage({ type: global, detail, globals });
   // if (global === "room") frontEnd.postMessage({ type: "room", value: globals.room });
   // if (global === "room objects") frontEnd.postMessage({ type: "room objects", value: globals.room });
   // if (global === "room players") frontEnd.postMessage({ type: "room players", value: globals.room });

@@ -85,7 +85,7 @@ function parseHeldItem(line, globals, globalUpdated) {
   const handKey = hand === "left" ? "leftHand" : "rightHand";
   globals[handKey] = {
     noun: itemNoun,
-    id: itemId,
+    id: "#" + itemId, // can't reference items without # so might as well include from start
     item: itemDescription
   };
   globalUpdated(handKey); // either rightHand or leftHand

@@ -41,17 +41,13 @@ p {
   padding: 0;
 }
 
-input {
-  height: 1.2rem;
+#input-container {
   flex-grow: 1;
-  min-width: 10px;
-  /* width: 67vw; */
-  margin-left: 5px;
 }
 
-button {
-  /* width: 10vw; */
-  flex-grow: 0;
+input {
+  /* height: 1.2rem; */
+  width: 100%;
 }
 
 .monospace {

@@ -34,6 +34,7 @@ const roomElms = {
   name: document.querySelector("#room-name"),
   description: document.querySelector("#room-description"),
   objects: document.querySelector("#room-objects"),
+  players: document.querySelector("#room-players"),
   exits: document.querySelector("#room-exits")
 };
 
@@ -217,13 +218,21 @@ function hideXML(str) {
 }
 
 function updateRoom(room) {
-  const { name, description, exits, objectsArray } = room;
+  const { name, description, exits, objectsArray, playersArray } = room;
   updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
   roomElms.objects.innerHTML = generateClickableRoomObjects(objectsArray);
-  console.log('exits.array:', exits.array);
+  roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
   roomElms.exits.innerHTML = generateClickableRoomExits(exits.array);
+}
+
+function generateClickableRoomplayers(playersArray) {
+  if (!playersArray.length) return "Also here: no one.";
+  return "Also here: " + playersArray.map(playerFullName => {
+    const playerName = getPlayerName(playerFullName);
+    return `<span class="room-player" onclick="passCmdToServer('look at ${playerName}')">${playerFullName}</span>`
+  });
 }
 
 function generateClickableRoomExits(exitsArray) {
@@ -258,6 +267,13 @@ function updateCompass(exits) {
 function getObjNoun(str) {
   const nounMatch = str.match(/.+ (\S+)$/);
   if (nounMatch && nounMatch[1]) return nounMatch[1];
+  return str;
+}
+
+function getPlayerName(str) {
+  str = str.replace(/ who is .+/, "");
+  const nameMatch = str.match(/.+ (\S+)/);
+  if (nameMatch && nameMatch[1]) return nameMatch[1];
   return str;
 }
 

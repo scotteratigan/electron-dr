@@ -82,6 +82,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.leftHand = {};
   globals.roundTime = 0;
   globals.vitals = {};
+  globals.preparedSpell = "";
   // I don't like the idea of 5 variables to track this:
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   console.log('globals reset');
@@ -111,8 +112,22 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseBodyPosition(line, globals, xmlUpdateEvent);
       if (line.startsWith("<dialogData"))
         return parseVitals(line, globals, xmlUpdateEvent);
+      if (line.startsWith("<spell"))
+        return parseSpellPrep(line, globals, xmlUpdateEvent);
     });
   }
+}
+
+function parseSpellPrep(line, globals, xmlUpdateEvent) {
+  if (line === "<spell>None</spell>") {
+    globals.preparedSpell = "";
+    return xmlUpdateEvent("preparedSpell");
+  }
+  // <spell exist='spell'>Minor Physical Protection</spell>
+  const spellMatch = line.match(/<spell exist='spell'>(.*)<\/spell>/);
+  if (!spellMatch) return console.error("Unable to parse prepared spell:", line);
+  globals.preparedSpell = spellMatch[1];
+  xmlUpdateEvent("preparedSpell");
 }
 
 function parseVitals(line, globals, xmlUpdateEvent) {

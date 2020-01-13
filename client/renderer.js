@@ -204,6 +204,7 @@ function processMsgFromServer(event, msg) {
   if (type === "globals") return console.log("GLOBALS:\n", globals);
   if (type === "bodyPosition") return updateBodyPosition(globals.bodyPosition);
   if (type === "vitals") return updateVitals(detail, globals.vitals[detail]);
+  if (type === "preparedSpell") return updatePreparedSpell(globals.preparedSpell);
   console.log('Unknown event fired:', type);
 }
 
@@ -228,6 +229,7 @@ function hideXML(str) {
   str = str.replace(/<pushStream[^>]+\/>[^<]+<popStream\/>/g, "");
   str = str.replace(/<popStream\/>/, ""); // I have no idea why this is necessary.
   str = str.replace(/<prompt.*<\/prompt>/, "");
+  str = str.replace(/<spell.*<\/spell>/, "");
   str = str.replace(/<prompt time=.\d+.>.*<\/prompt>/, ""); // why is this necessary?
   str = str.replace(/<component.*\/component>/g, "");
   str = str.replace(/<resource picture="\d+"\/>/, "");
@@ -342,6 +344,10 @@ function updateCompass(exits) {
 
 function updateVitals(vital, value) {
   vitalElms[vital].textContent = value;
+}
+
+function updatePreparedSpell(spell) {
+  console.log('update spell to:', spell);
 }
 
 function getObjNoun(str) {

@@ -36,6 +36,42 @@ const expLookup = {
   "mind lock": 34
 }
 
+class RegExpSplitter extends RegExp {
+  [Symbol.split](str, limit) {
+    const result = RegExp.prototype[Symbol.split].call(this, str, limit);
+    return result;
+  }
+}
+
+const xmlSplitArr = [
+  // self-closing:
+  `<clearStream[^\/]+\/>`,
+  `<castTime[^\/]+\/>`,
+  `<endSetup/>[^\/]+\/>`, // weird one...
+  `<mode[^\/]+\/>`,
+  `<nav\/>`,
+  `<playerID[^\/]+\/>`,
+  `<roundTime[^\/]+\/>`,
+  `<settingsInfo[^\/]+\/>`,
+  `<streamWindow[^\/]+\/>`,
+  // multi self-closing on same line, should be parsed together:
+  `<indicator[^\n]+\n`,
+  // Normal tags
+  `<compDef.*<\/compDef>`,
+  `<component.*<\/component>`,
+  `<dialogData.*<\/dialogData>`,
+  `<settings.*<\/settings>`,
+  `<spell>.*<\/spell>`,
+  `<right>.*<\/right>`,
+  `<left>.*<\/left>`,
+  `<prompt.*<\/prompt>`,
+  `<openDialog.*<\/openDialog>`,
+  // Oddballs:
+  `<pushStream[\s\S\n]+<popStream\/>`,
+];
+const xmlSplits = "(" + xmlSplitArr.join("|") + ")";
+const xmlSplitter = new RegExpSplitter(xmlSplits);
+
 let rtInterval = null;
 
 function setupXMLparser(globals, xmlUpdateEvent) {
@@ -49,11 +85,10 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   console.log('globals reset');
   return function parseXML(str) {
-    // First, do multi-line parsing (like inventory)
-
-    // Otherwise, check line by line.
-    const lines = str.split("\n");
-    lines.forEach(line => {
+    const splitXML = str.split(xmlSplitter);
+    const filteredXML = splitXML.filter(line => line.length);
+    console.log('filteredXML:', filteredXML);
+    filteredXML.forEach(line => {
       if (!line.startsWith("<")) return;
       if (line.startsWith("<component id='exp"))
         return parseExp(line, globals, xmlUpdateEvent);
@@ -73,7 +108,31 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseRoundtime(line, globals, xmlUpdateEvent);
       if (line.startsWith("<indicator"))
         return parseBodyPosition(line, globals, xmlUpdateEvent);
-    });
+    })
+
+    // Otherwise, check line by line.
+    // const lines = str.split("\n");
+    // lines.forEach(line => {
+    //   if (!line.startsWith("<")) return;
+    //   if (line.startsWith("<component id='exp"))
+    //     return parseExp(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<streamWindow id='room"))
+    //     return parseRoomName(line, globals);
+    //   if (line.startsWith("<component id='room desc"))
+    //     return parseRoomDescription(line, globals);
+    //   if (line.startsWith("<component id='room objs"))
+    //     return parseRoomObjects(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<component id='room players"))
+    //     return parseRoomPlayers(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<component id='room exits"))
+    //     return parseRoomExits(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<left") || line.startsWith("<right"))
+    //     return parseHeldItem(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<roundTime"))
+    //     return parseRoundtime(line, globals, xmlUpdateEvent);
+    //   if (line.startsWith("<indicator"))
+    //     return parseBodyPosition(line, globals, xmlUpdateEvent);
+    // });
 
     // pick up something in a hand. note this actually starts line
     // <left exist="4717291" noun="moss">moss</left><

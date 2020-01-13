@@ -16,7 +16,6 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 
 - Further xml work
-  - hands - skin-to-bundle not working properly
   - health
   - mana
   - stamina

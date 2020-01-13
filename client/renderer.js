@@ -18,6 +18,7 @@ const rightHandDisplay = document.querySelector("#right-hand");
 const leftHandDisplay = document.querySelector("#left-hand");
 const roundtimeDisplay = document.querySelector("#roundtime");
 const bodyPositionDisplay = document.querySelector("#body-position");
+const preparedSpellDisplay = document.querySelector("#prepared-spell");
 
 const vitalElms = {
   health: document.querySelector("#health"),
@@ -347,7 +348,7 @@ function updateVitals(vital, value) {
 }
 
 function updatePreparedSpell(spell) {
-  console.log('update spell to:', spell);
+  preparedSpellDisplay.textContent = spell;
 }
 
 function getObjNoun(str) {

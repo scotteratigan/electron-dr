@@ -57,7 +57,6 @@ p {
 }
 
 input {
-  /* height: 1.2rem; */
   width: 100%;
 }
 
@@ -136,15 +135,25 @@ strong {
   cursor: default;
 }
 
+#rt-position-spell-container {
+  display: flex;
+  flex-direction: row;
+}
+
 #roundtime {
-  display: inline-block;
+  /* display: inline-block; */
   text-align: center;
   width: 25px;
 }
 
 #body-position {
-  display: inline-block;
-  width: 50px;
+  /* display: inline-block; */
+  width: 75px;
+  text-align: center;
+}
+
+.vital-name {
+  text-align: right;
 }
 
 #vitals-bar {

@@ -119,3 +119,15 @@ strong {
   display: inline-block;
   width: 50px;
 }
+
+#vitals-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+#health,
+#mana,
+#stamina,
+#spirit {
+  width: 50px;
+}

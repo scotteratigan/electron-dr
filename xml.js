@@ -81,6 +81,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.rightHand = {};
   globals.leftHand = {};
   globals.roundTime = 0;
+  globals.vitals = {};
   // I don't like the idea of 5 variables to track this:
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   console.log('globals reset');
@@ -108,39 +109,20 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseRoundtime(line, globals, xmlUpdateEvent);
       if (line.startsWith("<indicator"))
         return parseBodyPosition(line, globals, xmlUpdateEvent);
-    })
-
-    // Otherwise, check line by line.
-    // const lines = str.split("\n");
-    // lines.forEach(line => {
-    //   if (!line.startsWith("<")) return;
-    //   if (line.startsWith("<component id='exp"))
-    //     return parseExp(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<streamWindow id='room"))
-    //     return parseRoomName(line, globals);
-    //   if (line.startsWith("<component id='room desc"))
-    //     return parseRoomDescription(line, globals);
-    //   if (line.startsWith("<component id='room objs"))
-    //     return parseRoomObjects(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<component id='room players"))
-    //     return parseRoomPlayers(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<component id='room exits"))
-    //     return parseRoomExits(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<left") || line.startsWith("<right"))
-    //     return parseHeldItem(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<roundTime"))
-    //     return parseRoundtime(line, globals, xmlUpdateEvent);
-    //   if (line.startsWith("<indicator"))
-    //     return parseBodyPosition(line, globals, xmlUpdateEvent);
-    // });
-
-    // pick up something in a hand. note this actually starts line
-    // <left exist="4717291" noun="moss">moss</left><
-    // <right exist="4717193" noun="stem">stem</right>
-    // for worn items, that gets resent a lot for no reason,
-    // I should check the string length and value before parsing out each time
-
+      if (line.startsWith("<dialogData"))
+        return parseVitals(line, globals, xmlUpdateEvent);
+    });
   }
+}
+
+function parseVitals(line, globals, xmlUpdateEvent) {
+  // <dialogData id='minivitals'><skin id='manaSkin' name='manaBar' controls='mana' left='20%' top='0%' width='20%' height='100%'/><progressBar id='mana' value='99' text='mana 99%' left='20%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+  const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
+  if (!vitalsMatch) return console.error("Unable to match vitals:", line);
+  const vital = vitalsMatch[1];
+  const value = parseInt(vitalsMatch[2]);
+  globals.vitals[vital] = value;
+  xmlUpdateEvent("vitals", vital);
 }
 
 function parseBodyPosition(line, globals, xmlUpdateEvent) {

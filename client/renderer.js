@@ -19,6 +19,13 @@ const leftHandDisplay = document.querySelector("#left-hand");
 const roundtimeDisplay = document.querySelector("#roundtime");
 const bodyPositionDisplay = document.querySelector("#body-position");
 
+const vitalElms = {
+  health: document.querySelector("#health"),
+  mana: document.querySelector("#mana"),
+  stamina: document.querySelector("#stamina"),
+  spirit: document.querySelector("#spirit"),
+}
+
 const dirElms = {
   n: document.querySelector("#north"),
   ne: document.querySelector("#northeast"),
@@ -196,6 +203,7 @@ function processMsgFromServer(event, msg) {
   }
   if (type === "globals") return console.log("GLOBALS:\n", globals);
   if (type === "bodyPosition") return updateBodyPosition(globals.bodyPosition);
+  if (type === "vitals") return updateVitals(detail, globals.vitals[detail]);
   console.log('Unknown event fired:', type);
 }
 
@@ -267,8 +275,6 @@ function updateRoomPlayers(room) {
   roomElms.players.innerHTML = generateClickableRoomplayers(playersArray);
 }
 
-
-
 function generateClickableRoomplayers(playersArray) {
   if (!playersArray.length) return "Also here: no one.";
   return "Also here: " + playersArray.map(playerFullName => {
@@ -332,6 +338,10 @@ function updateCompass(exits) {
   dirElms.up.setAttribute("data-direction-exists", exits.up);
   dirElms.down.setAttribute("data-direction-exists", exits.down);
   dirElms.out.setAttribute("data-direction-exists", exits.out);
+}
+
+function updateVitals(vital, value) {
+  vitalElms[vital].textContent = value;
 }
 
 function getObjNoun(str) {

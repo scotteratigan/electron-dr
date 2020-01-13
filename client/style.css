@@ -13,13 +13,21 @@ h3 {
   margin: 0.25rem 1rem;
 }
 
-#container {
-  display: flex;
-  flex-direction: column;
+#main-column, #right-column {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100vh;
-  width: 100vw;
+  flex-grow: 1;
+}
+
+#main-column {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+}
+
+#right-column {
+  width: 20vw;
 }
 
 #command-bar {
@@ -60,6 +68,25 @@ input {
 
 strong {
   font-weight: 600;
+}
+
+#app-container {
+  /* display: flex;
+  flex-direction: row; */
+  height: 100vh;
+  margin: 0;
+  border: 0;
+}
+
+#main-content {
+  display: flex;
+  flex-direction: row;
+  height: 85vh;
+  /* todo: figure out height better */
+}
+
+#bottom-panel {
+  height: 15vh;
 }
 
 #compass-container {

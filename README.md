@@ -16,10 +16,6 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 
 - Further xml work
-  - health
-  - mana
-  - stamina
-  - spirit
   - magic
   - worn inventory
   - stowed inventory

@@ -15,70 +15,81 @@
 </head>
 
 <body>
-  <div id="container">
-    <div id="room">
-      <h3>Room</h3>
-      <div id="room-name"></div>
-      <div id="room-description"></div>
-      <div id="room-items"></div>
-      <div id="room-mobs"></div>
-      <div id="room-players"></div>
-      <div id="room-exits"></div>
-    </div>
-    <h3>Game</h3>
-    <div id="game">
-      Welcome to DragonRealms Electron / NodeDR<br>
-    </div>
-    <div id="command-bar">
-      <div id="input-container">
-        <input type="text" id="commands" autofocus>
-        <div>
-          Right Hand:
-          <span id="right-hand"></span>
+  <div id="app-container">
+    <div id="main-content">
+      <div id="main-column">
+        <div id="room">
+          <h3>Room</h3>
+          <div id="room-name"></div>
+          <div id="room-description"></div>
+          <div id="room-items"></div>
+          <div id="room-mobs"></div>
+          <div id="room-players"></div>
+          <div id="room-exits"></div>
         </div>
-        <div>
-          Left Hand:
-          <span id="left-hand"></span>
-        </div>
-        <div>
-          <div id="roundtime"></div>
-          <div id="body-position"></div>
+        <h3>Game</h3>
+        <div id="game">
+          Welcome to DragonRealms Electron / NodeDR<br>
         </div>
       </div>
-      <div id="compass-container">
-        <div class="compass-column">
-          <div class="compass-square" id="northwest">NW</div>
-          <div class="compass-square" id="west">W</div>
-          <div class="compass-square" id="southwest">SW</div>
+      <div id="right-column">
+        <div>Active Spells...</div>
+      </div>
+    </div>
+    <div id="bottom-panel">
+      <div id="command-bar">
+        <div id="input-container">
+          <input type="text" id="commands" autofocus>
+          <div>
+            Right Hand:
+            <span id="right-hand"></span>
+          </div>
+          <div>
+            Left Hand:
+            <span id="left-hand"></span>
+          </div>
+          <div>
+            <div id="roundtime"></div>
+            <div id="body-position"></div>
+          </div>
         </div>
-        <div class="compass-column">
-          <div class="compass-square" id="north">N</div>
-          <div class="compass-square" id="out">O</div>
-          <div class="compass-square" id="south">S</div>
-        </div>
-        <div class="compass-column">
-          <div class="compass-square" id="northeast">NE</div>
-          <div class="compass-square" id="east">E</div>
-          <div class="compass-square" id="southeast">SE</div>
-        </div>
-        <div class="compass-column">
-          <div class="compass-square" id="up">U</div>
-          <div class="compass-square" id="down">D</div>
-        </div>
+        <div id="compass-container">
+          <div class="compass-column">
+            <div class="compass-square" id="northwest">NW</div>
+            <div class="compass-square" id="west">W</div>
+            <div class="compass-square" id="southwest">SW</div>
+          </div>
+          <div class="compass-column">
+            <div class="compass-square" id="north">N</div>
+            <div class="compass-square" id="out">O</div>
+            <div class="compass-square" id="south">S</div>
+          </div>
+          <div class="compass-column">
+            <div class="compass-square" id="northeast">NE</div>
+            <div class="compass-square" id="east">E</div>
+            <div class="compass-square" id="southeast">SE</div>
+          </div>
+          <div class="compass-column">
+            <div class="compass-square" id="up">U</div>
+            <div class="compass-square" id="down">D</div>
+          </div>
 
+        </div>
       </div>
-    </div>
-    <div id="vitals-bar">
-      <div>Health:</div>
-      <div id="health"></div>
-      <div>Mana:</div>
-      <div id="mana"></div>
-      <div>Stamina:</div>
-      <div id="stamina"></div>
-      <div>Spirit:</div>
-      <div id="spirit"></div>
+      <div id="vitals-bar">
+        <div>Health:</div>
+        <div id="health"></div>
+        <div>Mana:</div>
+        <div id="mana"></div>
+        <div>Stamina:</div>
+        <div id="stamina"></div>
+        <div>Spirit:</div>
+        <div id="spirit"></div>
+      </div>
     </div>
   </div>
+
+
   <!-- You can also require other files to run in this process -->
   <script src="./renderer.js"></script>
 </body>

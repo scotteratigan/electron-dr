@@ -98,9 +98,11 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     // const filteredXMLarr = splitXML.filter(line => line && line.length);
     // const composedXMLarr = recomposeXML(filteredXMLarr);
 
-    let inventoryMode = false;
-    let spellMode = false;
+    let inventoryMode = false; // concatenate inventory strings before processing
+    let spellMode = false; // concatenate spell strings before processing
+    let expMode = false; // fire exp change event when we hit prompt
     let multiLineXml = "";
+
 
     splitXML.forEach(str => {
       if (inventoryMode || spellMode) {
@@ -112,8 +114,10 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         }
       }
       if (!str.startsWith("<")) return;
-      if (str.startsWith("<component id='exp"))
+      if (str.startsWith("<component id='exp")) {
+        expMode = true;
         return parseExp(str, globals, xmlUpdateEvent);
+      }
       if (str.startsWith("<streamWindow id='room"))
         return parseRoomName(str, globals);
       if (str.startsWith("<component id='room desc"))
@@ -140,6 +144,13 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseVitals(str, globals, xmlUpdateEvent);
       if (str.startsWith("<spell"))
         return parseSpellPrep(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<prompt")) {
+        // todo: set game time
+        if (expMode) {
+          expMode = false;
+          xmlUpdateEvent("experience");
+        }
+      }
     });
   }
 }
@@ -385,26 +396,48 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
 }
 
 function parseExp(line, globals, xmlUpdateEvent) {
-  // not sure if exp should fire an updated event per line - might want to display all exp gained in a single line
+  // todo: add additional event for exp parsed rather than each individual skill?
   let expType = "pulse";
   if (line.includes("whisper")) {
     line = line.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
     expType = "gain";
   }
   const expMatch = line.match(/<component id='exp ([\w ]+)'>.+:\s+(\d+) (\d\d)% (.+)\s*<\/component>/);
-  if (!expMatch) return
-  try {
-    const skill = formatSkillName(expMatch[1]);
-    const rank = parseFloat(expMatch[2] + "." + expMatch[3]);
-    const rateWord = expMatch[4].trim();
-    const rate = expLookup[rateWord]
-    if (!globals.exp[skill]) globals.exp[skill] = {};
-    globals.exp[skill].rank = rank;
-    globals.exp[skill].rate = rate;
-    xmlUpdateEvent(expType, skill);
-  } catch (err) {
-    console.error("Error parsing exp:", err);
+
+  if (!expMatch) {
+    // exp pulsing to zero:
+    // <component id='exp Outdoorsmanship'></component>
+    console.log("SECONDARY EXP MATCH??")
+    const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
+    if (clearedExpMatch) {
+      const skill = clearedExpMatch(expMatch[1]);
+      globals.exp[skill].rate = 0;
+      globals.exp[skill].rateWord = "clear";
+      xmlUpdateEvent("pulse", skill);
+    } else {
+      console.error("Error matching exp, not sure what happened.")
+    }
+  } else {
+    try {
+      const skill = formatSkillName(expMatch[1]);
+      const displayName = expMatch[1]
+      const rank = parseFloat(expMatch[2] + "." + expMatch[3]);
+      const rateWord = expMatch[4].trim();
+      const rate = expLookup[rateWord]
+      if (!globals.exp[skill]) globals.exp[skill] = {};
+      globals.exp[skill].rank = rank;
+      globals.exp[skill].rate = rate;
+      globals.exp[skill].displayName = displayName;
+      const fullSkillTextMatch = line.match(/<component id='exp [\w ]+'>(.+:\s+\d+ \d\d% .+\s*)<\/component>/);
+      if (fullSkillTextMatch) {
+        globals.exp[skill].displayStr = fullSkillTextMatch[1];
+      }
+      xmlUpdateEvent(expType, skill);
+    } catch (err) {
+      console.error("Error parsing exp:", err);
+    }
   }
+
 }
 
 function formatSkillName(str) {

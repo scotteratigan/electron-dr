@@ -16,7 +16,11 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
+- title bar replacement (since it can't be skinned)
+  - is this worthwhile? it would ruin the native look
+
 - Further xml work
+  - experience
   - magic
   - worn inventory
   - stowed inventory
@@ -25,6 +29,9 @@ CHARACTER=Zoha
 - Basic script system w/ pauses for now
 
 - Logging
+- Game Text
+- XML changes?
+- Script error debug?
 
 - Support to enter your own account info
 - Support for multiple accounts

@@ -11,47 +11,55 @@ let cmdLookupIndex = 1;
 const maxCmdHistory = 50;
 const minLengthCmdToSave = 2;
 
-const input = document.querySelector("#commands");
-const gameText = document.querySelector("#game");
-const compassContainer = document.querySelector("#compass-container");
-const rightHandDisplay = document.querySelector("#right-hand");
-const leftHandDisplay = document.querySelector("#left-hand");
-const roundtimeDisplay = document.querySelector("#roundtime");
-const bodyPositionDisplay = document.querySelector("#body-position");
-const preparedSpellDisplay = document.querySelector("#prepared-spell");
-const spellsDisplay = document.querySelector("#active-spells");
-const wornItemsDisplay = document.querySelector("#worn-items");
+const commandInput = document.getElementById("commands");
+const gameText = document.getElementById("game");
+const compassContainer = document.getElementById("compass-container");
+const rightHandDisplay = document.getElementById("right-hand");
+const leftHandDisplay = document.getElementById("left-hand");
+const roundtimeDisplay = document.getElementById("roundtime");
+const bodyPositionDisplay = document.getElementById("body-position");
+const preparedSpellDisplay = document.getElementById("prepared-spell");
+const spellsDisplay = document.getElementById("active-spells");
+const wornItemsDisplay = document.getElementById("worn-items");
+const experienceDisplay = document.getElementById("experience");
 
 const vitalElms = {
-  health: document.querySelector("#health"),
-  mana: document.querySelector("#mana"),
-  stamina: document.querySelector("#stamina"),
-  spirit: document.querySelector("#spirit"),
-  concentration: document.querySelector("#concentration")
+  health: document.getElementById("health"),
+  mana: document.getElementById("mana"),
+  stamina: document.getElementById("stamina"),
+  spirit: document.getElementById("spirit"),
+  concentration: document.getElementById("concentration")
 }
 
 const dirElms = {
-  n: document.querySelector("#north"),
-  ne: document.querySelector("#northeast"),
-  e: document.querySelector("#east"),
-  se: document.querySelector("#southeast"),
-  s: document.querySelector("#south"),
-  sw: document.querySelector("#southwest"),
-  w: document.querySelector("#west"),
-  nw: document.querySelector("#northwest"),
-  up: document.querySelector("#up"),
-  down: document.querySelector("#down"),
-  out: document.querySelector("#out")
+  n: document.getElementById("north"),
+  ne: document.getElementById("northeast"),
+  e: document.getElementById("east"),
+  se: document.getElementById("southeast"),
+  s: document.getElementById("south"),
+  sw: document.getElementById("southwest"),
+  w: document.getElementById("west"),
+  nw: document.getElementById("northwest"),
+  up: document.getElementById("up"),
+  down: document.getElementById("down"),
+  out: document.getElementById("out")
 };
 
 const roomElms = {
-  name: document.querySelector("#room-name"),
-  description: document.querySelector("#room-description"),
-  items: document.querySelector("#room-items"),
-  mobs: document.querySelector("#room-mobs"),
-  players: document.querySelector("#room-players"),
-  exits: document.querySelector("#room-exits")
+  name: document.getElementById("room-name"),
+  description: document.getElementById("room-description"),
+  items: document.getElementById("room-items"),
+  mobs: document.getElementById("room-mobs"),
+  players: document.getElementById("room-players"),
+  exits: document.getElementById("room-exits")
 };
+
+// const btnElms = {
+//   playBtn: document.getElementById("play-btn"),
+//   exitBtn: document.getElementById("exit-btn"),
+//   toggleDevtoolsBtn: document.getElementById("toggle-devtools-btn"),
+//   reloadBtn: document.getElementById("reload-btn")
+// }
 
 const goNouns = {
   // default to go action on click, alternate is get for now
@@ -60,24 +68,36 @@ const goNouns = {
   "bank": true,
   "bridge": true,
   "door": true,
+  "embankment": true,
   "footpath": true,
   "gap": true,
   "gate": true,
   "path": true,
+  "pond": true,
   "shop": true,
   "trail": true
 }
 
 // Event Listeners:
 document.addEventListener("keydown", navigateByKeypad, true);
-input.addEventListener("keydown", interceptInputSpecialKeys);
+commandInput.addEventListener("keydown", interceptInputSpecialKeys);
 compassContainer.addEventListener("click", navigateByCompass);
 ipcRenderer.on('gametext', processMsgFromServer);
 
+// btnElms.playBtn.addEventListener("click", playBtnFn);
+// btnElms.exitBtn.addEventListener("click", () => console.log('exitBtn'));
+// btnElms.toggleDevtoolsBtn.addEventListener("click", () => console.log("devBtn"));
+// btnElms.reloadBtn.addEventListener("click", () => console.log('reload'));
+
+// function playBtnFn() {
+//   passCmdToServer("#connect");
+//   commandInput.focus();
+// }
+
 function enterCommand() {
-  const text = input.value;
+  const text = commandInput.value;
   if (!text.length) return;
-  input.select();
+  commandInput.select();
   passCmdToServer(text);
 }
 
@@ -121,7 +141,7 @@ function retrievePreviousCommand() {
   cmdLookupIndex--;
   if (cmdHistory[cmdLookupIndex]) {
     const prevCommand = cmdHistory[cmdLookupIndex];
-    input.value = prevCommand;
+    commandInput.value = prevCommand;
   }
   else cmdLookupIndex++;
 }
@@ -130,7 +150,7 @@ function retrieveNextCommand() {
   cmdLookupIndex++;
   if (cmdHistory[cmdLookupIndex]) {
     const nextCommand = cmdHistory[cmdLookupIndex];
-    input.value = nextCommand;
+    commandInput.value = nextCommand;
   }
   else cmdLookupIndex--;
 }
@@ -141,11 +161,11 @@ function navigateByCompass(e) {
 }
 
 function navigateByKeypad(e) {
-  if (e.keyCode >= 96 && e.keyCode <= 105) {
+  if ((e.keyCode >= 96 && e.keyCode <= 105) || e.keyCode === 110) {
     e.preventDefault();
     e.stopPropagation();
   }
-  // todo: prevent typing this in input bar
+  // todo: prevent typing this in commandInput bar
   switch (e.keyCode) {
     case 104:
       passCmdToServer("north");
@@ -211,6 +231,7 @@ function processMsgFromServer(event, msg) {
   if (type === "preparedSpell") return updatePreparedSpell(globals.preparedSpell);
   if (type === "activeSpells") return updateActiveSpells(globals.activeSpells);
   if (type === "wornInventory") return updateWornInventory(globals.wornInventory);
+  if (type === "experience") return updateExperience(globals.exp);
   console.log('Unknown event fired:', type);
 }
 
@@ -229,11 +250,23 @@ function replaceXMLwithHTML(str) {
   return str;
 }
 
+// Why isn't this getting hidden?:
+
+// <clearStream id="percWindow"/>
+// <pushStream id="percWindow"/>Manifest Force  (10 roisaen)
+// Ease Burden  (9 roisaen)
+// Minor Physical Protection  (10 roisaen)
+// <popStream/><prompt time="1579036556">&gt;</prompt>
+
 function hideXML(str) {
-  str = str.replace(/<clearStream id=.\S+.[^>]*\/>/g, "");
+  // todo: move this to xml.js and only send visible text to game window
+  const spellsMatch = str.match(/^([\s\S\r\n]*)<pushStream id="percWindow"\/>[\w\(\)\d\r\n ]+<popStream\/>([\s\S\r\n]*)$/);
+  if (spellsMatch) str = spellsMatch[1] + spellsMatch[2];
+  const invMatch = str.match(/<pushStream id='inv'\/>[\s\S\r\n.]+<popStream\/>([\s\S\r\n]*)$/);
+  if (invMatch) str = invMatch[1]; // is the prefix here ever relevant?
+
+  // str = str.replace(/<clearStream id=.\S+.[^>]*\/>/g, "");
   str = str.replace(/<clearContainer id=.\S+.\/>/, "");
-  str = str.replace(/<pushStream[^>]+\/>[^<]+<popStream\/>/g, "");
-  str = str.replace(/<popStream\/>/, ""); // I have no idea why this is necessary.
   str = str.replace(/<prompt.*<\/prompt>/, "");
   str = str.replace(/<spell.*<\/spell>/, "");
   str = str.replace(/<prompt time=.\d+.>.*<\/prompt>/, ""); // why is this necessary?
@@ -253,6 +286,7 @@ function hideXML(str) {
   str = str.replace(/<d cmd="\S*">/g, ""); // useful for later, this is a command link
   str = str.replace(/<roundTime value='\d+'\/>/, "");
   str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, "");
+
   // str = str.replace(/<compDef .+<\/compDef>/, ""); // login, sends exp skills
   // str = str.replace(/<mode id="GAME"\/>/, ""); // login, useless...
   // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
@@ -361,9 +395,21 @@ function updateActiveSpells(activeSpellsArr) {
 
 function updateWornInventory(wornItemArr) {
   const wornItemsHTML = wornItemArr.map(itemText => (
-    `<div>${itemText}</div>`
+    `<div class="worn-item" onclick="passCmdToServer('remove ${getObjNoun}')">${itemText}</div>`
   )).join("");
   wornItemsDisplay.innerHTML = wornItemsHTML;
+}
+
+function updateExperience(allExp) {
+  console.log('allexp:', allExp);
+  console.log('keys:', Object.keys(allExp));
+  console.log('keys:', Object.values(allExp));
+  const expHTML = Object.values(allExp)
+    .filter(e => (e.rate > 0))
+    .map(e => (`<div class="skill-display">${e.displayStr}</div>`))
+    .join("");
+  console.log('expHTML:', expHTML);
+  experienceDisplay.innerHTML = expHTML;
 }
 
 function updatePreparedSpell(spell) {

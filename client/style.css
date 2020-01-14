@@ -25,10 +25,11 @@ h3 {
 #main-column {
   display: flex;
   flex-direction: column;
-  width: 80vw;
+  width: 60vw;
 }
 
-#right-column {
+#right-column,
+#left-column {
   width: 20vw;
 }
 
@@ -38,6 +39,7 @@ h3 {
 
 #room {
   padding: 4px;
+  border-bottom: 1px solid white;
 }
 
 #game {
@@ -45,6 +47,11 @@ h3 {
   overflow-x: hidden;
   padding: 4px;
   flex-grow: 1;
+}
+
+#game,
+#skill-display,
+#experience {
   white-space: pre-wrap;
 }
 
@@ -72,9 +79,16 @@ strong {
   font-weight: 600;
 }
 
+/* #title-bar {
+  background-color: white;
+  color: black;
+  display: flex;
+  height: 20px;
+  overflow: hidden;
+} */
+
 #app-container {
-  /* display: flex;
-  flex-direction: row; */
+  /* height: calc(100vh - 20px); */
   height: 100vh;
   margin: 0;
   border: 0;
@@ -83,12 +97,14 @@ strong {
 #main-content {
   display: flex;
   flex-direction: row;
-  height: 85vh;
+  height: calc(100vh - 8rem);
   /* todo: figure out height better */
 }
 
 #bottom-panel {
-  height: 15vh;
+  overflow-y: auto;
+  /* height: 90px */
+  height: 8rem;
 }
 
 #compass-container {
@@ -133,7 +149,9 @@ strong {
 .room-mob:hover,
 .room-exit:hover,
 .room-player:hover,
-.held-item:hover {
+.held-item:hover,
+.worn-item:hover,
+.skill-display:hover {
   text-decoration: underline;
   cursor: default;
 }
@@ -181,11 +199,11 @@ strong {
 }
 
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3); 
-  /* border-radius: 10px; */
+  box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-  /* border-radius: 10px; */
-  -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5); 
+  box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
+  -webkit-box-shadow: inset 0 0 6px rgba(255,255,255,0.5);
 }

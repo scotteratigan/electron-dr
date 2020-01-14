@@ -212,7 +212,7 @@ function parseInventory(str, globals, xmlUpdateEvent) {
 }
 
 function parseSpellPrep(line, globals, xmlUpdateEvent) {
-  if (line === "<spell>None</spell>") {
+  if (line.startsWith("<spell>None</spell>")) {
     globals.preparedSpell = "";
     return xmlUpdateEvent("preparedSpell");
   }

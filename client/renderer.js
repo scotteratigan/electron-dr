@@ -19,12 +19,15 @@ const leftHandDisplay = document.querySelector("#left-hand");
 const roundtimeDisplay = document.querySelector("#roundtime");
 const bodyPositionDisplay = document.querySelector("#body-position");
 const preparedSpellDisplay = document.querySelector("#prepared-spell");
+const spellsDisplay = document.querySelector("#active-spells");
+const wornItemsDisplay = document.querySelector("#worn-items");
 
 const vitalElms = {
   health: document.querySelector("#health"),
   mana: document.querySelector("#mana"),
   stamina: document.querySelector("#stamina"),
   spirit: document.querySelector("#spirit"),
+  concentration: document.querySelector("#concentration")
 }
 
 const dirElms = {
@@ -206,6 +209,8 @@ function processMsgFromServer(event, msg) {
   if (type === "bodyPosition") return updateBodyPosition(globals.bodyPosition);
   if (type === "vitals") return updateVitals(detail, globals.vitals[detail]);
   if (type === "preparedSpell") return updatePreparedSpell(globals.preparedSpell);
+  if (type === "activeSpells") return updateActiveSpells(globals.activeSpells);
+  if (type === "wornInventory") return updateWornInventory(globals.wornInventory);
   console.log('Unknown event fired:', type);
 }
 
@@ -345,6 +350,20 @@ function updateCompass(exits) {
 
 function updateVitals(vital, value) {
   vitalElms[vital].textContent = value;
+}
+
+function updateActiveSpells(activeSpellsArr) {
+  const activeSpellsHTML = activeSpellsArr.map(spellText => (
+    `<div>${spellText}</div>`
+  )).join("");
+  spellsDisplay.innerHTML = activeSpellsHTML;
+}
+
+function updateWornInventory(wornItemArr) {
+  const wornItemsHTML = wornItemArr.map(itemText => (
+    `<div>${itemText}</div>`
+  )).join("");
+  wornItemsDisplay.innerHTML = wornItemsHTML;
 }
 
 function updatePreparedSpell(spell) {

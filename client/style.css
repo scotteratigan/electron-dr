@@ -7,6 +7,8 @@ body, html {
   padding: 0;
   font-family: 'Gelasio', serif;
   font-size: 12px;
+  color: white;
+  background-color: black;
 }
 
 h3 {
@@ -42,7 +44,6 @@ h3 {
   overflow-y: scroll;
   overflow-x: hidden;
   padding: 4px;
-  background-color: whitesmoke;
   flex-grow: 1;
   white-space: pre-wrap;
 }
@@ -58,6 +59,8 @@ p {
 
 input {
   width: 100%;
+  background-color: black;
+  color: white;
 }
 
 .monospace {
@@ -166,4 +169,9 @@ strong {
 #stamina,
 #spirit {
   width: 50px;
+}
+
+#spells-header,
+#worn-inventory-header {
+  text-align: center;
 }

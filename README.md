@@ -14,6 +14,7 @@ CHARACTER=Zoha
 ## Todos
 
 - Pipe sge server messages to main window
+- Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
 - Further xml work
   - magic
@@ -44,3 +45,6 @@ CHARACTER=Zoha
 - Map system?
 
 - Ensure prompt time matches system time, or calculate offset
+
+New idea for xml parsing
+go back to line-by-line system, except for special xml

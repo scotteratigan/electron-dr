@@ -36,45 +36,48 @@ const expLookup = {
   "mind lock": 34
 }
 
-class RegExpSplitter extends RegExp {
-  [Symbol.split](str, limit) {
-    const result = RegExp.prototype[Symbol.split].call(this, str, limit);
-    return result;
-  }
-}
+// class RegExpSplitter extends RegExp {
+//   [Symbol.split](str, limit) {
+//     const result = RegExp.prototype[Symbol.split].call(this, str, limit);
+//     return result;
+//   }
+// }
 
-const xmlSplitArr = [
-  // self-closing:
-  `<clearStream[^\/]+\/>`,
-  `<castTime[^\/]+\/>`,
-  `<endSetup/>[^\/]+\/>`, // weird one...
-  `<mode[^\/]+\/>`,
-  `<nav\/>`,
-  `<playerID[^\/]+\/>`,
-  `<roundTime[^\/]+\/>`,
-  `<settingsInfo[^\/]+\/>`,
-  `<streamWindow[^\/]+\/>`,
-  // multi self-closing on same line, should be parsed together:
-  `<indicator[^\n]+\n`,
-  // Normal tags
-  `<compDef.*<\/compDef>`,
-  `<component.*<\/component>`,
-  `<dialogData.*<\/dialogData>`,
-  `<settings.*<\/settings>`,
-  `<spell>.*<\/spell>`,
-  `<right>.*<\/right>`,
-  `<left>.*<\/left>`,
-  `<prompt.*<\/prompt>`,
-  `<openDialog.*<\/openDialog>`,
-  // Oddballs:
-  `<pushStream[\s\S\n]+<popStream\/>`,
-];
-const xmlSplits = "(" + xmlSplitArr.join("|") + ")";
-const xmlSplitter = new RegExpSplitter(xmlSplits);
+// const xmlSplitArr = [
+//   // self-closing:
+//   `<clearStream[^\/]+\/>`,
+//   `<castTime[^\/]+\/>`,
+//   `<endSetup/>[^\/]+\/>`, // weird one...
+//   `<mode[^\/]+\/>`,
+//   `<nav\/>`,
+//   `<playerID[^\/]+\/>`,
+//   `<roundTime[^\/]+\/>`,
+//   `<settingsInfo[^\/]+\/>`,
+//   `<streamWindow[^\/]+\/>`,
+//   // multi self-closing on same line, should be parsed together:
+//   `<indicator[^\n]+\n`,
+//   // Normal tags
+//   `<compDef.*<\/compDef>`,
+//   `<component.*<\/component>`,
+//   `<dialogData.*<\/dialogData>`,
+//   `<settings.*<\/settings>`,
+//   `<spell>[^<]+<\/spell>`,
+//   `<right>[^<]+<\/right>`,
+//   `<left>[^<]+<\/left>`,
+//   `<prompt.*<\/prompt>`,
+//   `<openDialog.*<\/openDialog>`,
+//   // Oddballs:
+//   `.*<pushStream[^<]+popStream\/>`
+// ];
+// const xmlSplits = "(" + xmlSplitArr.join("|") + ")";
+// const xmlSplitter = new RegExpSplitter(xmlSplits);
+// const xmlSplitter = new RegExpSplitter(/(<[^>]+>)|\r?\n/);
 
 let rtInterval = null;
 
 function setupXMLparser(globals, xmlUpdateEvent) {
+  // the regex split is too much of a black box, I think I need to go back to my original line-by-line parsing with checks for multi-line xml first
+  // the only multi-line stuff I care about is inventory and spells I think
   console.log('XML version loaded: 8');
   globals.exp = {};
   globals.room = {};
@@ -83,39 +86,129 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.roundTime = 0;
   globals.vitals = {};
   globals.preparedSpell = "";
+  globals.activeSpells = [];
+  globals.wornInventory = [];
   // I don't like the idea of 5 variables to track this:
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   console.log('globals reset');
   return function parseXML(str) {
-    const splitXML = str.split(xmlSplitter);
-    const filteredXML = splitXML.filter(line => line.length);
-    console.log('filteredXML:', filteredXML);
-    filteredXML.forEach(line => {
-      if (!line.startsWith("<")) return;
-      if (line.startsWith("<component id='exp"))
-        return parseExp(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<streamWindow id='room"))
-        return parseRoomName(line, globals);
-      if (line.startsWith("<component id='room desc"))
-        return parseRoomDescription(line, globals);
-      if (line.startsWith("<component id='room objs"))
-        return parseRoomObjects(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<component id='room players"))
-        return parseRoomPlayers(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<component id='room exits"))
-        return parseRoomExits(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<left") || line.startsWith("<right"))
-        return parseHeldItem(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<roundTime"))
-        return parseRoundtime(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<indicator"))
-        return parseBodyPosition(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<dialogData"))
-        return parseVitals(line, globals, xmlUpdateEvent);
-      if (line.startsWith("<spell"))
-        return parseSpellPrep(line, globals, xmlUpdateEvent);
+    const splitXML = str.split(/\r?\n/);
+    console.log(splitXML);
+    // const splitXML = str.split(xmlSplitter);
+    // const filteredXMLarr = splitXML.filter(line => line && line.length);
+    // const composedXMLarr = recomposeXML(filteredXMLarr);
+
+    let inventoryMode = false;
+    let spellMode = false;
+    let multiLineXml = "";
+
+    splitXML.forEach(str => {
+      if (inventoryMode || spellMode) {
+        multiLineXml += str + "\n";
+        if (str.match(/<popStream\//)) {
+          if (spellMode) parseActiveSpells(multiLineXml, globals, xmlUpdateEvent);
+          else if (inventoryMode) parseInventory(multiLineXml, globals, xmlUpdateEvent);
+          multiLineXml = "";
+        }
+      }
+      if (!str.startsWith("<")) return;
+      if (str.startsWith("<component id='exp"))
+        return parseExp(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<streamWindow id='room"))
+        return parseRoomName(str, globals);
+      if (str.startsWith("<component id='room desc"))
+        return parseRoomDescription(str, globals);
+      if (str.startsWith("<component id='room objs"))
+        return parseRoomObjects(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<component id='room players"))
+        return parseRoomPlayers(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<component id='room exits"))
+        return parseRoomExits(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<left") || str.startsWith("<right")) {
+        inventoryMode = true;
+        return parseHeldItem(str, globals, xmlUpdateEvent);
+      }
+      if (str.startsWith('<pushStream id="percWindow')) {
+        spellMode = true;
+        multiLineXml += str + "\n";
+      }
+      if (str.startsWith("<roundTime"))
+        return parseRoundtime(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<indicator"))
+        return parseBodyPosition(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<dialogData"))
+        return parseVitals(str, globals, xmlUpdateEvent);
+      if (str.startsWith("<spell"))
+        return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
   }
+}
+
+// function recomposeXML(splitArr) {
+//   // this logic might be sound but apparently it is not performant enough... lol can't event log in with it
+//   let newArr = [];
+//   let currentTag = null;
+//   let currentStr = "";
+//   for (let i = 0; i < splitArr.length; i++) {
+//     const line = splitArr[i];
+//     if (!line.startsWith("<")) currentStr += line;
+//     else {
+//       if (!currentTag) {
+//         let selfClosingMatch = line.match(/<([^<\/ ]+).*\/>/);
+//         // special case, self closing match is pushStream, need to look for popstream
+//         if (selfClosingMatch) {
+//           const tag = selfClosingMatch[1];
+//           if (tag === "clearStream") {
+//             // do nothing
+//           } else if (tag === "pushStream") {
+//             currentTag = "pushStream"; // is this necessary?
+//             currentStr += line;
+//           } else if (tag === "popStream") {
+//             currentTag = "";
+//             newArr.push(currentStr + line);
+//             currentStr = "";
+//           } else {
+//             // console.log('selfClosingMatchTag:', selfClosingMatch[1])
+//             newArr.push(currentStr + line);
+//             currentStr = "";
+//           }
+//         } else {
+//           let tagMatch = line.match(/<([^\/>\s]+)/);
+//           currentTag = tagMatch[1];
+//           currentStr += line;
+//           // console.log('tag match:', tagMatch);
+//         }
+//       } else {
+//         currentStr += line;
+//         const closeTagRegex = new RegExp(`</${currentStr}`);
+//         const closeTagMatch = line.match(closeTagRegex);
+//         newArr.push(currentStr);
+//         if (closeTagMatch) {
+//           line = "";
+//           currentStr = "";
+//         }
+//       }
+//     }
+//   }
+//   return newArr;
+// }
+
+function parseActiveSpells(str, globals, xmlUpdateEvent) {
+  // <pushStream id="percWindow"/>Ease Burden  (4 roisaen)
+  // Minor Physical Protection  (3 roisaen)
+  // <popStream/>You sense the Ease Burden spell upon you, which will last for about four roisaen.
+  const spellList = str.replace(/^<pushStream id="percWindow"\/>/, "").replace(/<popStream\/>.*/, "").split("\n").filter(s => s.length);
+  // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
+  globals.activeSpells = spellList; // todo: parse out durations and spells
+  xmlUpdateEvent("activeSpells");
+}
+
+function parseInventory(str, globals, xmlUpdateEvent) {
+  console.log('inventory, str is:', str);
+  const wornInventory = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
+  globals.wornInventory = wornInventory;
+  // todo: check to see if inventory has changed before firing event here
+  xmlUpdateEvent("wornInventory");
 }
 
 function parseSpellPrep(line, globals, xmlUpdateEvent) {

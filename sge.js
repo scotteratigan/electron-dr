@@ -40,58 +40,47 @@ function getGameKey(cb) {
   });
 
   sgeClient.on("data", data => {
-    // try {
-    //   const lines = JSON.stringify([...data]);
-    //   lines.forEach(line => console.log("DATA: ", line));
-    // } catch (err) {
-    //   console.error("Error parsing SGE line.");
-    // }
-    // data.split("\r\n").forEach(line => console.log(line));
-    console.log("typeof data:", typeof data); // object? I think it's a buffer
-    console.log("DATA:", data);
-    // console.log("DATA:", data);
     if (!hashKey) {
       hashKey = [...data];
-      console.log("HASH KEY:", JSON.stringify(hashKey));
-      setTimeout(() => {
-        console.log("Sending authentication string...");
+      // console.log("HASH KEY:", JSON.stringify(hashKey));
+      return setTimeout(() => {
+        console.log("Sending hashed authentication string.");
         const hashedPassArr = hashPassword();
-        console.log(`SEND: A\t${process.env.ACCOUNT}\t${hashedPassArr}\r\n`);
+        // console.log(`SEND: A\t${process.env.ACCOUNT}\t${hashedPassArr}\r\n`);
         sgeClient.write(`A\t${process.env.ACCOUNT}\t`);
         const buffPW = Buffer.from(hashedPassArr); // must be written as a buffer because of invalid ASCII values!
         sgeClient.write(buffPW);
         sgeClient.write("\r\n");
       }, 5);
-      return;
     }
     const text = data.toString();
+
     if (text.startsWith("A")) {
       // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
       if (text.includes("KEY")) {
         console.log("Authentication Successful!");
+        console.log(text.replace(/\t/g, "\n"));
         sgeSendStr("M\n");
         return;
       } else {
-        // todo: actually throw error here?
         console.error(
           "Authentication failed. Please check USERNAME and PASSWORD in .env file."
         );
-        console.error("Error:", text);
         return;
       }
     }
     if (text.startsWith("M")) {
-      console.log("gamesList:", text);
+      console.log("Games List:\n", text.replace(/\t/g, "\n"));
       sgeSendStr(`N\t${process.env.INSTANCE}\n`);
       return;
     }
     if (text.startsWith("N")) {
-      console.log("game versions:", text);
+      console.log("Game Versions:\n", text.replace(/\t/g, "\n"));
       sgeSendStr(`G\t${process.env.INSTANCE}\n`);
       return;
     }
     if (text.startsWith("G")) {
-      console.log("gameInfo:", text);
+      console.log("Game Info:\n", text.replace(/\t/g, "\n"));
       sgeSendStr("C\n");
       return;
     }
@@ -107,9 +96,7 @@ function getGameKey(cb) {
         charSlotNames[accountList[i + 1]] = accountList[i];
       }
       // grabbing character name from .env file, and ensuring the case is correct:
-      const desiredCharacterName = process.env.CHARACTER.toLowerCase().split(
-        ""
-      ); // why lower case than upper case? why split?
+      const desiredCharacterName = process.env.CHARACTER.toLowerCase().split("");
       desiredCharacterName[0] = desiredCharacterName[0].toUpperCase();
       const charName = desiredCharacterName.join("");
       const slotName = charSlotNames[charName];
@@ -120,7 +107,7 @@ function getGameKey(cb) {
     }
     // Login text: L   OK      UPPORT=5535     GAME=STORM      GAMECODE=DR     FULLGAMENAME=StormFront GAMEFILE=STORMFRONT.EXE GAMEHOST=dr.simutronics.net     GAMEPORT=11324  KEY=a33f64d541ee461cab92a460e149d6d1
     if (text.startsWith("L")) {
-      console.log("Login text:", text);
+      console.log("Login Info:\n", text.replace(/\t/g, "\n"));
       connectKey = text.match(/KEY=(\S+)/)[1];
       connectIP = text.match(/GAMEHOST=(\S+)/)[1];
       connectPort = text.match(/GAMEPORT=(\d+)/)[1];

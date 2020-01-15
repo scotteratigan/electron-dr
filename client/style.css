@@ -79,16 +79,7 @@ strong {
   font-weight: 600;
 }
 
-/* #title-bar {
-  background-color: white;
-  color: black;
-  display: flex;
-  height: 20px;
-  overflow: hidden;
-} */
-
 #app-container {
-  /* height: calc(100vh - 20px); */
   height: 100vh;
   margin: 0;
   border: 0;
@@ -163,13 +154,11 @@ strong {
 }
 
 #roundtime {
-  /* display: inline-block; */
   text-align: center;
   width: 25px;
 }
 
 #body-position {
-  /* display: inline-block; */
   width: 75px;
   text-align: center;
 }

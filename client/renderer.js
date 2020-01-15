@@ -56,13 +56,6 @@ const roomElms = {
   exits: document.getElementById("room-exits")
 };
 
-// const btnElms = {
-//   playBtn: document.getElementById("play-btn"),
-//   exitBtn: document.getElementById("exit-btn"),
-//   toggleDevtoolsBtn: document.getElementById("toggle-devtools-btn"),
-//   reloadBtn: document.getElementById("reload-btn")
-// }
-
 const goNouns = {
   // default to go action on click, alternate is get for now
   "arch": true,
@@ -86,16 +79,6 @@ commandInput.addEventListener("keydown", interceptInputSpecialKeys);
 compassContainer.addEventListener("click", navigateByCompass);
 ipcRenderer.on('gametext', processMsgFromServer);
 
-// btnElms.playBtn.addEventListener("click", playBtnFn);
-// btnElms.exitBtn.addEventListener("click", () => console.log('exitBtn'));
-// btnElms.toggleDevtoolsBtn.addEventListener("click", () => console.log("devBtn"));
-// btnElms.reloadBtn.addEventListener("click", () => console.log('reload'));
-
-// function playBtnFn() {
-//   passCmdToServer("#connect");
-//   commandInput.focus();
-// }
-
 function enterCommand() {
   const text = commandInput.value;
   if (!text.length) return;
@@ -112,9 +95,6 @@ function passCmdToServer(str) {
 
 function appendGameText(text) {
   let cleanedText = replaceXMLwithHTML(text);
-  cleanedText = hideXML(cleanedText);
-  if (!cleanedText) return;
-  console.log('CLEANED TEXT:', cleanedText);
   cleanedText = cleanedText.replace(/[\r\n]+/g, "<br>")
   const newParagraph = document.createElement("p");
   newParagraph.innerHTML = cleanedText;
@@ -232,7 +212,7 @@ function processMsgFromServer(event, msg) {
   if (type === "vitals") return updateVitals(detail, globals.vitals[detail]);
   if (type === "preparedSpell") return updatePreparedSpell(globals.preparedSpell);
   if (type === "activeSpells") return updateActiveSpells(globals.activeSpells);
-  if (type === "wornInventory") return updateWornInventory(globals.wornInventory);
+  if (type === "worn") return updateWornInventory(globals.worn);
   if (type === "experience") return updateExperience(globals.exp);
   if (type === "stow") return updateStowItems(globals.stow)
   console.log('Unknown event fired:', type);
@@ -246,49 +226,8 @@ function replaceXMLwithHTML(str) {
   // now the subs
   str = str.replace(/<output class="mono"\/>/, '<p class="monospace">'); // beginning of monospace, cool
   str = str.replace(/<output class=""\/>/, "</p>"); // end of monospace
-  // str = str.replace(/<pushBold\/>/g, '<span class="bold">');
-  // str = str.replace(/<popBold\/>/g, "</span>");
   str = str.replace(/<pushBold\/>/g, '<strong>');
   str = str.replace(/<popBold\/>/g, "</strong>");
-  return str;
-}
-
-function hideXML(str) {
-  // todo: move this to xml.js and only send visible text to game window
-  const spellsMatch = str.match(/^([\s\S\r\n]*)<pushStream id="percWindow"\/>[\w\(\)\d\r\n ]+<popStream\/>([\s\S\r\n]*)$/);
-  if (spellsMatch) str = spellsMatch[1] + spellsMatch[2];
-  const invMatch = str.match(/<pushStream id='inv'\/>[\s\S\r\n.]+<popStream\/>([\s\S\r\n]*)$/);
-  if (invMatch) str = invMatch[1]; // is the prefix here ever relevant?
-
-  // str = str.replace(/<clearStream id=.\S+.[^>]*\/>/g, "");
-  str = str.replace(/<clearContainer id=.\S+.\/>/, "");
-  str = str.replace(/<prompt.*<\/prompt>/, "");
-  str = str.replace(/<spell.*<\/spell>/, "");
-  str = str.replace(/<prompt time=.\d+.>.*<\/prompt>/, ""); // why is this necessary?
-  str = str.replace(/<component.*\/component>/g, "");
-  str = str.replace(/<resource picture="\d+"\/>/, "");
-  str = str.replace(/<style id="roomName" \/>/, "");
-  str = str.replace(/<style id=""\/>/, "");
-  str = str.replace(/<preset id='roomDesc'>/, "");
-  str = str.replace(/<\/preset>/, "");
-  str = str.replace(/<\/?d>/g, "");
-  str = str.replace(/<compass>.*<\/compass>/, "");
-  str = str.replace(/<nav\/>/, "");
-  str = str.replace(/<streamWindow .+\/>/g, "");
-  str = str.replace(/<right.*<\/right>/, "");
-  str = str.replace(/<left.*<\/left>/, "");
-  str = str.replace(/<inv id=.\S+.>[^<]*<\/inv>/g, "");
-  str = str.replace(/<d cmd="\S*">/g, ""); // useful for later, this is a command link
-  str = str.replace(/<roundTime value='\d+'\/>/, "");
-  str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, "");
-
-  // str = str.replace(/<compDef .+<\/compDef>/, ""); // login, sends exp skills
-  // str = str.replace(/<mode id="GAME"\/>/, ""); // login, useless...
-  // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
-  // str = str.replace(/<exposeContainer id='stow'\/>/); //login...
-  // str = str.replace(/<container id='.+' title=".+" target='.+' location='.+' save='.+' resident='.+'\/>/); // login - note this sends ID of stow container? maybe?
-  str = str.replace(/^\s*\n/mg, ""); // empty lines
-  str = str.replace(/^\s*&lt;/, "<"); // beginning of attack
   return str;
 }
 

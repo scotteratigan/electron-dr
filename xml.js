@@ -42,22 +42,22 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   // the regex split is too much of a black box, I think I need to go back to my original line-by-line parsing with checks for multi-line xml first
   // the only multi-line stuff I care about is inventory and spells I think
   console.log('XML version loaded: 8');
+  globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   globals.exp = {};
   globals.room = {};
   globals.rightHand = {};
   globals.leftHand = {};
   globals.roundTime = 0;
-  globals.vitals = {};
   globals.preparedSpell = "";
   globals.activeSpells = [];
-  globals.wornInventory = []; // consider renaming to 'worn'
+  globals.worn = [];
   globals.stow = {
     container: "",
     items: [],
     uniqueItems: {}
   };
-  // I don't like the idea of 5 variables to track this:
-  globals.bodyPosition = ""; // standing, sitting, kneeling, prone
+  globals.vitals = {};
+
   console.log('*** Globals Reset ***');
   return function parseXML(str) {
     const splitXML = str.split(/\r?\n/);
@@ -133,10 +133,10 @@ function parseActiveSpells(str, globals, xmlUpdateEvent) {
 }
 
 function parseInventory(str, globals, xmlUpdateEvent) {
-  const wornInventory = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
-  globals.wornInventory = wornInventory;
+  const worn = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
+  globals.worn = worn;
   // todo: check to see if inventory has changed before firing event here
-  xmlUpdateEvent("wornInventory");
+  xmlUpdateEvent("worn");
 }
 
 function parseSpellPrep(line, globals, xmlUpdateEvent) {
@@ -359,7 +359,6 @@ function parseExp(line, globals, xmlUpdateEvent) {
   if (!expMatch) {
     // exp pulsing to zero:
     // <component id='exp Outdoorsmanship'></component>
-    console.log("SECONDARY EXP MATCH??")
     const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
     if (clearedExpMatch) {
       const skill = formatSkillName(clearedExpMatch[1]);

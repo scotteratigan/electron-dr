@@ -10,6 +10,7 @@ const getConnectKey = require("./sge");
 // Initialization Stuff:
 const globals = {};
 let parseXML = () => { };
+let filterXML = () => { };
 loadXMLparser(); // loads or re-loads the parseXML function
 
 // Actions / Runtime:
@@ -46,12 +47,14 @@ client.on("data", data => {
   // Parse XML for updates:
   try {
     parseXML(gameStr);
+    // Send game data back to Main.js to pass on to client:
+    frontEnd.postMessage({ type: "gametext", detail: filterXML(gameStr) });
   } catch (err) {
     console.error('Uncaught error parsing xml:', err);
   }
 
-  // Send game data back to Main.js to pass on to client:
-  frontEnd.postMessage({ type: "gametext", detail: gameStr });
+  // // Send game data back to Main.js to pass on to client:
+  // frontEnd.postMessage({ type: "gametext", detail: gameStr });
 });
 
 client.on("close", function () {
@@ -95,6 +98,7 @@ function globalUpdated(global, detail = "") {
 
 function loadXMLparser() {
   parseXML = () => { };
+  filterXML = () => { };
   // Todo: replace with non-iterative solution. Need to find how to get root directory.
   for (const fullPath in require.cache) {
     if (fullPath.endsWith("xml.js"))
@@ -102,4 +106,7 @@ function loadXMLparser() {
   }
   const setupXMLparser = require("./xml.js");
   parseXML = setupXMLparser(globals, globalUpdated);
+  const setupXMLfilter = require("./filterxml.js");
+  filterXML = setupXMLfilter()
 }
+

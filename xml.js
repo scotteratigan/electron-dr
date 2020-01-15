@@ -37,11 +37,12 @@ const expLookup = {
 }
 
 let rtInterval = null;
+// fyi, on login we can grab the stow container #code:
+// <exposeContainer id='stow'/><container id='stow' title="My Carpetbag" target='#1088134' location='right' save='' resident='true'/><clearContainer id="stow"/><inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a map</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a rock</inv><openDialog type='dynamic' id='minivitals' title='Stats' location='statBar'><dialogData id='minivitals'></dialogData></openDialog>`
 
 function setupXMLparser(globals, xmlUpdateEvent) {
   // the regex split is too much of a black box, I think I need to go back to my original line-by-line parsing with checks for multi-line xml first
   // the only multi-line stuff I care about is inventory and spells I think
-  console.log('XML version loaded: 8');
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   globals.exp = {};
   globals.room = {};
@@ -60,65 +61,64 @@ function setupXMLparser(globals, xmlUpdateEvent) {
 
   console.log('*** Globals Reset ***');
   return function parseXML(str) {
+    console.log('splitting string:', str);
     const splitXML = str.split(/\r?\n/);
-    console.log(splitXML);
+    console.log("length is:", splitXML.length);
 
     let wornItemsMode = false; // concatenate inventory strings before processing
     let spellMode = false; // concatenate spell strings before processing
     let expMode = false; // fire exp change event when we hit prompt
     let multiLineXml = "";
 
-
-    splitXML.forEach(str => {
+    for (let i = 0; i < splitXML.length; i++) {
+      const splitStr = splitXML[i];
+      console.log('xml.js:', splitStr);
       if (wornItemsMode || spellMode) {
-        multiLineXml += str + "\n";
-        if (str.match(/<popStream\//)) {
-          if (spellMode) parseActiveSpells(multiLineXml, globals, xmlUpdateEvent);
-          else if (wornItemsMode) parseInventory(multiLineXml, globals, xmlUpdateEvent);
+        multiLineXml += splitStr + "\n";
+        if (splitStr.match(/<popStream\//)) {
+          console.log("popstream...")
+          if (spellMode) {
+            parseActiveSpells(multiLineXml, globals, xmlUpdateEvent);
+            spellMode = false;
+          } else if (wornItemsMode) {
+            parseInventory(multiLineXml, globals, xmlUpdateEvent);
+            inventoryMode = false;
+          }
           multiLineXml = "";
         }
       }
-      if (!str.startsWith("<")) return;
-      if (str.startsWith("<component id='exp")) {
+      if (!splitStr.startsWith("<")) return;
+      if (splitStr.match(/<component id='exp/)) {
         expMode = true;
-        return parseExp(str, globals, xmlUpdateEvent);
+        parseExp(splitStr, globals, xmlUpdateEvent);
       }
-      if (str.startsWith("<streamWindow id='room"))
-        return parseRoomName(str, globals);
-      if (str.startsWith("<component id='room desc"))
-        return parseRoomDescription(str, globals);
-      if (str.startsWith("<component id='room objs"))
-        return parseRoomObjects(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<component id='room players"))
-        return parseRoomPlayers(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<component id='room exits"))
-        return parseRoomExits(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<left") || str.startsWith("<right")) {
-        wornItemsMode = true;
-        return parseHeldItem(str, globals, xmlUpdateEvent);
-      }
-      if (str.startsWith('<pushStream id="percWindow')) {
+      if (splitStr.match(/<pushStream id="percWindow/)) {
         spellMode = true;
-        multiLineXml += str + "\n";
+        multiLineXml += splitStr + "\n";
       }
-      if (str.startsWith("<roundTime"))
-        return parseRoundtime(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<indicator"))
-        return parseBodyPosition(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<dialogData"))
-        return parseVitals(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<spell"))
-        return parseSpellPrep(str, globals, xmlUpdateEvent);
-      if (str.startsWith('<clearContainer id="stow"'))
-        return parseStowed(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<prompt")) {
+      if (splitStr.match(/<(left|right)/)) {
+        wornItemsMode = true;
+        parseHeldItem(splitStr, globals, xmlUpdateEvent);
+      }
+      if (splitStr.match(/<streamWindow id='room/)) parseRoomName(splitStr, globals);
+      if (splitStr.match(/<component id='room desc/)) parseRoomDescription(splitStr, globals);
+      if (splitStr.match(/<component id='room objs/)) parseRoomObjects(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<component id='room players/)) parseRoomPlayers(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<component id='room exits/)) parseRoomExits(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<roundTime/)) parseRoundtime(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<indicator/)) parseBodyPosition(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<dialogData/)) parseVitals(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<spell/)) parseSpellPrep(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<clearContainer id="stow"/)) parseStowed(splitStr, globals, xmlUpdateEvent);
+      if (splitStr.match(/<exposeContainer/)) parseStowed(splitStr, globals, xmlUpdateEvent); // (login)
+      if (splitStr.match(/<prompt/)) {
         // todo: set game time
         if (expMode) {
           expMode = false;
           xmlUpdateEvent("experience");
         }
       }
-    });
+    }
   }
 }
 
@@ -229,6 +229,7 @@ function parseHeldItem(line, globals, xmlUpdateEvent) {
 }
 
 function parseRoomName(line, globals) {
+  console.log('parsing room name:', line);
   const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);
   if (roomNameMatch && roomNameMatch[1]) {
     return globals.room.name = roomNameMatch[1];
@@ -362,6 +363,7 @@ function parseExp(line, globals, xmlUpdateEvent) {
     const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
     if (clearedExpMatch) {
       const skill = formatSkillName(clearedExpMatch[1]);
+      if (!globals.exp[skill]) globals.exp[skill] = {};
       globals.exp[skill].rate = 0;
       globals.exp[skill].rateWord = "clear";
       xmlUpdateEvent("pulse", skill);

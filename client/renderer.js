@@ -77,7 +77,7 @@ const goNouns = {
 document.addEventListener("keydown", navigateByKeypad, true);
 commandInput.addEventListener("keydown", interceptInputSpecialKeys);
 compassContainer.addEventListener("click", navigateByCompass);
-ipcRenderer.on('gametext', processMsgFromServer);
+ipcRenderer.on('message', processMsgFromServer);
 
 function enterCommand() {
   const text = commandInput.value;
@@ -197,7 +197,6 @@ function processMsgFromServer(event, msg) {
     console.log(detail);
     return appendGameText(detail);
   }
-  console.log("non-text event fired. type:", type, "detail:", detail);
   if (type === "roundTime") return updateRoundTime(globals.roundTime)
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
@@ -215,7 +214,7 @@ function processMsgFromServer(event, msg) {
   if (type === "worn") return updateWornInventory(globals.worn);
   if (type === "experience") return updateExperience(globals.exp);
   if (type === "stow") return updateStowItems(globals.stow)
-  console.log('Unknown event fired:', type);
+  console.log(' *** Unknown event fired:', type);
 }
 
 function replaceXMLwithHTML(str) {
@@ -328,6 +327,7 @@ function updateActiveSpells(activeSpellsArr) {
 }
 
 function updateWornInventory(wornItemArr) {
+  console.log('received WORN:', wornItemArr);
   const wornItemsHTML = wornItemArr.map(itemText => (
     `<div class="worn-item" onclick="passCmdToServer('remove my ${getObjNoun(itemText)}')">${itemText}</div>`
   )).join("");

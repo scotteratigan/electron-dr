@@ -47,8 +47,11 @@ client.on("data", data => {
   // Parse XML for updates:
   try {
     parseXML(gameStr);
+    const strCopy = gameStr.slice(0);
     // Send game data back to Main.js to pass on to client:
-    frontEnd.postMessage({ type: "gametext", detail: filterXML(gameStr) });
+    const nonXMLtext = filterXML(strCopy);
+    // Only send to front end if there is text to display:
+    if (nonXMLtext) frontEnd.postMessage({ type: "gametext", detail: nonXMLtext });
   } catch (err) {
     console.error('Uncaught error parsing xml:', err);
   }
@@ -62,6 +65,20 @@ client.on("close", function () {
   frontEnd.postMessage({ type: "gametext", detail: "Connection closed." });
   process.exit(0);
 });
+
+client.on("error", function (error) {
+
+  console.error("Connection lost?:", error);
+  //   read ECONNRESET
+  //   at TCP.onStreamRead (internal/stream_base_commons.js:183:27) {
+  //   errno: 'ECONNRESET',
+  //   code: 'ECONNRESET',
+  //   syscall: 'read'
+  // }
+  frontEnd.postMessage({ type: "gametext", detail: "Connection lost: " + error.code });
+  // todo: fire global change to client (perhaps change color?)
+  process.exit(0);
+})
 
 // Actual Connect process:
 

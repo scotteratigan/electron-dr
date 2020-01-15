@@ -407,7 +407,6 @@ function updateExperience(allExp) {
 
 function updateStowItems(stow) {
   const { uniqueItems, container } = stow;
-  // console.log('Update stow items:', uniqueItems);
   const stowHTML = Object.keys(uniqueItems).map(item => {
     const count = uniqueItems[item];
     return count === 1

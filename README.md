@@ -20,10 +20,7 @@ CHARACTER=Zoha
   - is this worthwhile? it would ruin the native look
 
 - Further xml work
-  - experience
-  - magic
-  - worn inventory
-  - stowed inventory
+  - magic - indicate time until fully-prepped
   - store list
 
 - Basic script system w/ pauses for now
@@ -50,6 +47,8 @@ CHARACTER=Zoha
 - Dynamically loaded triggers?
 
 - Map system?
+
+- Save description of character on look, store in DB, add ability to recall later
 
 - Ensure prompt time matches system time, or calculate offset
 

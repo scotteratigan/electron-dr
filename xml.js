@@ -36,43 +36,6 @@ const expLookup = {
   "mind lock": 34
 }
 
-// class RegExpSplitter extends RegExp {
-//   [Symbol.split](str, limit) {
-//     const result = RegExp.prototype[Symbol.split].call(this, str, limit);
-//     return result;
-//   }
-// }
-
-// const xmlSplitArr = [
-//   // self-closing:
-//   `<clearStream[^\/]+\/>`,
-//   `<castTime[^\/]+\/>`,
-//   `<endSetup/>[^\/]+\/>`, // weird one...
-//   `<mode[^\/]+\/>`,
-//   `<nav\/>`,
-//   `<playerID[^\/]+\/>`,
-//   `<roundTime[^\/]+\/>`,
-//   `<settingsInfo[^\/]+\/>`,
-//   `<streamWindow[^\/]+\/>`,
-//   // multi self-closing on same line, should be parsed together:
-//   `<indicator[^\n]+\n`,
-//   // Normal tags
-//   `<compDef.*<\/compDef>`,
-//   `<component.*<\/component>`,
-//   `<dialogData.*<\/dialogData>`,
-//   `<settings.*<\/settings>`,
-//   `<spell>[^<]+<\/spell>`,
-//   `<right>[^<]+<\/right>`,
-//   `<left>[^<]+<\/left>`,
-//   `<prompt.*<\/prompt>`,
-//   `<openDialog.*<\/openDialog>`,
-//   // Oddballs:
-//   `.*<pushStream[^<]+popStream\/>`
-// ];
-// const xmlSplits = "(" + xmlSplitArr.join("|") + ")";
-// const xmlSplitter = new RegExpSplitter(xmlSplits);
-// const xmlSplitter = new RegExpSplitter(/(<[^>]+>)|\r?\n/);
-
 let rtInterval = null;
 
 function setupXMLparser(globals, xmlUpdateEvent) {
@@ -87,29 +50,31 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.vitals = {};
   globals.preparedSpell = "";
   globals.activeSpells = [];
-  globals.wornInventory = [];
+  globals.wornInventory = []; // consider renaming to 'worn'
+  globals.stow = {
+    container: "",
+    items: [],
+    uniqueItems: {}
+  };
   // I don't like the idea of 5 variables to track this:
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
-  console.log('globals reset');
+  console.log('*** Globals Reset ***');
   return function parseXML(str) {
     const splitXML = str.split(/\r?\n/);
     console.log(splitXML);
-    // const splitXML = str.split(xmlSplitter);
-    // const filteredXMLarr = splitXML.filter(line => line && line.length);
-    // const composedXMLarr = recomposeXML(filteredXMLarr);
 
-    let inventoryMode = false; // concatenate inventory strings before processing
+    let wornItemsMode = false; // concatenate inventory strings before processing
     let spellMode = false; // concatenate spell strings before processing
     let expMode = false; // fire exp change event when we hit prompt
     let multiLineXml = "";
 
 
     splitXML.forEach(str => {
-      if (inventoryMode || spellMode) {
+      if (wornItemsMode || spellMode) {
         multiLineXml += str + "\n";
         if (str.match(/<popStream\//)) {
           if (spellMode) parseActiveSpells(multiLineXml, globals, xmlUpdateEvent);
-          else if (inventoryMode) parseInventory(multiLineXml, globals, xmlUpdateEvent);
+          else if (wornItemsMode) parseInventory(multiLineXml, globals, xmlUpdateEvent);
           multiLineXml = "";
         }
       }
@@ -129,7 +94,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (str.startsWith("<component id='room exits"))
         return parseRoomExits(str, globals, xmlUpdateEvent);
       if (str.startsWith("<left") || str.startsWith("<right")) {
-        inventoryMode = true;
+        wornItemsMode = true;
         return parseHeldItem(str, globals, xmlUpdateEvent);
       }
       if (str.startsWith('<pushStream id="percWindow')) {
@@ -144,6 +109,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseVitals(str, globals, xmlUpdateEvent);
       if (str.startsWith("<spell"))
         return parseSpellPrep(str, globals, xmlUpdateEvent);
+      if (str.startsWith('<clearContainer id="stow"'))
+        return parseStowed(str, globals, xmlUpdateEvent);
       if (str.startsWith("<prompt")) {
         // todo: set game time
         if (expMode) {
@@ -154,55 +121,6 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     });
   }
 }
-
-// function recomposeXML(splitArr) {
-//   // this logic might be sound but apparently it is not performant enough... lol can't event log in with it
-//   let newArr = [];
-//   let currentTag = null;
-//   let currentStr = "";
-//   for (let i = 0; i < splitArr.length; i++) {
-//     const line = splitArr[i];
-//     if (!line.startsWith("<")) currentStr += line;
-//     else {
-//       if (!currentTag) {
-//         let selfClosingMatch = line.match(/<([^<\/ ]+).*\/>/);
-//         // special case, self closing match is pushStream, need to look for popstream
-//         if (selfClosingMatch) {
-//           const tag = selfClosingMatch[1];
-//           if (tag === "clearStream") {
-//             // do nothing
-//           } else if (tag === "pushStream") {
-//             currentTag = "pushStream"; // is this necessary?
-//             currentStr += line;
-//           } else if (tag === "popStream") {
-//             currentTag = "";
-//             newArr.push(currentStr + line);
-//             currentStr = "";
-//           } else {
-//             // console.log('selfClosingMatchTag:', selfClosingMatch[1])
-//             newArr.push(currentStr + line);
-//             currentStr = "";
-//           }
-//         } else {
-//           let tagMatch = line.match(/<([^\/>\s]+)/);
-//           currentTag = tagMatch[1];
-//           currentStr += line;
-//           // console.log('tag match:', tagMatch);
-//         }
-//       } else {
-//         currentStr += line;
-//         const closeTagRegex = new RegExp(`</${currentStr}`);
-//         const closeTagMatch = line.match(closeTagRegex);
-//         newArr.push(currentStr);
-//         if (closeTagMatch) {
-//           line = "";
-//           currentStr = "";
-//         }
-//       }
-//     }
-//   }
-//   return newArr;
-// }
 
 function parseActiveSpells(str, globals, xmlUpdateEvent) {
   // <pushStream id="percWindow"/>Ease Burden  (4 roisaen)
@@ -215,7 +133,6 @@ function parseActiveSpells(str, globals, xmlUpdateEvent) {
 }
 
 function parseInventory(str, globals, xmlUpdateEvent) {
-  console.log('inventory, str is:', str);
   const wornInventory = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
   globals.wornInventory = wornInventory;
   // todo: check to see if inventory has changed before firing event here
@@ -395,6 +312,41 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("room");
 }
 
+function parseStowed(line, globals, xmlUpdateEvent) {
+  // `<clearContainer id="stow"/><inv id='stow'>In the carpetbag:`,
+  // "<inv id='stow'> a rock",
+  // ...
+  // "<inv id='stow'> a map",
+  // 'You put your rock in your leather-clasped carpetbag.'
+  // alternately, with nothing in the bag:
+  // `<clearContainer id="stow"/><inv id='stow'>In the carpetbag:`,
+  // "<inv id='stow'> nothing",
+  // 'You get a map from inside your leather-clasped carpetbag.
+
+  const rawItems = line.split("</inv>");
+  const containerMatch = rawItems[0].match(/In the (\S+):$/)
+  const containerName = containerMatch[1];
+  const items = [];
+  // note: skipping first and last line here intentionally:
+  for (let i = 1; i < rawItems.length - 1; i++) {
+    // "<inv id='stow'> a rock"
+    const cleanedItem = rawItems[i].match(/> (.+)$/)[1];
+    items.push(cleanedItem);
+  }
+  const uniqueItems = {};
+  items.forEach(item => {
+    if (!uniqueItems[item]) {
+      uniqueItems[item] = 1;
+    } else {
+      uniqueItems[item] += 1;
+    }
+  })
+  globals.stow.container = containerName;
+  globals.stow.items = items;
+  globals.stow.uniqueItems = uniqueItems;
+  xmlUpdateEvent("stow");
+}
+
 function parseExp(line, globals, xmlUpdateEvent) {
   // todo: add additional event for exp parsed rather than each individual skill?
   let expType = "pulse";
@@ -410,7 +362,7 @@ function parseExp(line, globals, xmlUpdateEvent) {
     console.log("SECONDARY EXP MATCH??")
     const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
     if (clearedExpMatch) {
-      const skill = clearedExpMatch(expMatch[1]);
+      const skill = formatSkillName(clearedExpMatch[1]);
       globals.exp[skill].rate = 0;
       globals.exp[skill].rateWord = "clear";
       xmlUpdateEvent("pulse", skill);
@@ -437,7 +389,6 @@ function parseExp(line, globals, xmlUpdateEvent) {
       console.error("Error parsing exp:", err);
     }
   }
-
 }
 
 function formatSkillName(str) {

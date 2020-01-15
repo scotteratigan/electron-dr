@@ -21,6 +21,8 @@ const bodyPositionDisplay = document.getElementById("body-position");
 const preparedSpellDisplay = document.getElementById("prepared-spell");
 const spellsDisplay = document.getElementById("active-spells");
 const wornItemsDisplay = document.getElementById("worn-items");
+const stowItemsDisplay = document.getElementById("stowed-items");
+const stowItemContainerDisplay = document.getElementById("stow-inventory-header");
 const experienceDisplay = document.getElementById("experience");
 
 const vitalElms = {
@@ -232,6 +234,7 @@ function processMsgFromServer(event, msg) {
   if (type === "activeSpells") return updateActiveSpells(globals.activeSpells);
   if (type === "wornInventory") return updateWornInventory(globals.wornInventory);
   if (type === "experience") return updateExperience(globals.exp);
+  if (type === "stow") return updateStowItems(globals.stow)
   console.log('Unknown event fired:', type);
 }
 
@@ -249,14 +252,6 @@ function replaceXMLwithHTML(str) {
   str = str.replace(/<popBold\/>/g, "</strong>");
   return str;
 }
-
-// Why isn't this getting hidden?:
-
-// <clearStream id="percWindow"/>
-// <pushStream id="percWindow"/>Manifest Force  (10 roisaen)
-// Ease Burden  (9 roisaen)
-// Minor Physical Protection  (10 roisaen)
-// <popStream/><prompt time="1579036556">&gt;</prompt>
 
 function hideXML(str) {
   // todo: move this to xml.js and only send visible text to game window
@@ -395,21 +390,32 @@ function updateActiveSpells(activeSpellsArr) {
 
 function updateWornInventory(wornItemArr) {
   const wornItemsHTML = wornItemArr.map(itemText => (
-    `<div class="worn-item" onclick="passCmdToServer('remove ${getObjNoun}')">${itemText}</div>`
+    `<div class="worn-item" onclick="passCmdToServer('remove my ${getObjNoun(itemText)}')">${itemText}</div>`
   )).join("");
   wornItemsDisplay.innerHTML = wornItemsHTML;
 }
 
 function updateExperience(allExp) {
-  console.log('allexp:', allExp);
-  console.log('keys:', Object.keys(allExp));
-  console.log('keys:', Object.values(allExp));
+  // it would be cool to pop up a tooltip on hover showing full exp
+  // and also mute the scroll from the main window if hovering
   const expHTML = Object.values(allExp)
     .filter(e => (e.rate > 0))
-    .map(e => (`<div class="skill-display">${e.displayStr}</div>`))
+    .map(e => (`<div class="skill-display" onclick="passCmdToServer('exp ${e.displayName}')">${e.displayStr}</div>`))
     .join("");
-  console.log('expHTML:', expHTML);
   experienceDisplay.innerHTML = expHTML;
+}
+
+function updateStowItems(stow) {
+  const { uniqueItems, container } = stow;
+  // console.log('Update stow items:', uniqueItems);
+  const stowHTML = Object.keys(uniqueItems).map(item => {
+    const count = uniqueItems[item];
+    return count === 1
+      ? `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${container}')">${item}</div>`
+      : `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${container}')">${item} (${count})</div>`;
+  }).join("");
+  stowItemsDisplay.innerHTML = stowHTML;
+  stowItemContainerDisplay.textContent = `In the ${container}:`;
 }
 
 function updatePreparedSpell(spell) {

@@ -151,7 +151,8 @@ strong {
 .room-player:hover,
 .held-item:hover,
 .worn-item:hover,
-.skill-display:hover {
+.skill-display:hover,
+.stow-item:hover {
   text-decoration: underline;
   cursor: default;
 }

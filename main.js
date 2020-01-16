@@ -108,7 +108,7 @@ function hardWire() {
     ipcMain.on("asynchronous-message", (event, command) => {
       // Command received from Player
       game.postMessage(command);
-    })
+    });
   }
 }
 

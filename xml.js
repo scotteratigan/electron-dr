@@ -133,15 +133,15 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   };
   globals.vitals = {};
   globals.gameTime = 0;
+  globals.playerId = 0;
 
   console.log('*** Globals Reset ***');
 
   return function parseXML(str) {
-    console.log("--- Incoming str: ---\n", str.substring(0, 100));
+    // console.log("--- Incoming str: ---\n", str.substring(0, 100));
     const tagRegex = /<([^<\/]+)\/?>/g;
     let m;
     let tagsObj = {};
-    console.log("----------------------\n", str);
     do {
       m = tagRegex.exec(str);
       if (m) {
@@ -150,7 +150,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     } while (m);
 
     Object.keys(tagsObj).forEach(key => {
-      console.log('key:', key);
+      console.log('key:', key.substr(0, 250));
       const line = tagsObj[key];
       // self-closing tags can use line, paired tags or multi-line tags need to use str
       if (key.startsWith("component id='room exits")) return fireRoomUpdate(str, globals, xmlUpdateEvent); // btw, what is room extra?
@@ -167,8 +167,16 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key === "inv id='stow'") return parseStowed(str, globals, xmlUpdateEvent);
       if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
       if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
+      if (key.startsWith("playerID")) return parsePlayerId(line, globals, xmlUpdateEvent)
     });
   }
+}
+
+function parsePlayerId(line, globals, xmlUpdateEvent) {
+  const playerIdMatch = line.match(/playerID id='\d+'/);
+  if (!playerIdMatch) return console.error("Error setting player id.");
+  globals.playerId = parseInt(playerIdMatch[1]);
+  xmlUpdateEvent("playerId");
 }
 
 function parseGameTime(line, globals, xmlUpdateEvent) {
@@ -337,7 +345,6 @@ function parseRoomDescription(line, globals) {
 }
 
 function fireRoomUpdate(str, globals, xmlUpdateEvent) {
-  console.log('firing room update, str is:', str);
   parseRoomName(str, globals);
   parseRoomDescription(str, globals);
   parseRoomExits(str, globals, xmlUpdateEvent);
@@ -410,27 +417,18 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("room");
 }
 
-function parseStowed(line, globals, xmlUpdateEvent) {
-  // `<clearContainer id="stow"/><inv id='stow'>In the carpetbag:`,
-  // "<inv id='stow'> a rock",
-  // ...
-  // "<inv id='stow'> a map",
-  // 'You put your rock in your leather-clasped carpetbag.'
-  // alternately, with nothing in the bag:
-  // `<clearContainer id="stow"/><inv id='stow'>In the carpetbag:`,
-  // "<inv id='stow'> nothing",
-  // 'You get a map from inside your leather-clasped carpetbag.
+function parseStowed(str, globals, xmlUpdateEvent) {
+  // getting spammed multiple times on login, so I need to limit the capture
+  const stow = { items: [], containerName: "" };
 
-  const rawItems = line.split("</inv>");
-  const containerMatch = rawItems[0].match(/In the (\S+):$/)
-  const containerName = containerMatch[1];
-  const items = [];
-  // note: skipping first and last line here intentionally:
-  for (let i = 1; i < rawItems.length - 1; i++) {
-    // "<inv id='stow'> a rock"
-    const cleanedItem = rawItems[i].match(/> (.+)$/)[1];
-    items.push(cleanedItem);
-  }
+  const stowedMatch = str.match(/<clearContainer id="stow"\/>(.+)<\/inv>/);
+  console.log('stowedMatch:', stowedMatch);
+  // "<inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a map</inv><inv id='stow'> a rock",
+  if (!stowedMatch) return console.error("unable to get stowed items");
+  const containerMatch = stowedMatch[1].match(/In the (\S+):/);
+  if (containerMatch) stow.containerName = containerMatch[1];
+  const items = stowedMatch[1].replace(/^<inv id='stow'>In the \S+:<\/inv><inv id='stow'> /, "").split("</inv><inv id='stow'> ");
+  stow.items = items;
   const uniqueItems = {};
   items.forEach(item => {
     if (!uniqueItems[item]) {
@@ -439,9 +437,8 @@ function parseStowed(line, globals, xmlUpdateEvent) {
       uniqueItems[item] += 1;
     }
   })
-  globals.stow.container = containerName;
-  globals.stow.items = items;
-  globals.stow.uniqueItems = uniqueItems;
+  stow.uniqueItems = uniqueItems
+  globals.stow = stow;
   xmlUpdateEvent("stow");
 }
 
@@ -452,6 +449,11 @@ function parseExp(str, globals, xmlUpdateEvent) {
   // Roundtime: 5 sec.
   // <component id='room objs'></component>
   // <prompt time="1579154331">&gt;</prompt>
+
+  // todo: add parsing for clear skills, like at login:
+  // <component id='exp Defending'></component>
+  // <component id='exp Parry Ability'></component>
+
   const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g;
   let m;
   do {

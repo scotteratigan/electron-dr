@@ -14,6 +14,8 @@
   A       ACCOUNTNAME  PROBLEM
   */
 
+// todo: capture port and ip for selected (also need to be able to select) game dynamically
+
 const SGE_URL = "eaccess.play.net";
 const SGE_PORT = 7900;
 
@@ -59,7 +61,7 @@ function getGameKey(cb) {
       // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
       if (text.includes("KEY")) {
         console.log("Authentication Successful!");
-        console.log(text.replace(/\t/g, "\n"));
+        console.log('text here is:', text); //text.replace(/\t/g, "\n")
         sgeSendStr("M\n");
         return;
       } else {
@@ -123,7 +125,7 @@ function getGameKey(cb) {
 
   function hashPassword() {
     const PASS = process.env.PASSWORD;
-    console.log(`Hashing password.`);
+    console.log("Hashing password.");
     let hashedPassword = [];
     PASS.split("").forEach((char, i) => {
       const result = hashChar(PASS[i], hashKey[i]);

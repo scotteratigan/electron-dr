@@ -44,6 +44,7 @@ client.on("data", data => {
     return;
   }
   buffer = "";
+
   // Parse XML for updates:
   try {
     parseXML(gameStr);
@@ -88,13 +89,13 @@ getConnectKey((connectKey, ip, port) => {
     console.log("Connected, sending key.".green);
     setTimeout(() => {
       client.write(connectKey + "\n");
+    }, 0);
+    setTimeout(() => {
+      client.write("/FE:WIZARD /VERSION:1.0.1.22 /P:WIN_XP /XML\n");
     }, 100);
     setTimeout(() => {
-      client.write("/FE:STORMFRONT /VERSION:1.0.1.22 /XML\n");
-    }, 200);
-    setTimeout(() => {
-      client.write("l\n");
-    }, 500);
+      client.write("\n");
+    }, 300);
     // todo: can we await specific text responses before sending this stuff instead of a timeout
   });
 });

@@ -217,6 +217,7 @@ function processMsgFromServer(event, msg) {
   if (type === "worn") return updateWornInventory(globals.worn);
   if (type === "experience") return updateExperience(globals.exp);
   if (type === "stow") return updateStowItems(globals.stow)
+  if (type === "playerId") return passCmdToServer("look");
   console.log(' *** Unknown event fired:', type);
 }
 

@@ -1,3 +1,5 @@
+// for inspiration, when I have time: https://github.com/WarlockFE/warlock2/wiki/Javascript-Scripting
+
 const { parentPort: pp } = require("worker_threads");
 
 const forever = () => new Promise(r => setInterval(() => { }, 1000));

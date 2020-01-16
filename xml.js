@@ -92,7 +92,6 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         tagsObj[m[1]] = m[0];
       }
     } while (m);
-    // console.log(tagsObj);
 
     Object.keys(tagsObj).forEach(key => {
       console.log('key:', key);
@@ -102,6 +101,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
       if (key.startsWith("roundTime")) return parseRoundtime(line, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
+      if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
     });
   }
 }
@@ -347,19 +347,52 @@ function parseStowed(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("stow");
 }
 
-function parseExp(line, globals, xmlUpdateEvent) {
+function parseExp(str, globals, xmlUpdateEvent) {
+  // console.log('PARSEEXP', str);
+  // <component id='exp Outdoorsmanship'><preset id='whisper'> Outdoorsmanship:    4 19% dabbling     </preset></component>
+  // <component id='exp Perception'><preset id='whisper'>      Perception:    5 85% dabbling     </preset></component>
+  // <roundTime value='1579154336'/>You wander around and poke your fingers into a few places, wondering what you might find.
+  // Roundtime: 5 sec.
+  // <component id='room objs'></component>
+  // <prompt time="1579154331">&gt;</prompt>
+  const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g;
+  let m;
+  console.log("----------------------\n", str);
+  do {
+    m = skillRegex.exec(str);
+    if (m) {
+      // console.log("---:", m);
+      const displayName = m[1]
+      const skill = formatSkillName(displayName);
+      const rank = parseFloat(m[2] + "." + m[3]);
+      const rateWord = m[4];
+      const rate = expLookup[rateWord];
+      const displayStr = `${displayName.padStart(16, " ")}: ${(m[2] + "." + m[3]).padStart(7, " ")}% ${rate.toString().padStart(2, " ")}/34`
+      globals.exp[skill] = {
+        rank,
+        rate,
+        rateWord,
+        displayName,
+        displayStr
+      }
+    }
+  } while (m);
+  xmlUpdateEvent("experience");
+}
+
+function parseExp2(str, globals, xmlUpdateEvent) {
   // todo: add additional event for exp parsed rather than each individual skill?
   let expType = "pulse";
-  if (line.includes("whisper")) {
-    line = line.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
+  if (str.includes("whisper")) {
+    str = str.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
     expType = "gain";
   }
-  const expMatch = line.match(/<component id='exp ([\w ]+)'>.+:\s+(\d+) (\d\d)% (.+)\s*<\/component>/);
+  const expMatch = str.match(/<component id='exp ([\w ]+)'>.+:\s+(\d+) (\d\d)% (.+)\s*<\/component>/);
 
   if (!expMatch) {
     // exp pulsing to zero:
     // <component id='exp Outdoorsmanship'></component>
-    const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
+    const clearedExpMatch = str.match(/<component id='exp ([\w ]+)'><\/component>/);
     if (clearedExpMatch) {
       const skill = formatSkillName(clearedExpMatch[1]);
       if (!globals.exp[skill]) globals.exp[skill] = {};
@@ -380,7 +413,7 @@ function parseExp(line, globals, xmlUpdateEvent) {
       globals.exp[skill].rank = rank;
       globals.exp[skill].rate = rate;
       globals.exp[skill].displayName = displayName;
-      const fullSkillTextMatch = line.match(/<component id='exp [\w ]+'>(.+:\s+\d+ \d\d% .+\s*)<\/component>/);
+      const fullSkillTextMatch = str.match(/<component id='exp [\w ]+'>(.+:\s+\d+ \d\d% .+\s*)<\/component>/);
       if (fullSkillTextMatch) {
         globals.exp[skill].displayStr = fullSkillTextMatch[1];
       }

@@ -198,7 +198,7 @@ function processMsgFromServer(event, msg) {
     console.log(detail);
     return appendGameText(detail);
   }
-  // console.log("RENDERERERER.JSYESS: msg is:", msg);
+  if (type === "gameTime") return;
   if (type === "roundTime") return updateRoundTime(globals.roundTime)
   if (type === "prepTime") return updateSpellTime(globals.prepTime)
   if (type === "room") return updateRoom(globals.room);
@@ -333,7 +333,6 @@ function updateActiveSpells(activeSpellsArr) {
 }
 
 function updateWornInventory(wornItemArr) {
-  console.log('received WORN:', wornItemArr);
   const wornItemsHTML = wornItemArr.map(itemText => (
     `<div class="worn-item" onclick="passCmdToServer('remove my ${getObjNoun(itemText)}')">${itemText}</div>`
   )).join("");

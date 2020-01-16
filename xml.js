@@ -175,7 +175,7 @@ function parseGameTime(line, globals, xmlUpdateEvent) {
   if (!gameTimeMatch) return console.error("Error matching game time:", line);
   const gameTime = parseInt(gameTimeMatch[1]);
   globals.gameTime = gameTime;
-  xmlUpdateEvent("gametime");
+  xmlUpdateEvent("gameTime");
 }
 
 function parseVital(line, globals, xmlUpdateEvent) {
@@ -243,8 +243,6 @@ function parseSpellTime(line, globals, xmlUpdateEvent) {
   const prepMatch = line.match(/<castTime value='(\d+)'\/>/);
   if (!prepMatch) return console.error("Unable to match prep time:", line);
   const prepTimeEnds = parseInt(prepMatch[1]);
-  console.log('prepTimeEnds:', prepTimeEnds);
-  console.log('gametime    :', globals.gameTime);
   countdownPrepTime(prepTimeEnds, globals, xmlUpdateEvent);
 }
 
@@ -260,7 +258,6 @@ function countdownPrepTime(spellPrepEnds, globals, xmlUpdateEvent) {
   clearInterval(spellPrepInterval); // don't want 2 at once
   spellPrepInterval = setInterval(() => {
     globals.prepTime -= 1;
-    console.log('globals.prepTime:', globals.prepTime);
     xmlUpdateEvent("prepTime");
     if (globals.prepTime <= 0) {
       clearInterval(spellPrepInterval);
@@ -329,7 +326,6 @@ function parseRoomName(line, globals) {
 }
 
 function parseRoomDescription(line, globals) {
-  console.log("PARSEROOMDESCRTIPSF:", line);
   const roomDescriptionMatch = line.match(/<component id='room desc'>(.*)<\/component>/);
   if (roomDescriptionMatch && roomDescriptionMatch[1]) {
     return globals.room.description = roomDescriptionMatch[1];
@@ -400,7 +396,6 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
   portalMatches && portalMatches.forEach(portalStr => {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);
     if (dirMatch && dirMatch[1]) {
-      console.log('dirMatch:', dirMatch[1]);
       exits[dirMatch[1]] = true;
       exits.array.push(dirMatch[1]);
     }
@@ -446,7 +441,6 @@ function parseStowed(line, globals, xmlUpdateEvent) {
 }
 
 function parseExp(str, globals, xmlUpdateEvent) {
-  // console.log('PARSEEXP', str);
   // <component id='exp Outdoorsmanship'><preset id='whisper'> Outdoorsmanship:    4 19% dabbling     </preset></component>
   // <component id='exp Perception'><preset id='whisper'>      Perception:    5 85% dabbling     </preset></component>
   // <roundTime value='1579154336'/>You wander around and poke your fingers into a few places, wondering what you might find.
@@ -455,11 +449,9 @@ function parseExp(str, globals, xmlUpdateEvent) {
   // <prompt time="1579154331">&gt;</prompt>
   const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g;
   let m;
-  console.log("----------------------\n", str);
   do {
     m = skillRegex.exec(str);
     if (m) {
-      // console.log("---:", m);
       const displayName = m[1]
       const skill = formatSkillName(displayName);
       const rank = parseFloat(m[2] + "." + m[3]);

@@ -103,7 +103,6 @@ function hardWire() {
     const game = new Worker("./game.js", {});
     game.on("message", message => {
       // Text received from game.
-      // mainWindow.webContents.send('gametext', message);
       mainWindow.webContents.send('message', message);
     });
     ipcMain.on("asynchronous-message", (event, command) => {

@@ -43,3 +43,7 @@ function setupXMLfilter() {
 }
 
 module.exports = setupXMLfilter;
+
+// Additional filters needed:
+// <playerID id='598697'/>
+// <settingsInfo  space not found crc='0' instance='DR'/>

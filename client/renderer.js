@@ -197,6 +197,7 @@ function processMsgFromServer(event, msg) {
     console.log(detail);
     return appendGameText(detail);
   }
+  // console.log("RENDERERERER.JSYESS: msg is:", msg);
   if (type === "roundTime") return updateRoundTime(globals.roundTime)
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
@@ -232,10 +233,10 @@ function replaceXMLwithHTML(str) {
 
 function updateRoom(room) {
   const { name, description, exits } = room;
-  updateCompass(exits);
+  // updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
-  roomElms.exits.innerHTML = generateClickableRoomExits(exits.array);
+  roomElms.exits.innerHTML = generateClickableRoomExits(room.exits.array);
 }
 
 function updateRoomObjects(room) {

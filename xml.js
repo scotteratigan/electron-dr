@@ -130,6 +130,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     uniqueItems: {}
   };
   globals.vitals = {};
+  globals.gameTime = 0;
 
   console.log('*** Globals Reset ***');
 
@@ -158,11 +159,20 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
       if (key.startsWith("indicator")) return parseBodyPosition(str, globals, xmlUpdateEvent);
       if (key.startsWith("progressBar")) return parseVital(line, globals, xmlUpdateEvent);
+      if (key.startsWith("prompt time")) return parseGameTime(line, globals, xmlUpdateEvent);
       if (key === "inv id='stow'") return parseStowed(str, globals, xmlUpdateEvent);
       if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
       if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
   }
+}
+
+function parseGameTime(line, globals, xmlUpdateEvent) {
+  const gameTimeMatch = line.match(/<prompt time="(\d+)">/);
+  if (!gameTimeMatch) return console.error("Error matching game time:", line);
+  const gameTime = parseInt(gameTimeMatch[1]);
+  globals.gameTime = gameTime;
+  xmlUpdateEvent("gametime");
 }
 
 function parseVital(line, globals, xmlUpdateEvent) {
@@ -180,7 +190,6 @@ function clearPreparedSpell(globals, xmlUpdateEvent) {
 }
 
 function parseActiveSpells(str, globals, xmlUpdateEvent) {
-  console.log('parseAcivespells ------------------------\n', str)
   const spellMatch = str.match(/<pushStream id="percWindow"\/>([^<]+)\r\n<popStream\/>/);
   // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
   if (!spellMatch) return console.error("Unknown error matching active spells");
@@ -362,7 +371,6 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
       exits.array.push(dirMatch[1]);
     }
   });
-  console.log('exits:', exits)
   globals.room.exits = exits;
   globals.room.test = exits;
   xmlUpdateEvent("room");

@@ -17,6 +17,7 @@ const compassContainer = document.getElementById("compass-container");
 const rightHandDisplay = document.getElementById("right-hand");
 const leftHandDisplay = document.getElementById("left-hand");
 const roundtimeDisplay = document.getElementById("roundtime");
+const spelltimeDisplay = document.getElementById("spelltime");
 const bodyPositionDisplay = document.getElementById("body-position");
 const preparedSpellDisplay = document.getElementById("prepared-spell");
 const spellsDisplay = document.getElementById("active-spells");
@@ -77,7 +78,7 @@ const goNouns = {
 document.addEventListener("keydown", navigateByKeypad, true);
 commandInput.addEventListener("keydown", interceptInputSpecialKeys);
 compassContainer.addEventListener("click", navigateByCompass);
-ipcRenderer.on('gametext', processMsgFromServer);
+ipcRenderer.on('message', processMsgFromServer);
 
 function enterCommand() {
   const text = commandInput.value;
@@ -197,8 +198,9 @@ function processMsgFromServer(event, msg) {
     console.log(detail);
     return appendGameText(detail);
   }
-  console.log("non-text event fired. type:", type, "detail:", detail);
+  // console.log("RENDERERERER.JSYESS: msg is:", msg);
   if (type === "roundTime") return updateRoundTime(globals.roundTime)
+  if (type === "prepTime") return updateSpellTime(globals.prepTime)
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
   if (type === "room players") return updateRoomPlayers(globals.room);
@@ -215,7 +217,7 @@ function processMsgFromServer(event, msg) {
   if (type === "worn") return updateWornInventory(globals.worn);
   if (type === "experience") return updateExperience(globals.exp);
   if (type === "stow") return updateStowItems(globals.stow)
-  console.log('Unknown event fired:', type);
+  console.log(' *** Unknown event fired:', type);
 }
 
 function replaceXMLwithHTML(str) {
@@ -236,14 +238,13 @@ function updateRoom(room) {
   updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
-  roomElms.exits.innerHTML = generateClickableRoomExits(exits.array);
+  roomElms.exits.innerHTML = generateClickableRoomExits(room.exits.array);
 }
 
 function updateRoomObjects(room) {
   const { items, mobs } = room;
   roomElms.items.innerHTML = generateClickableRoomItems(items);
   roomElms.mobs.innerHTML = generateClickableRoomMobs(mobs);
-  console.log('mobs:', mobs);
 }
 
 function updateRoomPlayers(room) {
@@ -298,6 +299,10 @@ function updateRoundTime(roundTime) {
   roundtimeDisplay.textContent = roundTime > 0 ? roundTime : "";
 }
 
+function updateSpellTime(spellTime) {
+  spelltimeDisplay.textContent = spellTime > 0 ? spellTime : "";
+}
+
 function updateBodyPosition(bodyPosition) {
   bodyPositionDisplay.textContent = bodyPosition;
 }
@@ -328,6 +333,7 @@ function updateActiveSpells(activeSpellsArr) {
 }
 
 function updateWornInventory(wornItemArr) {
+  console.log('received WORN:', wornItemArr);
   const wornItemsHTML = wornItemArr.map(itemText => (
     `<div class="worn-item" onclick="passCmdToServer('remove my ${getObjNoun(itemText)}')">${itemText}</div>`
   )).join("");
@@ -361,12 +367,13 @@ function updatePreparedSpell(spell) {
 }
 
 function getObjNoun(str) {
-  const nounMatch = str.match(/.+ (\S+)$/);
+  const nounMatch = str.match(/(\S+)$/);
   if (nounMatch && nounMatch[1]) return nounMatch[1];
   return str;
 }
 
 function getPlayerName(str) {
+  str = str.replace(/ (\([^\)]+\))$/, "");
   str = str.replace(/ who is .+/, "");
   const nameMatch = str.match(/.+ (\S+)/);
   if (nameMatch && nameMatch[1]) return nameMatch[1];

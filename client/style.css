@@ -153,7 +153,9 @@ strong {
   flex-direction: row;
 }
 
-#roundtime {
+#roundtime,
+#spelltime {
+  display: inline-block;
   text-align: center;
   width: 25px;
 }

@@ -17,7 +17,7 @@ function createWindow() {
     height: 768,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true, // needed to get icpMain import in the window
+      nodeIntegration: true, // necessary to get icpMain import in the window
     },
 
   });
@@ -62,6 +62,9 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadFile('client/index.html')
 
+  // make it big:
+  mainWindow.maximize();
+
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
 
@@ -100,17 +103,10 @@ function hardWire() {
     const game = new Worker("./game.js", {});
     game.on("message", message => {
       // Text received from game.
-      // console.log('main.js:', message.value);
-      mainWindow.webContents.send('gametext', message);
-      // todo: figure out how to send to main window
+      mainWindow.webContents.send('message', message);
     });
     ipcMain.on("asynchronous-message", (event, command) => {
       // Command received from Player
-      // if (command.startsWith(".")) {
-      //   console.log('prepare to launch script!');
-      //   return;
-      // }
-      // console.log(command);
       game.postMessage(command);
     })
   }

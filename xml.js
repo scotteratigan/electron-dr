@@ -35,19 +35,94 @@ const expLookup = {
   "nearly locked": 33,
   "mind lock": 34
 }
+// Alchemy
+// Appraisal
+// Arcana
+// Athletics
+// Attunement
+// Augmentation
+// Bow
+// Brawling
+// Brigandine
+// Chain Armor
+// Crossbow
+// Debilitation
+// Defending
+// Enchanting
+// Engineering
+// Evasion
+// First Aid
+// Forging
+// Heavy Thrown
+// Holy Magic
+// Large Blunt
+// Large Edged
+// Light Armor
+// Light Thrown
+// Locksmithing
+// Mechanical Lore
+// Melee Mastery
+// Missile Mastery
+// Offhand Weapon
+// Outdoorsmanship
+// Outfitting
+// Parry Ability
+// Perception
+// Performance
+// Plate Armor
+// Polearms
+// Scholarship
+// Shield Usage
+// Skinning
+// Slings
+// Small Blunt
+// Small Edged
+// Sorcery
+// Staves
+// Stealth
+// Tactics
+// Targeted Magic
+// Theurgy
+// Thievery
+// Twohanded Blunt
+// Twohanded Edged
+// Utility
+// Warding
 
 let rtInterval = null;
+let spellPrepInterval = null;
+// fyi, on login we can grab the stow container #code:
+// <exposeContainer id='stow'/><container id='stow' title="My Carpetbag" target='#1088134' location='right' save='' resident='true'/><clearContainer id="stow"/><inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a map</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a rock</inv><openDialog type='dynamic' id='minivitals' title='Stats' location='statBar'><dialogData id='minivitals'></dialogData></openDialog>`
 
 function setupXMLparser(globals, xmlUpdateEvent) {
   // the regex split is too much of a black box, I think I need to go back to my original line-by-line parsing with checks for multi-line xml first
   // the only multi-line stuff I care about is inventory and spells I think
-  console.log('XML version loaded: 8');
   globals.bodyPosition = ""; // standing, sitting, kneeling, prone
   globals.exp = {};
-  globals.room = {};
+  globals.room = {
+    name: "",
+    description: "",
+    items: [],
+    mobs: [],
+    monsterCount: 0,
+    exits: {
+      north: false,
+      northeast: false,
+      east: false,
+      southeast: false,
+      south: false,
+      southwest: false,
+      west: false,
+      northwest: false,
+      up: false,
+      down: false,
+      out: false
+    }
+  };
   globals.rightHand = {};
   globals.leftHand = {};
   globals.roundTime = 0;
+  globals.spellTime = 0;
   globals.preparedSpell = "";
   globals.activeSpells = [];
   globals.worn = [];
@@ -57,102 +132,53 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     uniqueItems: {}
   };
   globals.vitals = {};
+  globals.gameTime = 0;
 
   console.log('*** Globals Reset ***');
+
   return function parseXML(str) {
-    const splitXML = str.split(/\r?\n/);
-    console.log(splitXML);
+    const tagRegex = /<([^<\/]+)\/?>/g;
+    let m;
+    let tagsObj = {};
+    console.log("----------------------\n", str);
+    do {
+      m = tagRegex.exec(str);
+      if (m) {
+        tagsObj[m[1]] = m[0];
+      }
+    } while (m);
 
-    let wornItemsMode = false; // concatenate inventory strings before processing
-    let spellMode = false; // concatenate spell strings before processing
-    let expMode = false; // fire exp change event when we hit prompt
-    let multiLineXml = "";
-
-
-    splitXML.forEach(str => {
-      if (wornItemsMode || spellMode) {
-        multiLineXml += str + "\n";
-        if (str.match(/<popStream\//)) {
-          if (spellMode) parseActiveSpells(multiLineXml, globals, xmlUpdateEvent);
-          else if (wornItemsMode) parseInventory(multiLineXml, globals, xmlUpdateEvent);
-          multiLineXml = "";
-        }
-      }
-      if (!str.startsWith("<")) return;
-      if (str.startsWith("<component id='exp")) {
-        expMode = true;
-        return parseExp(str, globals, xmlUpdateEvent);
-      }
-      if (str.startsWith("<streamWindow id='room"))
-        return parseRoomName(str, globals);
-      if (str.startsWith("<component id='room desc"))
-        return parseRoomDescription(str, globals);
-      if (str.startsWith("<component id='room objs"))
-        return parseRoomObjects(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<component id='room players"))
-        return parseRoomPlayers(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<component id='room exits"))
-        return parseRoomExits(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<left") || str.startsWith("<right")) {
-        wornItemsMode = true;
-        return parseHeldItem(str, globals, xmlUpdateEvent);
-      }
-      if (str.startsWith('<pushStream id="percWindow')) {
-        spellMode = true;
-        multiLineXml += str + "\n";
-      }
-      if (str.startsWith("<roundTime"))
-        return parseRoundtime(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<indicator"))
-        return parseBodyPosition(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<dialogData"))
-        return parseVitals(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<spell"))
-        return parseSpellPrep(str, globals, xmlUpdateEvent);
-      if (str.startsWith('<clearContainer id="stow"'))
-        return parseStowed(str, globals, xmlUpdateEvent);
-      if (str.startsWith("<prompt")) {
-        // todo: set game time
-        if (expMode) {
-          expMode = false;
-          xmlUpdateEvent("experience");
-        }
-      }
+    Object.keys(tagsObj).forEach(key => {
+      console.log('key:', key);
+      const line = tagsObj[key];
+      // self-closing tags can use line, paired tags or multi-line tags need to use str
+      if (key.startsWith("nav")) return fireRoomUpdate(str, globals, xmlUpdateEvent);
+      if (key.startsWith("component id='room objs'")) return parseRoomObjects(str, globals, xmlUpdateEvent);
+      if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
+      if (key.startsWith("roundTime")) return parseRoundTime(line, globals, xmlUpdateEvent);
+      if (key.startsWith("castTime")) return parseSpellTime(line, globals, xmlUpdateEvent);
+      if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
+      if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
+      if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
+      if (key.startsWith("indicator")) return parseBodyPosition(str, globals, xmlUpdateEvent);
+      if (key.startsWith("progressBar")) return parseVital(line, globals, xmlUpdateEvent);
+      if (key.startsWith("prompt time")) return parseGameTime(line, globals, xmlUpdateEvent);
+      if (key === "inv id='stow'") return parseStowed(str, globals, xmlUpdateEvent);
+      if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
+      if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
   }
 }
 
-function parseActiveSpells(str, globals, xmlUpdateEvent) {
-  // <pushStream id="percWindow"/>Ease Burden  (4 roisaen)
-  // Minor Physical Protection  (3 roisaen)
-  // <popStream/>You sense the Ease Burden spell upon you, which will last for about four roisaen.
-  const spellList = str.replace(/^<pushStream id="percWindow"\/>/, "").replace(/<popStream\/>.*/, "").split("\n").filter(s => s.length);
-  // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
-  globals.activeSpells = spellList; // todo: parse out durations and spells
-  xmlUpdateEvent("activeSpells");
+function parseGameTime(line, globals, xmlUpdateEvent) {
+  const gameTimeMatch = line.match(/<prompt time="(\d+)">/);
+  if (!gameTimeMatch) return console.error("Error matching game time:", line);
+  const gameTime = parseInt(gameTimeMatch[1]);
+  globals.gameTime = gameTime;
+  xmlUpdateEvent("gametime");
 }
 
-function parseInventory(str, globals, xmlUpdateEvent) {
-  const worn = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
-  globals.worn = worn;
-  // todo: check to see if inventory has changed before firing event here
-  xmlUpdateEvent("worn");
-}
-
-function parseSpellPrep(line, globals, xmlUpdateEvent) {
-  if (line.startsWith("<spell>None</spell>")) {
-    globals.preparedSpell = "";
-    return xmlUpdateEvent("preparedSpell");
-  }
-  // <spell exist='spell'>Minor Physical Protection</spell>
-  const spellMatch = line.match(/<spell exist='spell'>(.*)<\/spell>/);
-  if (!spellMatch) return console.error("Unable to parse prepared spell:", line);
-  globals.preparedSpell = spellMatch[1];
-  xmlUpdateEvent("preparedSpell");
-}
-
-function parseVitals(line, globals, xmlUpdateEvent) {
-  // <dialogData id='minivitals'><skin id='manaSkin' name='manaBar' controls='mana' left='20%' top='0%' width='20%' height='100%'/><progressBar id='mana' value='99' text='mana 99%' left='20%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+function parseVital(line, globals, xmlUpdateEvent) {
   const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
   if (!vitalsMatch) return console.error("Unable to match vitals:", line);
   const vital = vitalsMatch[1];
@@ -161,27 +187,94 @@ function parseVitals(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("vitals", vital);
 }
 
-function parseBodyPosition(line, globals, xmlUpdateEvent) {
+function clearPreparedSpell(globals, xmlUpdateEvent) {
+  globals.preparedSpell = "";
+  xmlUpdateEvent("preparedSpell");
+}
+
+function parseActiveSpells(str, globals, xmlUpdateEvent) {
+  const spellMatch = str.match(/<pushStream id="percWindow"\/>([^<]+)\r\n<popStream\/>/);
+  // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
+  if (!spellMatch) return console.error("Unknown error matching active spells");
+  // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
+  const spellList = spellMatch[1].split("\r\n");
+  globals.activeSpells = spellList; // todo: parse out durations and spells
+  xmlUpdateEvent("activeSpells");
+}
+
+function parseInventory(str, globals, xmlUpdateEvent) {
+  const handMatch = str.match(/<(right|left)([^<]+)<\/(right|left)>/m);
+  if (handMatch) {
+    parseHeldItem(str, globals, xmlUpdateEvent);
+  }
+  const wornMatch = str.match(/Your worn items are:\r\n([^<]+)<popStream\/>/);
+  if (wornMatch) {
+    const items = wornMatch[1].split("\r\n").map(i => i.trim());
+    globals.worn = items;
+    xmlUpdateEvent("worn");
+  }
+}
+
+function parseSpellPrep(str, globals, xmlUpdateEvent) {
+  // <spell exist='spell'>Minor Physical Protection</spell>
+  const spellMatch = str.match(/<spell exist='spell'>(.*)<\/spell>/);
+  if (!spellMatch) return console.error("Unable to parse prepared spell:", str);
+  globals.preparedSpell = spellMatch[1];
+  xmlUpdateEvent("preparedSpell");
+}
+
+function parseBodyPosition(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
-  const bodyPositionMatch = line.match(/<indicator.+id="Icon(\w+)" visible="y"/);
+  const bodyPositionMatch = str.match(/<indicator.+id="Icon(\w+)" visible="y"/);
   if (!bodyPositionMatch) return console.error('Unable to determine verticality.')
   const bodyPosition = bodyPositionMatch[1].toLowerCase();
   globals.bodyPosition = bodyPosition;
   xmlUpdateEvent("bodyPosition");
 }
 
-function parseRoundtime(line, globals, xmlUpdateEvent) {
+function parseRoundTime(line, globals, xmlUpdateEvent) {
   const rtMatch = line.match(/<roundTime value='(\d+)'\/>/);
   if (!rtMatch) return console.error('Unable to match RT:', line);
   const rtEnds = parseInt(rtMatch[1]);
   countdownRT(rtEnds, globals, xmlUpdateEvent);
 }
 
-function countdownRT(rtEnds, globals, xmlUpdateEvent) {
-  const rtEndTime = new Date(rtEnds * 1000);
+function parseSpellTime(line, globals, xmlUpdateEvent) {
+  const prepMatch = line.match(/<castTime value='(\d+)'\/>/);
+  if (!prepMatch) return console.error("Unable to match prep time:", line);
+  const prepTimeEnds = parseInt(prepMatch[1]);
+  console.log('prepTimeEnds:', prepTimeEnds);
+  console.log('gametime    :', globals.gameTime);
+  countdownPrepTime(prepTimeEnds, globals, xmlUpdateEvent);
+}
+
+function countdownPrepTime(spellPrepEnds, globals, xmlUpdateEvent) {
+  // keeping this separate because I may want special logic to fire commands here
+  // and special logic to auto-cast when spelltime ends? not sure
+  const prepEndDate = new Date(spellPrepEnds * 1000);
   const currentTime = new Date();
   currentTime.setMilliseconds(0);
-  const roundTime = (rtEndTime.getTime() - currentTime.getTime()) / 1000;
+  const prepTime = (prepEndDate.getTime() - currentTime.getTime()) / 1000;
+  globals.prepTime = prepTime;
+  xmlUpdateEvent("prepTime");
+  clearInterval(spellPrepInterval); // don't want 2 at once
+  spellPrepInterval = setInterval(() => {
+    globals.prepTime -= 1;
+    console.log('globals.prepTime:', globals.prepTime);
+    xmlUpdateEvent("prepTime");
+    if (globals.prepTime <= 0) {
+      clearInterval(spellPrepInterval);
+    }
+  }, 1000)
+}
+
+function countdownRT(rtEnds, globals, xmlUpdateEvent) {
+  // keeping this separate because I may want special logic to fire commands here
+  // and special logic to auto-cast when spelltime ends? not sure
+  const rtEndDate = new Date(rtEnds * 1000);
+  const currentTime = new Date();
+  currentTime.setMilliseconds(0);
+  const roundTime = (rtEndDate.getTime() - currentTime.getTime()) / 1000;
   globals.roundTime = roundTime;
   xmlUpdateEvent("roundTime");
   clearInterval(rtInterval); // don't want 2 at once
@@ -194,17 +287,16 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   }, 1000)
 }
 
-function parseHeldItem(line, globals, xmlUpdateEvent) {
+function parseHeldItem(str, globals, xmlUpdateEvent) {
   // 3 cases
   // hand is holding item, hand is emptied, hand gets item then empties (passthrough)
-  // (which is a line with 2 xml statements)
-
-  const handPassthroughMatch = line.match(/<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/);
+  // (which is a str with 2 xml statements)
+  const handPassthroughMatch = str.match(/<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/);
   if (handPassthroughMatch) return; // no point in firing a change event, hand didn't change essentially
 
-  const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
+  const handMatch = str.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
   if (!handMatch) { // Hand is empty in this case
-    const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/);
+    const emptyHandMatch = str.match(/<(right|left)>Empty<\/(right|left)>/);
     if (!emptyHandMatch) return;
     const hand = emptyHandMatch[1];
     const handKey = hand === "left" ? "leftHand" : "rightHand";
@@ -229,17 +321,25 @@ function parseHeldItem(line, globals, xmlUpdateEvent) {
 }
 
 function parseRoomName(line, globals) {
+  // <streamWindow id='room' title='Room' subtitle=" - [Northern Trade Road, Farmlands]" location='center' target='drop' ifClosed='' resident='true'/>
   const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);
   if (roomNameMatch && roomNameMatch[1]) {
-    return globals.room.name = roomNameMatch[1];
+    globals.room.name = roomNameMatch[1];
   }
 }
 
 function parseRoomDescription(line, globals) {
+  console.log("PARSEROOMDESCRTIPSF:", line);
   const roomDescriptionMatch = line.match(/<component id='room desc'>(.*)<\/component>/);
   if (roomDescriptionMatch && roomDescriptionMatch[1]) {
     return globals.room.description = roomDescriptionMatch[1];
   }
+}
+
+function fireRoomUpdate(str, globals, xmlUpdateEvent) {
+  parseRoomName(str, globals);
+  parseRoomDescription(str, globals);
+  parseRoomExits(str, globals, xmlUpdateEvent);
 }
 
 function parseRoomObjects(line, globals, xmlUpdateEvent) {
@@ -257,8 +357,6 @@ function parseRoomObjects(line, globals, xmlUpdateEvent) {
         mobs.push(object.replace(/<pushBold\/>(.*)<popBold\/>/, "$1"));
       } else items.push(object);
     });
-    console.log('items:', items);
-    console.log('mobs:', mobs);
     globals.room.items = items;
     globals.room.mobs = mobs;
     globals.room.monsterCount = mobs.length;
@@ -299,16 +397,16 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
   };
   const portalMatches = line.match(/<d>(\w+)<\/d>/g);
   // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
-  const exitArray = [];
-  portalMatches.forEach(portalStr => {
+  portalMatches && portalMatches.forEach(portalStr => {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);
     if (dirMatch && dirMatch[1]) {
+      console.log('dirMatch:', dirMatch[1]);
       exits[dirMatch[1]] = true;
-      exitArray.push(dirMatch[1]);
+      exits.array.push(dirMatch[1]);
     }
   });
   globals.room.exits = exits;
-  globals.room.exits.array = exitArray;
+  globals.room.test = exits;
   xmlUpdateEvent("room");
 }
 
@@ -347,47 +445,37 @@ function parseStowed(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("stow");
 }
 
-function parseExp(line, globals, xmlUpdateEvent) {
-  // todo: add additional event for exp parsed rather than each individual skill?
-  let expType = "pulse";
-  if (line.includes("whisper")) {
-    line = line.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
-    expType = "gain";
-  }
-  const expMatch = line.match(/<component id='exp ([\w ]+)'>.+:\s+(\d+) (\d\d)% (.+)\s*<\/component>/);
-
-  if (!expMatch) {
-    // exp pulsing to zero:
-    // <component id='exp Outdoorsmanship'></component>
-    const clearedExpMatch = line.match(/<component id='exp ([\w ]+)'><\/component>/);
-    if (clearedExpMatch) {
-      const skill = formatSkillName(clearedExpMatch[1]);
-      globals.exp[skill].rate = 0;
-      globals.exp[skill].rateWord = "clear";
-      xmlUpdateEvent("pulse", skill);
-    } else {
-      console.error("Error matching exp, not sure what happened.")
-    }
-  } else {
-    try {
-      const skill = formatSkillName(expMatch[1]);
-      const displayName = expMatch[1]
-      const rank = parseFloat(expMatch[2] + "." + expMatch[3]);
-      const rateWord = expMatch[4].trim();
-      const rate = expLookup[rateWord]
-      if (!globals.exp[skill]) globals.exp[skill] = {};
-      globals.exp[skill].rank = rank;
-      globals.exp[skill].rate = rate;
-      globals.exp[skill].displayName = displayName;
-      const fullSkillTextMatch = line.match(/<component id='exp [\w ]+'>(.+:\s+\d+ \d\d% .+\s*)<\/component>/);
-      if (fullSkillTextMatch) {
-        globals.exp[skill].displayStr = fullSkillTextMatch[1];
+function parseExp(str, globals, xmlUpdateEvent) {
+  // console.log('PARSEEXP', str);
+  // <component id='exp Outdoorsmanship'><preset id='whisper'> Outdoorsmanship:    4 19% dabbling     </preset></component>
+  // <component id='exp Perception'><preset id='whisper'>      Perception:    5 85% dabbling     </preset></component>
+  // <roundTime value='1579154336'/>You wander around and poke your fingers into a few places, wondering what you might find.
+  // Roundtime: 5 sec.
+  // <component id='room objs'></component>
+  // <prompt time="1579154331">&gt;</prompt>
+  const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g;
+  let m;
+  console.log("----------------------\n", str);
+  do {
+    m = skillRegex.exec(str);
+    if (m) {
+      // console.log("---:", m);
+      const displayName = m[1]
+      const skill = formatSkillName(displayName);
+      const rank = parseFloat(m[2] + "." + m[3]);
+      const rateWord = m[4];
+      const rate = expLookup[rateWord];
+      const displayStr = `${displayName.padStart(16, " ")}: ${(m[2] + "." + m[3]).padStart(7, " ")}% ${rate.toString().padStart(2, " ")}/34`
+      globals.exp[skill] = {
+        rank,
+        rate,
+        rateWord,
+        displayName,
+        displayStr
       }
-      xmlUpdateEvent(expType, skill);
-    } catch (err) {
-      console.error("Error parsing exp:", err);
     }
-  }
+  } while (m);
+  xmlUpdateEvent("experience");
 }
 
 function formatSkillName(str) {

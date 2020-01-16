@@ -4,6 +4,7 @@ const net = require("net");
 const { parentPort: frontEnd } = require("worker_threads");
 const client = new net.Socket();
 const getConnectKey = require("./sge");
+const makeLogger = require("./log");
 
 // no need for export, this will be executed via worker thread
 
@@ -11,7 +12,10 @@ const getConnectKey = require("./sge");
 const globals = {};
 let parseXML = () => { };
 let filterXML = () => { };
+let log = defaultLogFn;
+let unloadLogger = () => { };
 loadXMLparser(); // loads or re-loads the parseXML function
+setupNewLogger();
 
 // Actions / Runtime:
 
@@ -56,14 +60,18 @@ client.on("data", data => {
   } catch (err) {
     console.error('Uncaught error parsing xml:', err);
   }
-
-  // // Send game data back to Main.js to pass on to client:
-  // frontEnd.postMessage({ type: "gametext", detail: gameStr });
+  try {
+    log(gameStr);
+  } catch (err) {
+    console.error("Unable to log to file:", err);
+  }
 });
 
 client.on("close", function () {
   console.log("Connection closed.");
   frontEnd.postMessage({ type: "gametext", detail: "Connection closed." });
+  log("Connection closed.");
+  unloadLogger();
   process.exit(0);
 });
 
@@ -128,3 +136,17 @@ function loadXMLparser() {
   filterXML = setupXMLfilter()
 }
 
+function defaultLogFn() {
+  console.log("Cannot log, log not set up yet.");
+}
+
+async function setupNewLogger() {
+  // charName = "Anonymous", instance = "UI"
+  const charName = "Anonymous";
+  const instance = "UI";
+  // todo: detect change in XML and switch to new logger when char name changes? or have some other global like profile name?
+  console.log('makeLogger:', makeLogger);
+  const logObjs = await makeLogger(charName, instance);
+  log = logObjs.log;
+  unloadLogger = logObjs.unloadLogger;
+}

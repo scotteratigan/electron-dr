@@ -25,7 +25,7 @@ CHARACTER=Zoha
 
 - Basic script system w/ pauses for now
 
-- Logging
+- Logging - set up non-xml logger also?
 - Game Text
 - XML changes?
 - Script error debug?

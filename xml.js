@@ -137,6 +137,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   console.log('*** Globals Reset ***');
 
   return function parseXML(str) {
+    console.log("--- Incoming str: ---\n", str.substring(0, 100));
     const tagRegex = /<([^<\/]+)\/?>/g;
     let m;
     let tagsObj = {};
@@ -152,7 +153,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       console.log('key:', key);
       const line = tagsObj[key];
       // self-closing tags can use line, paired tags or multi-line tags need to use str
-      if (key.startsWith("nav")) return fireRoomUpdate(str, globals, xmlUpdateEvent);
+      if (key.startsWith("component id='room exits")) return fireRoomUpdate(str, globals, xmlUpdateEvent); // btw, what is room extra?
       if (key.startsWith("component id='room objs'")) return parseRoomObjects(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
       if (key.startsWith("roundTime")) return parseRoundTime(line, globals, xmlUpdateEvent);
@@ -195,10 +196,13 @@ function clearPreparedSpell(globals, xmlUpdateEvent) {
 function parseActiveSpells(str, globals, xmlUpdateEvent) {
   const spellMatch = str.match(/<pushStream id="percWindow"\/>([^<]+)\r\n<popStream\/>/);
   // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
-  if (!spellMatch) return console.error("Unknown error matching active spells");
-  // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
-  const spellList = spellMatch[1].split("\r\n");
-  globals.activeSpells = spellList; // todo: parse out durations and spells
+  if (!spellMatch) {
+    globals.activeSpells = [];
+  } else {
+    // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
+    const spellList = spellMatch[1].split("\r\n");
+    globals.activeSpells = spellList; // todo: parse out durations and spells
+  }
   xmlUpdateEvent("activeSpells");
 }
 
@@ -333,6 +337,7 @@ function parseRoomDescription(line, globals) {
 }
 
 function fireRoomUpdate(str, globals, xmlUpdateEvent) {
+  console.log('firing room update, str is:', str);
   parseRoomName(str, globals);
   parseRoomDescription(str, globals);
   parseRoomExits(str, globals, xmlUpdateEvent);

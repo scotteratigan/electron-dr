@@ -233,7 +233,7 @@ function replaceXMLwithHTML(str) {
 
 function updateRoom(room) {
   const { name, description, exits } = room;
-  // updateCompass(exits);
+  updateCompass(exits);
   roomElms.name.textContent = `[${name}]`;
   roomElms.description.textContent = description;
   roomElms.exits.innerHTML = generateClickableRoomExits(room.exits.array);
@@ -365,8 +365,6 @@ function getObjNoun(str) {
   if (nounMatch && nounMatch[1]) return nounMatch[1];
   return str;
 }
-
-console.log(getObjNoun("Tenike (sitting)"))
 
 function getPlayerName(str) {
   str = str.replace(/ (\([^\)]+\))$/, "");

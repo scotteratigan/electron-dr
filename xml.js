@@ -158,6 +158,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
       if (key.startsWith("indicator")) return parseBodyPosition(str, globals, xmlUpdateEvent);
       if (key.startsWith("progressBar")) return parseVital(line, globals, xmlUpdateEvent);
+      if (key === "inv id='stow'") return parseStowed(str, globals, xmlUpdateEvent);
       if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
       if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
@@ -209,16 +210,6 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
   globals.preparedSpell = spellMatch[1];
   xmlUpdateEvent("preparedSpell");
 }
-
-// function parseVitals(line, globals, xmlUpdateEvent) {
-//   // <dialogData id='minivitals'><skin id='manaSkin' name='manaBar' controls='mana' left='20%' top='0%' width='20%' height='100%'/><progressBar id='mana' value='99' text='mana 99%' left='20%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
-//   const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
-//   if (!vitalsMatch) return console.error("Unable to match vitals:", line);
-//   const vital = vitalsMatch[1];
-//   const value = parseInt(vitalsMatch[2]);
-//   globals.vitals[vital] = value;
-//   xmlUpdateEvent("vitals", vital);
-// }
 
 function parseBodyPosition(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
@@ -291,7 +282,6 @@ function parseRoomName(line, globals) {
   const roomNameMatch = line.match(/<streamWindow id='room' title='Room' subtitle=" - \[([^\]]+)\]"/);
   if (roomNameMatch && roomNameMatch[1]) {
     globals.room.name = roomNameMatch[1];
-    // setTimeout(() => xmlUpdateEvent("room"), 100);
   }
 }
 
@@ -307,7 +297,6 @@ function fireRoomUpdate(str, globals, xmlUpdateEvent) {
   parseRoomName(str, globals);
   parseRoomDescription(str, globals);
   parseRoomExits(str, globals, xmlUpdateEvent);
-  // setTimeout(() => xmlUpdateEvent("room"), 100);
 }
 
 function parseRoomObjects(line, globals, xmlUpdateEvent) {
@@ -445,50 +434,6 @@ function parseExp(str, globals, xmlUpdateEvent) {
     }
   } while (m);
   xmlUpdateEvent("experience");
-}
-
-function parseExp2(str, globals, xmlUpdateEvent) {
-  // todo: add additional event for exp parsed rather than each individual skill?
-  let expType = "pulse";
-  if (str.includes("whisper")) {
-    str = str.replace(/<preset id='whisper'>/, "").replace(/<\/preset>/, "");
-    expType = "gain";
-  }
-  const expMatch = str.match(/<component id='exp ([\w ]+)'>.+:\s+(\d+) (\d\d)% (.+)\s*<\/component>/);
-
-  if (!expMatch) {
-    // exp pulsing to zero:
-    // <component id='exp Outdoorsmanship'></component>
-    const clearedExpMatch = str.match(/<component id='exp ([\w ]+)'><\/component>/);
-    if (clearedExpMatch) {
-      const skill = formatSkillName(clearedExpMatch[1]);
-      if (!globals.exp[skill]) globals.exp[skill] = {};
-      globals.exp[skill].rate = 0;
-      globals.exp[skill].rateWord = "clear";
-      xmlUpdateEvent("pulse", skill);
-    } else {
-      console.error("Error matching exp, not sure what happened.")
-    }
-  } else {
-    try {
-      const skill = formatSkillName(expMatch[1]);
-      const displayName = expMatch[1]
-      const rank = parseFloat(expMatch[2] + "." + expMatch[3]);
-      const rateWord = expMatch[4].trim();
-      const rate = expLookup[rateWord]
-      if (!globals.exp[skill]) globals.exp[skill] = {};
-      globals.exp[skill].rank = rank;
-      globals.exp[skill].rate = rate;
-      globals.exp[skill].displayName = displayName;
-      const fullSkillTextMatch = str.match(/<component id='exp [\w ]+'>(.+:\s+\d+ \d\d% .+\s*)<\/component>/);
-      if (fullSkillTextMatch) {
-        globals.exp[skill].displayStr = fullSkillTextMatch[1];
-      }
-      xmlUpdateEvent(expType, skill);
-    } catch (err) {
-      console.error("Error parsing exp:", err);
-    }
-  }
 }
 
 function formatSkillName(str) {

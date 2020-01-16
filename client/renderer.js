@@ -243,7 +243,6 @@ function updateRoomObjects(room) {
   const { items, mobs } = room;
   roomElms.items.innerHTML = generateClickableRoomItems(items);
   roomElms.mobs.innerHTML = generateClickableRoomMobs(mobs);
-  console.log('mobs:', mobs);
 }
 
 function updateRoomPlayers(room) {

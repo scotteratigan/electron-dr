@@ -98,10 +98,10 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       console.log('key:', key);
       const line = tagsObj[key];
       if (key.startsWith("nav")) return fireRoomUpdate(str, globals, xmlUpdateEvent);
-      // if (key.startsWith("streamWindow id='room'")) return parseRoomName(str, globals); // just the match
-      // if (key.startsWith("component id='room desc'")) return parseRoomDescription(str, globals); // need full str
       if (key.startsWith("component id='room objs'")) return parseRoomObjects(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
+      if (key.startsWith("roundTime")) return parseRoundtime(line, globals, xmlUpdateEvent);
+      if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
     });
   }
 }
@@ -119,10 +119,16 @@ function parseActiveSpells(str, globals, xmlUpdateEvent) {
 }
 
 function parseInventory(str, globals, xmlUpdateEvent) {
-  const worn = str.replace(/<popStream\/>/, "").split("\n").filter(s => s.length).map(s => s.trim());
-  globals.worn = worn;
-  // todo: check to see if inventory has changed before firing event here
-  xmlUpdateEvent("worn");
+  const handMatch = str.match(/<(right|left)([^<]+)<\/(right|left)>/m);
+  if (handMatch) {
+    parseHeldItem(str, globals, xmlUpdateEvent);
+  }
+  const wornMatch = str.match(/Your worn items are:\r\n([^<]+)<popStream\/>/);
+  if (wornMatch) {
+    const items = wornMatch[1].split("\r\n").map(i => i.trim());
+    globals.worn = items;
+    xmlUpdateEvent("worn");
+  }
 }
 
 function parseSpellPrep(line, globals, xmlUpdateEvent) {
@@ -180,17 +186,16 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   }, 1000)
 }
 
-function parseHeldItem(line, globals, xmlUpdateEvent) {
+function parseHeldItem(str, globals, xmlUpdateEvent) {
   // 3 cases
   // hand is holding item, hand is emptied, hand gets item then empties (passthrough)
-  // (which is a line with 2 xml statements)
-
-  const handPassthroughMatch = line.match(/<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/);
+  // (which is a str with 2 xml statements)
+  const handPassthroughMatch = str.match(/<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/);
   if (handPassthroughMatch) return; // no point in firing a change event, hand didn't change essentially
 
-  const handMatch = line.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
+  const handMatch = str.match(/<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/);
   if (!handMatch) { // Hand is empty in this case
-    const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/);
+    const emptyHandMatch = str.match(/<(right|left)>Empty<\/(right|left)>/);
     if (!emptyHandMatch) return;
     const hand = emptyHandMatch[1];
     const handKey = hand === "left" ? "leftHand" : "rightHand";
@@ -253,8 +258,6 @@ function parseRoomObjects(line, globals, xmlUpdateEvent) {
         mobs.push(object.replace(/<pushBold\/>(.*)<popBold\/>/, "$1"));
       } else items.push(object);
     });
-    console.log('items:', items);
-    console.log('mobs:', mobs);
     globals.room.items = items;
     globals.room.mobs = mobs;
     globals.room.monsterCount = mobs.length;
@@ -279,9 +282,6 @@ function parseRoomPlayers(line, globals, xmlUpdateEvent) {
 }
 
 function parseRoomExits(line, globals, xmlUpdateEvent) {
-
-  console.log('PARSE_ROOM_EXITS, LINE IS:', line)
-  console.log('----------------------')
   const exits = {
     north: false,
     northeast: false,
@@ -297,7 +297,6 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
     array: []
   };
   const portalMatches = line.match(/<d>(\w+)<\/d>/g);
-  console.log('portalMatches are:', portalMatches);
   // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
   portalMatches.forEach(portalStr => {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);

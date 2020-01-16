@@ -156,6 +156,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
+      if (key.startsWith("indicator")) return parseBodyPosition(str, globals, xmlUpdateEvent);
       if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
       if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
@@ -209,9 +210,9 @@ function parseVitals(line, globals, xmlUpdateEvent) {
   xmlUpdateEvent("vitals", vital);
 }
 
-function parseBodyPosition(line, globals, xmlUpdateEvent) {
+function parseBodyPosition(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
-  const bodyPositionMatch = line.match(/<indicator.+id="Icon(\w+)" visible="y"/);
+  const bodyPositionMatch = str.match(/<indicator.+id="Icon(\w+)" visible="y"/);
   if (!bodyPositionMatch) return console.error('Unable to determine verticality.')
   const bodyPosition = bodyPositionMatch[1].toLowerCase();
   globals.bodyPosition = bodyPosition;

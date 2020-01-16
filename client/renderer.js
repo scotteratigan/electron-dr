@@ -361,12 +361,15 @@ function updatePreparedSpell(spell) {
 }
 
 function getObjNoun(str) {
-  const nounMatch = str.match(/.+ (\S+)$/);
+  const nounMatch = str.match(/(\S+)$/);
   if (nounMatch && nounMatch[1]) return nounMatch[1];
   return str;
 }
 
+console.log(getObjNoun("Tenike (sitting)"))
+
 function getPlayerName(str) {
+  str = str.replace(/ (\([^\)]+\))$/, "");
   str = str.replace(/ who is .+/, "");
   const nameMatch = str.match(/.+ (\S+)/);
   if (nameMatch && nameMatch[1]) return nameMatch[1];

@@ -157,10 +157,20 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
       if (key.startsWith("indicator")) return parseBodyPosition(str, globals, xmlUpdateEvent);
+      if (key.startsWith("progressBar")) return parseVital(line, globals, xmlUpdateEvent);
       if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
       if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
   }
+}
+
+function parseVital(line, globals, xmlUpdateEvent) {
+  const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
+  if (!vitalsMatch) return console.error("Unable to match vitals:", line);
+  const vital = vitalsMatch[1];
+  const value = parseInt(vitalsMatch[2]);
+  globals.vitals[vital] = value;
+  xmlUpdateEvent("vitals", vital);
 }
 
 function clearPreparedSpell(globals, xmlUpdateEvent) {
@@ -200,15 +210,15 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent("preparedSpell");
 }
 
-function parseVitals(line, globals, xmlUpdateEvent) {
-  // <dialogData id='minivitals'><skin id='manaSkin' name='manaBar' controls='mana' left='20%' top='0%' width='20%' height='100%'/><progressBar id='mana' value='99' text='mana 99%' left='20%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
-  const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
-  if (!vitalsMatch) return console.error("Unable to match vitals:", line);
-  const vital = vitalsMatch[1];
-  const value = parseInt(vitalsMatch[2]);
-  globals.vitals[vital] = value;
-  xmlUpdateEvent("vitals", vital);
-}
+// function parseVitals(line, globals, xmlUpdateEvent) {
+//   // <dialogData id='minivitals'><skin id='manaSkin' name='manaBar' controls='mana' left='20%' top='0%' width='20%' height='100%'/><progressBar id='mana' value='99' text='mana 99%' left='20%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+//   const vitalsMatch = line.match(/<progressBar id='(\w+)' value='(\d+)'/);
+//   if (!vitalsMatch) return console.error("Unable to match vitals:", line);
+//   const vital = vitalsMatch[1];
+//   const value = parseInt(vitalsMatch[2]);
+//   globals.vitals[vital] = value;
+//   xmlUpdateEvent("vitals", vital);
+// }
 
 function parseBodyPosition(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
@@ -355,7 +365,7 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
   };
   const portalMatches = line.match(/<d>(\w+)<\/d>/g);
   // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
-  portalMatches.forEach(portalStr => {
+  portalMatches && portalMatches.forEach(portalStr => {
     const dirMatch = portalStr.match(/<d>(\w+)<\/d>/);
     if (dirMatch && dirMatch[1]) {
       console.log('dirMatch:', dirMatch[1]);

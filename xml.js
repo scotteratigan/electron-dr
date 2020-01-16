@@ -148,6 +148,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     Object.keys(tagsObj).forEach(key => {
       console.log('key:', key);
       const line = tagsObj[key];
+      // self-closing tags can use line, paired tags or multi-line tags need to use str
       if (key.startsWith("nav")) return fireRoomUpdate(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room objs'")) return parseRoomObjects(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
@@ -155,11 +156,16 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
+      if (key === "spell") return clearPreparedSpell(globals, xmlUpdateEvent);
+      if (key === "spell exist='spell'") return parseSpellPrep(str, globals, xmlUpdateEvent);
     });
   }
 }
 
-
+function clearPreparedSpell(globals, xmlUpdateEvent) {
+  globals.preparedSpell = "";
+  xmlUpdateEvent("preparedSpell");
+}
 
 function parseActiveSpells(str, globals, xmlUpdateEvent) {
   console.log('parseAcivespells ------------------------\n', str)
@@ -185,14 +191,10 @@ function parseInventory(str, globals, xmlUpdateEvent) {
   }
 }
 
-function parseSpellPrep(line, globals, xmlUpdateEvent) {
-  if (line.startsWith("<spell>None</spell>")) {
-    globals.preparedSpell = "";
-    return xmlUpdateEvent("preparedSpell");
-  }
+function parseSpellPrep(str, globals, xmlUpdateEvent) {
   // <spell exist='spell'>Minor Physical Protection</spell>
-  const spellMatch = line.match(/<spell exist='spell'>(.*)<\/spell>/);
-  if (!spellMatch) return console.error("Unable to parse prepared spell:", line);
+  const spellMatch = str.match(/<spell exist='spell'>(.*)<\/spell>/);
+  if (!spellMatch) return console.error("Unable to parse prepared spell:", str);
   globals.preparedSpell = spellMatch[1];
   xmlUpdateEvent("preparedSpell");
 }

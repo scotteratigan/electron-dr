@@ -35,6 +35,59 @@ const expLookup = {
   "nearly locked": 33,
   "mind lock": 34
 }
+// Alchemy
+// Appraisal
+// Arcana
+// Athletics
+// Attunement
+// Augmentation
+// Bow
+// Brawling
+// Brigandine
+// Chain Armor
+// Crossbow
+// Debilitation
+// Defending
+// Enchanting
+// Engineering
+// Evasion
+// First Aid
+// Forging
+// Heavy Thrown
+// Holy Magic
+// Large Blunt
+// Large Edged
+// Light Armor
+// Light Thrown
+// Locksmithing
+// Mechanical Lore
+// Melee Mastery
+// Missile Mastery
+// Offhand Weapon
+// Outdoorsmanship
+// Outfitting
+// Parry Ability
+// Perception
+// Performance
+// Plate Armor
+// Polearms
+// Scholarship
+// Shield Usage
+// Skinning
+// Slings
+// Small Blunt
+// Small Edged
+// Sorcery
+// Staves
+// Stealth
+// Tactics
+// Targeted Magic
+// Theurgy
+// Thievery
+// Twohanded Blunt
+// Twohanded Edged
+// Utility
+// Warding
 
 let rtInterval = null;
 // fyi, on login we can grab the stow container #code:
@@ -81,7 +134,6 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   console.log('*** Globals Reset ***');
 
   return function parseXML(str) {
-    // const selfClosingTagRegex = /<(\w+)[^<]*\/>/g;
     const tagRegex = /<([^<\/]+)\/?>/g;
     let m;
     let tagsObj = {};
@@ -101,6 +153,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
       if (key.startsWith("roundTime")) return parseRoundtime(line, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
+      if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
     });
   }
@@ -109,11 +162,12 @@ function setupXMLparser(globals, xmlUpdateEvent) {
 
 
 function parseActiveSpells(str, globals, xmlUpdateEvent) {
-  // <pushStream id="percWindow"/>Ease Burden  (4 roisaen)
-  // Minor Physical Protection  (3 roisaen)
-  // <popStream/>You sense the Ease Burden spell upon you, which will last for about four roisaen.
-  const spellList = str.replace(/^<pushStream id="percWindow"\/>/, "").replace(/<popStream\/>.*/, "").split("\n").filter(s => s.length);
+  console.log('parseAcivespells ------------------------\n', str)
+  const spellMatch = str.match(/<pushStream id="percWindow"\/>([^<]+)\r\n<popStream\/>/);
+  // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
+  if (!spellMatch) return console.error("Unknown error matching active spells");
   // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
+  const spellList = spellMatch[1].split("\r\n");
   globals.activeSpells = spellList; // todo: parse out durations and spells
   xmlUpdateEvent("activeSpells");
 }

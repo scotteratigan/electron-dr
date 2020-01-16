@@ -90,6 +90,7 @@ const expLookup = {
 // Warding
 
 let rtInterval = null;
+let spellPrepInterval = null;
 // fyi, on login we can grab the stow container #code:
 // <exposeContainer id='stow'/><container id='stow' title="My Carpetbag" target='#1088134' location='right' save='' resident='true'/><clearContainer id="stow"/><inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a map</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a rock</inv><openDialog type='dynamic' id='minivitals' title='Stats' location='statBar'><dialogData id='minivitals'></dialogData></openDialog>`
 
@@ -121,6 +122,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.rightHand = {};
   globals.leftHand = {};
   globals.roundTime = 0;
+  globals.spellTime = 0;
   globals.preparedSpell = "";
   globals.activeSpells = [];
   globals.worn = [];
@@ -153,7 +155,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       if (key.startsWith("nav")) return fireRoomUpdate(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room objs'")) return parseRoomObjects(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='room players'")) return parseRoomPlayers(str, globals, xmlUpdateEvent);
-      if (key.startsWith("roundTime")) return parseRoundtime(line, globals, xmlUpdateEvent);
+      if (key.startsWith("roundTime")) return parseRoundTime(line, globals, xmlUpdateEvent);
+      if (key.startsWith("castTime")) return parseSpellTime(line, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id='inv'")) return parseInventory(str, globals, xmlUpdateEvent);
       if (key.startsWith("pushStream id=\"percWindow")) return parseActiveSpells(str, globals, xmlUpdateEvent);
       if (key.startsWith("component id='exp")) return parseExp(str, globals, xmlUpdateEvent);
@@ -229,18 +232,49 @@ function parseBodyPosition(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent("bodyPosition");
 }
 
-function parseRoundtime(line, globals, xmlUpdateEvent) {
+function parseRoundTime(line, globals, xmlUpdateEvent) {
   const rtMatch = line.match(/<roundTime value='(\d+)'\/>/);
   if (!rtMatch) return console.error('Unable to match RT:', line);
   const rtEnds = parseInt(rtMatch[1]);
   countdownRT(rtEnds, globals, xmlUpdateEvent);
 }
 
-function countdownRT(rtEnds, globals, xmlUpdateEvent) {
-  const rtEndTime = new Date(rtEnds * 1000);
+function parseSpellTime(line, globals, xmlUpdateEvent) {
+  const prepMatch = line.match(/<castTime value='(\d+)'\/>/);
+  if (!prepMatch) return console.error("Unable to match prep time:", line);
+  const prepTimeEnds = parseInt(prepMatch[1]);
+  console.log('prepTimeEnds:', prepTimeEnds);
+  console.log('gametime    :', globals.gameTime);
+  countdownPrepTime(prepTimeEnds, globals, xmlUpdateEvent);
+}
+
+function countdownPrepTime(spellPrepEnds, globals, xmlUpdateEvent) {
+  // keeping this separate because I may want special logic to fire commands here
+  // and special logic to auto-cast when spelltime ends? not sure
+  const prepEndDate = new Date(spellPrepEnds * 1000);
   const currentTime = new Date();
   currentTime.setMilliseconds(0);
-  const roundTime = (rtEndTime.getTime() - currentTime.getTime()) / 1000;
+  const prepTime = (prepEndDate.getTime() - currentTime.getTime()) / 1000;
+  globals.prepTime = prepTime;
+  xmlUpdateEvent("prepTime");
+  clearInterval(spellPrepInterval); // don't want 2 at once
+  spellPrepInterval = setInterval(() => {
+    globals.prepTime -= 1;
+    console.log('globals.prepTime:', globals.prepTime);
+    xmlUpdateEvent("prepTime");
+    if (globals.prepTime <= 0) {
+      clearInterval(spellPrepInterval);
+    }
+  }, 1000)
+}
+
+function countdownRT(rtEnds, globals, xmlUpdateEvent) {
+  // keeping this separate because I may want special logic to fire commands here
+  // and special logic to auto-cast when spelltime ends? not sure
+  const rtEndDate = new Date(rtEnds * 1000);
+  const currentTime = new Date();
+  currentTime.setMilliseconds(0);
+  const roundTime = (rtEndDate.getTime() - currentTime.getTime()) / 1000;
   globals.roundTime = roundTime;
   xmlUpdateEvent("roundTime");
   clearInterval(rtInterval); // don't want 2 at once

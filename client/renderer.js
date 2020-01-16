@@ -17,6 +17,7 @@ const compassContainer = document.getElementById("compass-container");
 const rightHandDisplay = document.getElementById("right-hand");
 const leftHandDisplay = document.getElementById("left-hand");
 const roundtimeDisplay = document.getElementById("roundtime");
+const spelltimeDisplay = document.getElementById("spelltime");
 const bodyPositionDisplay = document.getElementById("body-position");
 const preparedSpellDisplay = document.getElementById("prepared-spell");
 const spellsDisplay = document.getElementById("active-spells");
@@ -199,6 +200,7 @@ function processMsgFromServer(event, msg) {
   }
   // console.log("RENDERERERER.JSYESS: msg is:", msg);
   if (type === "roundTime") return updateRoundTime(globals.roundTime)
+  if (type === "prepTime") return updateSpellTime(globals.prepTime)
   if (type === "room") return updateRoom(globals.room);
   if (type === "room objects") return updateRoomObjects(globals.room);
   if (type === "room players") return updateRoomPlayers(globals.room);
@@ -295,6 +297,10 @@ function updateHand(hand, { id, noun, item }) {
 
 function updateRoundTime(roundTime) {
   roundtimeDisplay.textContent = roundTime > 0 ? roundTime : "";
+}
+
+function updateSpellTime(spellTime) {
+  spelltimeDisplay.textContent = spellTime > 0 ? spellTime : "";
 }
 
 function updateBodyPosition(bodyPosition) {

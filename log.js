@@ -6,6 +6,10 @@ const LOG_DIR = 'logs'
 
 async function makeLogger(charName = 'Character', instance = 'UI') {
   return new Promise((resolve, reject) => {
+    if (!fs.existsSync(`./${LOG_DIR}`)) {
+      // this is sync but only executed once on bootup - replace with non-sync code later?
+      fs.mkdirSync(`./${LOG_DIR}`)
+    }
     const now = new Date()
     const dateStr =
       now.getFullYear() +

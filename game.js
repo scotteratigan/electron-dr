@@ -36,6 +36,7 @@ frontEnd.on('message', async command => {
   if (command.startsWith('#log ')) {
     const logText = command.substring(4) // strips out '#log '
     try {
+      console.log('attempting to log...')
       log(logText)
     } catch (err) {
       console.error(`Unable to log text "${logText}"`)

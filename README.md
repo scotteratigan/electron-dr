@@ -13,8 +13,6 @@ CHARACTER=Zoha
 
 ## Todos
 
-- Add Quit functionality (not close window) on Mac
-
 - Configure linting settings for project
 
 - Pipe sge server messages to main window

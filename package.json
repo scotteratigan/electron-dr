@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron ."
   },
+  "productName": "ElectronDR",
   "repository": "https://github.com/electron/electron-quick-start",
   "author": "GitHub",
   "license": "CC0-1.0",

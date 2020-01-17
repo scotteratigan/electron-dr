@@ -7,6 +7,7 @@ const path = require('path')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+const isMac = process.platform === 'darwin'
 
 function createWindow() {
   // Create the browser window.
@@ -22,13 +23,13 @@ function createWindow() {
     // What should I do on load?
   })
 
-  const isMac = process.platform === 'darwin'
   const template = [
     {
       label: 'File',
       submenu: [
         { label: 'Play', click: () => hardWire() },
-        { role: isMac ? 'close' : 'quit' },
+        // { role: isMac ? 'close' : 'quit' }
+        { role: 'quit' },
       ],
     },
     {
@@ -83,7 +84,9 @@ app.on('ready', createWindow)
 app.on('window-all-closed', function() {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
+  // if (!isMac) app.quit()
+  // todo: quit game first?
+  app.quit()
 })
 
 app.on('activate', function() {

@@ -16,28 +16,24 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
-- title bar replacement (since it can't be skinned)
-  - is this worthwhile? it would ruin the native look
-
-- Further xml work
-  - magic - indicate time until fully-prepped
-  - store list
-
-- Basic script system w/ pauses for now
-
-- Logging - set up non-xml logger also?
-- Game Text
-- XML changes?
-- Script error debug?
-
 - Support to enter your own account info
 - Support for multiple accounts
 
+- Logging
+  - use non-xml logger in tandem
+  - be sure to log script errors for debugging
+
+- Script system w/ pauses for now
+  - loaded via worker thread
+  - access to xml events, globals, and game text
+
+- Links: make links open in new window (login links, for instance)
+
 - Non-xml parsing
-  - assess
+  - assess (and other windows)
   - attack parsing
   - info / stat parsing
-  - exp command (useful to set vars at login)
+  - exp command (useful to set vars after #xml reset)
 
 - Better visual for RT display and bodyPosition
 
@@ -47,10 +43,10 @@ CHARACTER=Zoha
 - Dynamically loaded triggers?
 
 - Map system?
+  - GraphDB of rooms using ArangoDB?
+    - https://www.arangodb.com/docs/stable/drivers/js-getting-started.html
+  - Visualization using library (like deckGL but with drag/drop capabilities and non-spherical coordinate system)
 
 - Save description of character on look, store in DB, add ability to recall later
 
 - Ensure prompt time matches system time, or calculate offset
-
-New idea for xml parsing
-go back to line-by-line system, except for special xml

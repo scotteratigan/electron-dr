@@ -11,6 +11,7 @@ const makeLogger = require("./log");
 // Initialization Stuff:
 const globals = {};
 let parseXML = () => { };
+let parseText = () => { }; // used by script. todo: add parsexmlchange to trigger off of xml?
 let filterXML = () => { };
 let log = defaultLogFn;
 let unloadLogger = () => { };
@@ -20,10 +21,16 @@ setupNewLogger();
 // Actions / Runtime:
 
 // Message from client:
-frontEnd.on("message", command => {
+frontEnd.on("message", async command => { // async only for script loading - need to revisit later
   if (command.startsWith(".")) {
     console.log('prepare to launch script!');
-    return;
+    const scriptImport = require("./loadScript"); // doing this here so I can update dynamically w/o reconnecting constantly
+    const { loadScript } = scriptImport;
+    sendParseText = await loadScript(
+      "script",
+      sendCommandToGame,
+      globals
+    );
   }
   if (command.startsWith("#xml")) {
     frontEnd.postMessage({ type: "gametext", detail: "*** Reloading XML Parser. ***" });

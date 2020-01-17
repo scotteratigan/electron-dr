@@ -1,14 +1,14 @@
 // for inspiration, when I have time: https://github.com/WarlockFE/warlock2/wiki/Javascript-Scripting
 
-const { parentPort: pp } = require("worker_threads");
+const { parentPort: pp } = require('worker_threads')
 
 // const forever = () => new Promise(r => setInterval(() => { }, 1000));
-const sleep = seconds => new Promise(r => setTimeout(() => r(), seconds * 1000));
+const sleep = seconds => new Promise(r => setTimeout(() => r(), seconds * 1000))
 
 async function script(sendCommandToGame, globals) {
-  pp.on("message", message => {
-    console.log("Received message:", message);
-    pp.postMessage({ pong: message });
+  pp.on('message', message => {
+    console.log('Received message:', message)
+    pp.postMessage({ pong: message })
     // todo: test throwing an error here
 
     // pp.postError("test");
@@ -16,18 +16,18 @@ async function script(sendCommandToGame, globals) {
     // if (message === "You fall over.")
     //   pp.postMessage({ command: "stand" });
     // else pp.postMessage({ resonpse: "ignore" });
-  });
+  })
 
-  console.log("await loaded");
+  console.log('await loaded')
   // await forever(); // ok cool, script returns even while this awaits
 
-  await sleep(1);
-  sendCommandToGame("west");
+  await sleep(1)
+  sendCommandToGame('west')
   console.log('trying to send west')
-  await sleep(5);
-  sendCommandToGame("east");
+  await sleep(5)
+  sendCommandToGame('east')
   console.log('trying to send east')
 }
-script();
+script()
 
-module.exports = script;
+module.exports = script

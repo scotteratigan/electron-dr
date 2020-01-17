@@ -13,6 +13,10 @@ CHARACTER=Zoha
 
 ## Todos
 
+- Add Quit functionality (not close window) on Mac
+
+- Configure linting settings for project
+
 - Pipe sge server messages to main window
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
@@ -20,16 +24,19 @@ CHARACTER=Zoha
 - Support for multiple accounts
 
 - Logging
+
   - use non-xml logger in tandem
   - be sure to log script errors for debugging
 
 - Script system w/ pauses for now
+
   - loaded via worker thread
   - access to xml events, globals, and game text
 
 - Links: make links open in new window (login links, for instance)
 
 - Non-xml parsing
+
   - assess (and other windows)
   - attack parsing
   - info / stat parsing
@@ -38,11 +45,13 @@ CHARACTER=Zoha
 - Better visual for RT display and bodyPosition
 
 - Skinning system (dynamically loading css variables)
+
   - Think light or dark mode to start
 
 - Dynamically loaded triggers?
 
 - Map system?
+
   - GraphDB of rooms using ArangoDB?
     - https://www.arangodb.com/docs/stable/drivers/js-getting-started.html
   - Visualization using library (like deckGL but with drag/drop capabilities and non-spherical coordinate system)

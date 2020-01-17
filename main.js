@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu } = require('electron')
-const { Worker } = require("worker_threads"); // to run game server
-const { ipcMain } = require('electron'); // to talk to the browser window
+const { Worker } = require('worker_threads') // to run game server
+const { ipcMain } = require('electron') // to talk to the browser window
 const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -16,8 +16,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true, // necessary to get icpMain import in the window
-    }
-  });
+    },
+  })
   mainWindow.webContents.on('did-finish-load', () => {
     // What should I do on load?
   })
@@ -27,9 +27,9 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
-        { label: "Play", click: () => hardWire() },
+        { label: 'Play', click: () => hardWire() },
         { role: isMac ? 'close' : 'quit' },
-      ]
+      ],
     },
     {
       role: 'help',
@@ -39,34 +39,34 @@ function createWindow() {
           click: async () => {
             const { shell } = require('electron')
             await shell.openExternal('https://electronjs.org')
-          }
+          },
         },
         {
-          label: "Dev Tools",
-          role: "toggleDevTools"
+          label: 'Dev Tools',
+          role: 'toggleDevTools',
         },
         {
-          label: "Force Reload",
-          role: "forceReload"
-        }
-      ]
-    }
+          label: 'Force Reload',
+          role: 'forceReload',
+        },
+      ],
+    },
   ]
 
   const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu);
+  Menu.setApplicationMenu(menu)
 
   // and load the index.html of the app.
   mainWindow.loadFile('client/index.html')
 
   // make it big:
-  mainWindow.maximize();
+  mainWindow.maximize()
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -77,39 +77,39 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', createWindow)
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function () {
+app.on('window-all-closed', function() {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') app.quit()
-});
+})
 
-app.on('activate', function () {
+app.on('activate', function() {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
-});
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
 function hardWire() {
   {
-    const game = new Worker("./game.js", {});
-    game.on("message", message => {
+    const game = new Worker('./game.js', {})
+    game.on('message', message => {
       // Text received from game.
-      mainWindow.webContents.send('message', message);
-    });
-    ipcMain.on("asynchronous-message", (event, command) => {
+      mainWindow.webContents.send('message', message)
+    })
+    ipcMain.on('asynchronous-message', (event, command) => {
       // Command received from Player
-      game.postMessage(command);
-    });
+      game.postMessage(command)
+    })
   }
 }
 
 // hacky, do not like...
 ipcMain.on('asynchronous-message', (event, command) => {
-  if (command.startsWith("#connect")) hardWire();
-});
+  if (command.startsWith('#connect')) hardWire()
+})

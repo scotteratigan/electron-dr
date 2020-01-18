@@ -18,6 +18,9 @@ CHARACTER=Zoha
 - Pipe sge server messages to main window
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
+- XML
+  - shop verb/window
+
 - Support to enter your own account info
 - Support for multiple accounts
 

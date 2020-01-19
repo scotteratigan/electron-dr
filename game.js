@@ -30,10 +30,15 @@ function game(messageFrontEnd) {
       delete require.cache[scriptLoaderPath];
       const scriptLoader = require('./loadScript') // this needs to be reworked
       const loadScript = scriptLoader
-      const scriptFunctions = await loadScript('script', sendCommandToGame);
+      const scriptFunctions = await loadScript('script', sendCommand);
       sendTextToScript = scriptFunctions.sendTextToScript;
       sendXMLeventToScript = scriptFunctions.sendXMLeventToScript;
       return
+    }
+    if (command.startsWith("#echo ")) {
+      const detail = command.substring(6);
+      // if (!detail) return console.error("Echo called with no text?")
+      return messageFrontEnd({ type: 'gametext', detail })
     }
     if (command.startsWith('#log ')) {
       const logText = command.substring(4) // strips out '#log '
@@ -61,6 +66,7 @@ function game(messageFrontEnd) {
         detail: 'Unknown command:' + command,
       })
     }
+
     sendCommandToGame(command)
   }
 

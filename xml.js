@@ -151,7 +151,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     } while (m)
 
     Object.keys(tagsObj).forEach(key => {
-      console.log('key:', key.substr(0, 250))
+      // console.log('key:', key.substr(0, 250)) // uncomment to see xml parsing
       const line = tagsObj[key]
       // self-closing tags can use line, paired tags or multi-line tags need to use str
       if (key.startsWith("component id='room exits"))
@@ -455,7 +455,6 @@ function parseStowed(str, globals, xmlUpdateEvent) {
   const stow = { items: [], containerName: '' }
 
   const stowedMatch = str.match(/<clearContainer id="stow"\/>(.+)<\/inv>/)
-  console.log('stowedMatch:', stowedMatch)
   // "<inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a map</inv><inv id='stow'> a rock",
   if (!stowedMatch) return console.error('unable to get stowed items')
   const containerMatch = stowedMatch[1].match(/In the (\S+):/)

@@ -63,12 +63,12 @@ function loadScript(name, sendCommand) {
 
   function sendTextToScript(text) {
     console.log("Forwarding message to script:", text.substring(0, 15) + "...");
-    script.postMessage({ event: "text", value: text });
+    script.postMessage({ event: "text", text });
   }
 
   function sendXMLeventToScript(xmlVar, detail, globals) {
-    console.log("Forwarding xml event to script:", xmlVar, detail);
-    script.postMessage({ event: "xml", variable: xmlVar, detail, globals }); // this should work for now
+    // console.log("Forwarding xml event to script:", xmlVar, detail);
+    script.postMessage({ event: "xml", xmlVar, detail, globals }); // this should work for now
   }
 
 

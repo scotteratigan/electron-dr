@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+// const { Worker } = require('worker_threads') // to run game server
 
 // needs to be launched as a worker thread so that it can be terminated
 
@@ -24,11 +25,11 @@ function loadScript(scriptFileName, sendCommandToGame, globals) {
         let { run, parseText } = await load(sendCommandToGame, globals)
         resolve(parseText)
         await run()
-        parseText = () => {}
+        parseText = () => { }
         console.log('Script ended:', scriptFileName)
       } catch (err) {
         console.error('Error running script', scriptFileName, ':', err)
-        return reject(() => {})
+        return reject(() => { })
       }
     })
   })
@@ -38,5 +39,7 @@ module.exports = { loadScript }
 
 function removeScriptFromCache(path) {
   console.log('clearing script cache:', path)
+  console.log('require.cache before script deletion:', require.cache);
   delete require.cache[path]
+  console.log('require.cache after script deletion:', require.cache);
 }

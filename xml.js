@@ -97,6 +97,7 @@ let spellPrepInterval = null
 function setupXMLparser(globals, xmlUpdateEvent) {
   // the regex split is too much of a black box, I think I need to go back to my original line-by-line parsing with checks for multi-line xml first
   // the only multi-line stuff I care about is inventory and spells I think
+  globals.connected = false;
   globals.bodyPosition = '' // standing, sitting, kneeling, prone
   globals.exp = {}
   globals.room = {

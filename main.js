@@ -1,13 +1,14 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, Menu } = require('electron')
-const { Worker } = require('worker_threads') // to run game server
 const { ipcMain } = require('electron') // to talk to the browser window
 const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
-const isMac = process.platform === 'darwin'
+let game
+let sendCommand
+// const isMac = process.platform === 'darwin'
 
 function createWindow() {
   // Create the browser window.
@@ -100,28 +101,25 @@ app.on('activate', function () {
 
 function hardWire() {
   {
-    // const game = new Worker('./game.js', {})
-    const game = require("./game");
-    const { connect, sendCommand } = game(messageFrontEnd)
+    // path.join(__dirname, 'preload.js'),
+    const gamePath = path.join(__dirname, "game.js")
+    console.log('require.cache before deletion:', require.cache)
+    delete require.cache[gamePath];
+    console.log('require.cache after deletion:', require.cache)
+    game = require("./game.js");
+    const gameReturns = game(messageFrontEnd)
+    const { connect } = gameReturns;
+    sendCommand = gameReturns.sendCommand;
     connect()
-    // game.on('message', message => {
-    //   // Text received from game.
-    //   mainWindow.webContents.send('message', message)
-    // })
-    ipcMain.on('asynchronous-message', (event, command) => {
-      // Command received from Player
-      sendCommand(command);
-      // game.postMessage(command)
-    })
   }
 }
 
 function messageFrontEnd(message) {
-  console.log('message received from game to pass on to main window: ', message);
   mainWindow.webContents.send('message', message)
 }
 
 // hacky, do not like...
 ipcMain.on('asynchronous-message', (event, command) => {
-  if (command.startsWith('#connect')) hardWire()
+  if (command.startsWith('#connect')) return hardWire()
+  else sendCommand(command); // (Command received from player, pass on to game)
 })

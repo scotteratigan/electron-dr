@@ -17,6 +17,8 @@ function game(messageFrontEnd) {
   setupNewLogger()
   let sendTextToScript = () => { }
   let sendXMLeventToScript = () => { }
+  let sendControlCommandToScript = () => { }
+  let scriptLoader;
 
   // Actions / Runtime:
 
@@ -24,16 +26,23 @@ function game(messageFrontEnd) {
     if (command.startsWith('.')) {
       // Need a global array of scripts to with parseText and XML events
       // Figure out sharing of globals array (read-only in scripts)
-
       console.log('prepare to launch script!')
       const scriptLoaderPath = path.join(__dirname, "loadscript.js")
       delete require.cache[scriptLoaderPath];
-      const scriptLoader = require('./loadScript') // this needs to be reworked
+      scriptLoader = null;
+      sendTextToScript = () => { }
+      sendXMLeventToScript = () => { }
+      sendControlCommandToScript = () => { }
+      scriptLoader = require('./loadScript') // this needs to be reworked
       const loadScript = scriptLoader
       const scriptFunctions = await loadScript('script', sendCommand);
       sendTextToScript = scriptFunctions.sendTextToScript;
       sendXMLeventToScript = scriptFunctions.sendXMLeventToScript;
       return
+    }
+    if (command.startsWith("#abort")) {
+      console.log('*** Abort signal received from client ***');
+      return sendControlCommandToScript("#abort")
     }
     if (command.startsWith("#echo ")) {
       const detail = command.substring(6);

@@ -71,9 +71,14 @@ function loadScript(name, sendCommand) {
     script.postMessage({ event: "xml", xmlVar, detail, globals }); // this should work for now
   }
 
+  function sendControlCommandToScript(command) {
+    if (command === "#abort") {
+      script.terminate();
+    }
+    else script.postMessage({ event: "control", command })
+  }
 
-
-  return { sendTextToScript, sendXMLeventToScript }
+  return { sendTextToScript, sendXMLeventToScript, sendControlCommandToScript }
 }
 
 module.exports = loadScript;

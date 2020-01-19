@@ -4,30 +4,36 @@ const net = require('net')
 const client = new net.Socket()
 const getConnectKey = require('./sge')
 const makeLogger = require('./log')
+const path = require('path')
 
 function game(messageFrontEnd) {
   // Initialization Stuff:
   const globals = {}
   let parseXML = () => { }
-  let parseText = () => { } // used by script. todo: add parsexmlchange to trigger off of xml?
   let filterXML = () => { }
   let log = defaultLogFn
   let unloadLogger = () => { }
   loadXMLparser() // loads or re-loads the parseXML function
   setupNewLogger()
+  let sendTextToScript = () => { }
+  let sendXMLeventToScript = () => { }
 
   // Actions / Runtime:
 
   async function sendCommand(command) {
     if (command.startsWith('.')) {
+      // Need a global array of scripts to with parseText and XML events
+      // Figure out sharing of globals array (read-only in scripts)
+
       console.log('prepare to launch script!')
-      const scriptImport = require('./loadScript') // this needs to be reworked
-      const { loadScript } = scriptImport
-      return (sendParseText = await loadScript(
-        'script',
-        sendCommandToGame,
-        globals
-      ))
+      const scriptLoaderPath = path.join(__dirname, "loadscript.js")
+      delete require.cache[scriptLoaderPath];
+      const scriptLoader = require('./loadScript') // this needs to be reworked
+      const loadScript = scriptLoader
+      const scriptFunctions = await loadScript('script', sendCommandToGame);
+      sendTextToScript = scriptFunctions.sendTextToScript;
+      sendXMLeventToScript = scriptFunctions.sendXMLeventToScript;
+      return
     }
     if (command.startsWith('#log ')) {
       const logText = command.substring(4) // strips out '#log '
@@ -79,8 +85,10 @@ function game(messageFrontEnd) {
       // Send game data back to Main.js to pass on to client:
       const nonXMLtext = filterXML(strCopy)
       // Only send to front end if there is text to display:
-      if (nonXMLtext)
+      if (nonXMLtext) {
         messageFrontEnd({ type: 'gametext', detail: nonXMLtext })
+        sendTextToScript(nonXMLtext);
+      }
     } catch (err) {
       console.error('Uncaught error parsing xml:', err)
     }
@@ -147,6 +155,7 @@ function game(messageFrontEnd) {
 
   function globalUpdated(global, detail = '') {
     // Forwards along the event and detail (hand or exp only for now) along with all global values:
+    sendXMLeventToScript(global, detail, globals)
     messageFrontEnd({ type: global, detail, globals })
   }
 

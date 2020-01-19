@@ -101,11 +101,8 @@ app.on('activate', function () {
 
 function hardWire() {
   {
-    // path.join(__dirname, 'preload.js'),
     const gamePath = path.join(__dirname, "game.js")
-    console.log('require.cache before deletion:', require.cache)
     delete require.cache[gamePath];
-    console.log('require.cache after deletion:', require.cache)
     game = require("./game.js");
     const gameReturns = game(messageFrontEnd)
     const { connect } = gameReturns;

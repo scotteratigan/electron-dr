@@ -22,7 +22,9 @@ CHARACTER=Zoha
   - shop verb/window
 
 - Support to enter your own account info
-- Support for multiple accounts
+  - Support for multiple accounts
+  - Protect accounts with master password and encrypt everything locally
+  - local account config in new window
 
 - Logging
 

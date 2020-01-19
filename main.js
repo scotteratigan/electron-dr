@@ -67,7 +67,7 @@ function createWindow() {
   mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -81,7 +81,7 @@ function createWindow() {
 app.on('ready', createWindow)
 
 // Quit when all windows are closed.
-app.on('window-all-closed', function() {
+app.on('window-all-closed', function () {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   // if (!isMac) app.quit()
@@ -89,7 +89,7 @@ app.on('window-all-closed', function() {
   app.quit()
 })
 
-app.on('activate', function() {
+app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow()
@@ -100,16 +100,25 @@ app.on('activate', function() {
 
 function hardWire() {
   {
-    const game = new Worker('./game.js', {})
-    game.on('message', message => {
-      // Text received from game.
-      mainWindow.webContents.send('message', message)
-    })
+    // const game = new Worker('./game.js', {})
+    const game = require("./game");
+    const { connect, sendCommand } = game(messageFrontEnd)
+    connect()
+    // game.on('message', message => {
+    //   // Text received from game.
+    //   mainWindow.webContents.send('message', message)
+    // })
     ipcMain.on('asynchronous-message', (event, command) => {
       // Command received from Player
-      game.postMessage(command)
+      sendCommand(command);
+      // game.postMessage(command)
     })
   }
+}
+
+function messageFrontEnd(message) {
+  console.log('message received from game to pass on to main window: ', message);
+  mainWindow.webContents.send('message', message)
 }
 
 // hacky, do not like...

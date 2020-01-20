@@ -28,17 +28,18 @@ function game(messageFrontEnd) {
       // Figure out sharing of globals array (read-only in scripts)
       console.log('prepare to launch script!')
       const scriptLoaderPath = path.join(__dirname, "loadscript.js")
-      delete require.cache[scriptLoaderPath];
+      delete require.cache[scriptLoaderPath]
       scriptLoader = null;
       sendTextToScript = () => { }
       sendXMLeventToScript = () => { }
       sendControlCommandToScript = () => { }
       scriptLoader = require('./loadScript') // this needs to be reworked
       const loadScript = scriptLoader
-      const scriptFunctions = await loadScript('script', sendCommand);
+      const scriptFunctions = await loadScript('script', sendCommand)
       sendTextToScript = scriptFunctions.sendTextToScript;
-      sendXMLeventToScript = scriptFunctions.sendXMLeventToScript;
-      sendControlCommandToScript = scriptFunctions.sendControlCommandToScript;
+      sendXMLeventToScript = scriptFunctions.sendXMLeventToScript
+      sendControlCommandToScript = scriptFunctions.sendControlCommandToScript
+      sendXMLeventToScript("all", "", globals) // so that script initializes with variables - should wait for this in script
       return
     }
     if (command.startsWith("#abort")) {

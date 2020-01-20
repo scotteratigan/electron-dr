@@ -1,10 +1,10 @@
 // for inspiration, when I have time: https://github.com/WarlockFE/warlock2/wiki/Javascript-Scripting
 
 const { parentPort: connection } = require('worker_threads')
-let globals;
+let globals = {};
 const send = command => connection.postMessage(command)
 const echo = text => send("#echo " + text);
-// const forever = () => new Promise(r => setInterval(() => { }, 1000));
+// const forever = () => new Promise(r => setInterval(() => {}, 1000));
 const sleep = seconds => new Promise(r => setTimeout(() => r(), seconds * 1000))
 const globalHasVal = (xmlVar, value) => new Promise((res, rej) => {
   let interval = setInterval(() => {
@@ -12,8 +12,7 @@ const globalHasVal = (xmlVar, value) => new Promise((res, rej) => {
       clearInterval(interval);
       return res()
     }
-    console.log(globals.roundTime)
-  }, 1000)
+  }, 25)
 })
 const rt = () => new Promise(async (res, rej) => {
   await sleep(.5)
@@ -25,19 +24,40 @@ const rt = () => new Promise(async (res, rej) => {
     console.log('rt:', globals["roundTime"])
   }, 25)
 })
-// const move = moveCommand => new Promise(async res => {
-//   console.log('globals:', globals) // globals is undefined here for some reason
-//   return res();
-//   const startRoomDesc = globals["room"]["description"]
-//   send(moveCommand)
-//   let interval = setInterval(() => {
-//     const newRoomDesc = globals["room"]["description"]
-//     if (startRoomDesc !== newRoomDesc) {
-//       clearInterval(interval)
-//       return res()
-//     }
-//   }, 25)
-// })
+const move = moveCommand => new Promise(async res => {
+  const startRoomDesc = globals["room"]["description"]
+  send(moveCommand)
+  let interval = setInterval(() => {
+    const newRoomDesc = globals["room"]["description"]
+    if (startRoomDesc !== newRoomDesc) {
+      clearInterval(interval)
+      return res()
+    }
+  }, 5)
+})
+
+const globalsLoaded = () => new Promise(res => {
+  let interval = setInterval(() => {
+    if (globals["roundTime"] !== undefined) {
+      clearInterval(interval)
+      return res()
+    }
+  }, 1)
+})
+
+async function script() {
+  await globalsLoaded()
+  await southToXing()
+  await northFromXing()
+
+  // send("forage")
+  // await rt()
+  // send("forage")
+  // await rt()
+  echo("*** SCRIPT EXITING ***")
+  // await globalHasVal("roundTime", 0)
+  process.exit(0)
+}
 
 connection.on('message', message => {
   const { event } = message
@@ -58,8 +78,6 @@ connection.on('message', message => {
   console.log('unhandled event to script:', event)
 })
 
-let moved = false;
-
 function parseText(text) {
   console.log('parsing text:', text.substring(0, 15) + "...")
   // if (!text) return;
@@ -70,26 +88,17 @@ function parseText(text) {
 
 function parseXML(xmlVar, detail, gameGlobals) {
   console.log('xmlVar:', xmlVar);
-  globals = gameGlobals; // assign local obj here to values from game
+  // don't want to reassign the variable:
+  Object.keys(gameGlobals).forEach(key => {
+    globals[key] = gameGlobals[key]
+  })
+  // in theory, if I synced globals at start I'd only need to update the changed variable with the detail
+  // globals = gameGlobals; // assign local obj here to values from game
   // console.log('globals:', globals);
 }
 
 
-async function script() {
-  await move("n")
-  // await move("n")
-  // await move("ne")
-  // await move("nw")
-  send("forage")
-  await sleep(1)
-  // await globalHasVal("roundTime", 0)
-  await rt()
-  send("forage")
-  await rt()
-  echo("*** SCRIPT EXITING ***")
-  // await sleep(5);
-  process.exit(0)
-}
+
 script();
 
 // script received message: {
@@ -110,3 +119,112 @@ script();
 //       description: '',
 //       items: [],
 
+function southToXing() {
+  return new Promise(async res => {
+    await move("southwest")
+    await move("southwest")
+    await move("west")
+    await move("west")
+    await move("south")
+    await move("southwest")
+    await move("south")
+    await move("south")
+    await move("west")
+    await move("west")
+    await move("south")
+    await move("southeast")
+    await move("southeast")
+    await move("go town gate")
+    await move("southwest")
+    await move("south")
+    await move("go town gate")
+    await move("southwest")
+    await move("south")
+    await move("south")
+    await move("south")
+    await move("south")
+    await move("south")
+    await move("south")
+    await move("west")
+    await move("west")
+    await move("west")
+    await move("southwest")
+    await move("southwest")
+    await move("southwest")
+    await move("south")
+    await move("south")
+    await move("south")
+    await move("southeast")
+    await move("southeast")
+    await move("south")
+    await move("south")
+    await move("southeast")
+    await move("southwest")
+    await move("south")
+    await move("south")
+    await move("southeast")
+    await move("southeast")
+    await move("south")
+    await move("southwest")
+    await move("southwest")
+    await move("south")
+    await move("south")
+    await move("south")
+    return res()
+  })
+}
+
+function northFromXing() {
+  return new Promise(async res => {
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("northeast")
+    await move("northeast")
+    await move("north")
+    await move("northwest")
+    await move("northwest")
+    await move("north")
+    await move("north")
+    await move("northeast")
+    await move("northwest")
+    await move("north")
+    await move("north")
+    await move("northwest")
+    await move("northwest")
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("northeast")
+    await move("northeast")
+    await move("northeast")
+    await move("east")
+    await move("east")
+    await move("east")
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("north")
+    await move("northeast")
+    await move("go town gate")
+    await move("north")
+    await move("northeast")
+    await move("go town gate")
+    await move("northwest")
+    await move("northwest")
+    await move("north")
+    await move("east")
+    await move("east")
+    await move("north")
+    await move("north")
+    await move("northeast")
+    await move("north")
+    await move("east")
+    await move("east")
+    await move("northeast")
+    await move("northeast")
+    return res()
+  })
+}

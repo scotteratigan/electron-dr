@@ -528,3 +528,29 @@ function stringListToArray(str) {
 }
 
 module.exports = setupXMLparser
+
+// XML todos:
+// COMMAND: shop
+// key: pushStream id="ShopWindow"
+// key: d cmd='shop #34302'
+// key: d cmd='shop #34292'
+// key: d cmd='shop #34282'
+// key: d cmd='shop #34272'
+// key: d cmd='shop #34263'
+// key: d
+
+
+// COMMAND: shop #34303 on #34302
+// key: pushStream id="ShopWindow"
+// key: output class="mono"
+// key: b
+// key: d cmd='buy #34303 from #34302'
+// key: d cmd='shop #34302'
+// key: d cmd='shop'
+// key: popStream id="ShopWindow"
+
+
+// COMMAND: read book
+// key: nav
+// key: streamWindow id='main' title='Story' subtitle=" - [Book System Room]" location='center' target='drop'
+// key: streamWindow id='room' title='Room' subtitle=" - [Book System Room]" location='center' target='drop' ifClosed='' resident='true'

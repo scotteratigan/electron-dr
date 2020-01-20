@@ -1,6 +1,9 @@
 // No Node.js APIs are available in this process because `nodeIntegration` is turned off.
 // Use `preload.js` to selectively enable features needed in the rendering process.
 
+// todo: fix links so they aren't tabbable and open in new window:
+// <a href='http://www.topmudsites.com/vote-DragonRealms.html'>Visit Top Mud Sites!</a>
+
 const { ipcRenderer } = require('electron')
 
 let cmdHistory = {
@@ -381,17 +384,17 @@ function updateExperience(allExp) {
 }
 
 function updateStowItems(stow) {
-  const { uniqueItems, container } = stow
+  const { uniqueItems, containerName } = stow
   const stowHTML = Object.keys(uniqueItems)
     .map(item => {
       const count = uniqueItems[item]
       return count === 1
-        ? `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${container}')">${item}</div>`
-        : `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${container}')">${item} (${count})</div>`
+        ? `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${containerName}')">${item}</div>`
+        : `<div class="stow-item" onclick="passCmdToServer('get ${item} from my ${containerName}')">${item} (${count})</div>`
     })
     .join('')
   stowItemsDisplay.innerHTML = stowHTML
-  stowItemContainerDisplay.textContent = `In the ${container}:`
+  stowItemContainerDisplay.textContent = `In the ${containerName}:`
 }
 
 function updatePreparedSpell(spell) {

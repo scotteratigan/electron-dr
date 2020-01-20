@@ -34,8 +34,9 @@ function setupXMLfilter() {
     str = str.replace(/<roundTime value='\d+'\/>/, '')
     str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, '')
     str = str.replace(/<castTime value='\d+'\/>/, '')
+    str = str.replace(/<playerID id='\d+'\/>/, '')
+    str = str.replace(/<settingsInfo[^\/]+instance='\w+'\/>/, '')
 
-    // str = str.replace(/<compDef .+<\/compDef>/, ""); // login, sends exp skills
     // str = str.replace(/<mode id="GAME"\/>/, ""); // login, useless...
     // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
     // str = str.replace(/<exposeContainer id='stow'\/>/); //login...
@@ -49,5 +50,6 @@ function setupXMLfilter() {
 module.exports = setupXMLfilter
 
 // Additional filters needed:
-// <playerID id='598697'/>
-// <settingsInfo  space not found crc='0' instance='DR'/>
+{/* <playerID id='598697'/> - dunno why this isn't getting filtered
+<settingsInfo  client="1.0.1.26" major="2" crc='3026568258' instance='DR'/> - or this?
+<mode id="GAME"/> */}

@@ -87,11 +87,16 @@ function parseText(text) {
 }
 
 function parseXML(xmlVar, detail, gameGlobals) {
-  console.log('xmlVar:', xmlVar);
+  if (xmlVar === 'all') {
+    Object.keys(gameGlobals).forEach(key => {
+      globals[key] = gameGlobals[key]
+    })
+    return
+  }
+  globals[xmlVar] = gameGlobals[xmlVar]
+  // console.log('xmlVar:', xmlVar);
   // don't want to reassign the variable:
-  Object.keys(gameGlobals).forEach(key => {
-    globals[key] = gameGlobals[key]
-  })
+
   // in theory, if I synced globals at start I'd only need to update the changed variable with the detail
   // globals = gameGlobals; // assign local obj here to values from game
   // console.log('globals:', globals);

@@ -16,7 +16,12 @@ CHARACTER=Zoha
 - Configure linting settings for project
 
 - Pipe sge server messages to main window
+
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
+
+- xml parsing seems to have broken somewhat - exp shows wrong skills, container is undefined
+
+- Convert FE to React
 
 - XML
   - shop verb/window
@@ -27,7 +32,9 @@ CHARACTER=Zoha
   - local account config in new window
 
 - Logging
-
+  - did logging stop working? fix?
+  - ensure logging is in proper order
+  - is logging batched? probably should be
   - use non-xml logger in tandem
   - be sure to log script errors for debugging
 

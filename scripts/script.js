@@ -7,14 +7,37 @@ const echo = text => send("#echo " + text);
 // const forever = () => new Promise(r => setInterval(() => { }, 1000));
 const sleep = seconds => new Promise(r => setTimeout(() => r(), seconds * 1000))
 const globalHasVal = (xmlVar, value) => new Promise((res, rej) => {
-  let agvInterval = setInterval(() => {
-    if (xmlVar <= 1) {
-      clearInterval(agvInterval);
-      return res();
+  let interval = setInterval(() => {
+    if (globals[xmlVar] === value) {
+      clearInterval(interval);
+      return res()
     }
     console.log(globals.roundTime)
   }, 1000)
 })
+const rt = () => new Promise(async (res, rej) => {
+  await sleep(.5)
+  let interval = setInterval(() => {
+    if (globals["roundTime"] <= 0) {
+      clearInterval(interval)
+      return res()
+    }
+    console.log('rt:', globals["roundTime"])
+  }, 25)
+})
+// const move = moveCommand => new Promise(async res => {
+//   console.log('globals:', globals) // globals is undefined here for some reason
+//   return res();
+//   const startRoomDesc = globals["room"]["description"]
+//   send(moveCommand)
+//   let interval = setInterval(() => {
+//     const newRoomDesc = globals["room"]["description"]
+//     if (startRoomDesc !== newRoomDesc) {
+//       clearInterval(interval)
+//       return res()
+//     }
+//   }, 25)
+// })
 
 connection.on('message', message => {
   const { event } = message
@@ -53,13 +76,16 @@ function parseXML(xmlVar, detail, gameGlobals) {
 
 
 async function script() {
-  send("power")
-  await sleep(1)
-  console.log("*** typeof globals.roundTime:", typeof globals.roundTime)
-  echo(`** Remaining RT: ${globals.roundTime}`)
-  await globalHasVal(globals.roundTime, 0)
+  await move("n")
+  // await move("n")
+  // await move("ne")
+  // await move("nw")
   send("forage")
-  await sleep(5)
+  await sleep(1)
+  // await globalHasVal("roundTime", 0)
+  await rt()
+  send("forage")
+  await rt()
   echo("*** SCRIPT EXITING ***")
   // await sleep(5);
   process.exit(0)

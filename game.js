@@ -38,6 +38,7 @@ function game(messageFrontEnd) {
       const scriptFunctions = await loadScript('script', sendCommand);
       sendTextToScript = scriptFunctions.sendTextToScript;
       sendXMLeventToScript = scriptFunctions.sendXMLeventToScript;
+      sendControlCommandToScript = scriptFunctions.sendControlCommandToScript;
       return
     }
     if (command.startsWith("#abort")) {

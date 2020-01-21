@@ -19,8 +19,6 @@ CHARACTER=Zoha
 
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
-- xml parsing seems to have broken somewhat - exp shows wrong skills, container is undefined
-
 - Convert FE to React
 
 - XML
@@ -32,10 +30,9 @@ CHARACTER=Zoha
   - local account config in new window
 
 - Logging
-  - did logging stop working? fix?
-  - ensure logging is in proper order
+  - ensure logging is in proper order!
   - is logging batched? probably should be
-  - use non-xml logger in tandem
+  - use non-xml logger in tandem - set up but needs to be passed to parent so that filterxml can access it?
   - be sure to log script errors for debugging
 
 - Script system w/ pauses for now

@@ -150,9 +150,9 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       }
     } while (m)
 
-    console.log("--------------------------------")
-    console.log(tagsObj)
-    console.log("--------------------------------")
+    // console.log("--------------------------------")
+    // console.log(tagsObj)
+    // console.log("--------------------------------")
     let expParsed = false
 
     Object.keys(tagsObj).forEach(key => {

@@ -4,7 +4,7 @@ const path = require('path')
 const LOG_DIR = 'logs'
 // todo: create log directory if it doesn't exist
 
-async function makeLogger(charName = 'Character', instance = 'UI') {
+async function makeLogger(charName = 'Character', instance = 'UI', logType) {
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(`./${LOG_DIR}`)) {
       // this is sync but only executed once on bootup - replace with non-sync code later?
@@ -20,7 +20,8 @@ async function makeLogger(charName = 'Character', instance = 'UI') {
         .getDate()
         .toString()
         .padStart(2, '0')
-    const fileName = charName + '-' + instance + '-' + dateStr + '-log.txt'
+    // const fileName = charName + '-' + instance + '-' + dateStr + '-' + logType + '-log.txt'
+    const fileName = [charName, instance, dateStr, logType, 'log.txt'].join('-')
     const fileFullPath = path.resolve(__dirname, LOG_DIR, fileName)
     let logging = false
     fs.open(fileFullPath, 'a', (err, fd) => {

@@ -11,8 +11,10 @@ function game(messageFrontEnd) {
   const globals = {}
   let parseXML = () => { }
   let filterXML = () => { }
-  let log = defaultLogFn
-  let unloadLogger = () => { }
+  let rawLog = () => { }
+  let gameLog = () => { }
+  let unloadRawLogger = () => { }
+  let unloadGameLogger = () => { }
   loadXMLparser() // loads or re-loads the parseXML function
   setupNewLogger()
   let sendTextToScript = () => { }
@@ -55,7 +57,8 @@ function game(messageFrontEnd) {
       const logText = command.substring(4) // strips out '#log '
       try {
         console.log('attempting to log...')
-        log(logText)
+        rawLog(logText)
+        gameLog(logText)
       } catch (err) {
         console.error(`Unable to log text "${logText}"`)
       }
@@ -110,7 +113,7 @@ function game(messageFrontEnd) {
       console.error('Uncaught error parsing xml:', err)
     }
     try {
-      log(gameStr)
+      rawLog(gameStr)
     } catch (err) {
       console.error('Unable to log to file:', err)
     }
@@ -122,10 +125,12 @@ function game(messageFrontEnd) {
       type: 'gametext',
       detail: 'Connection closed.'
     })
-    log('Connection closed.')
+    rawLog('Connection closed.')
+    gameLog('Connection closed.')
     globals.connected = false;
     globalUpdated('connected')
-    unloadLogger()
+    unloadRawLogger()
+    unloadGameLogger()
   })
 
   client.on('error', function (error) {
@@ -189,19 +194,18 @@ function game(messageFrontEnd) {
     filterXML = setupXMLfilter()
   }
 
-  function defaultLogFn() {
-    console.log('Cannot log, log not set up yet.')
-  }
-
   async function setupNewLogger() {
     // charName = "Anonymous", instance = "UI"
     const charName = 'Anonymous'
     const instance = 'UI'
     // todo: detect change in XML and switch to new logger when char name changes? or have some other global like profile name?
     console.log('makeLogger:', makeLogger)
-    const logObjs = await makeLogger(charName, instance)
-    log = logObjs.log
-    unloadLogger = logObjs.unloadLogger
+    const rawLogger = await makeLogger(charName, instance, "raw")
+    rawLog = rawLogger.log
+    unloadRawLogger = rawLogger.unloadLogger
+    const gameLogger = await makeLogger(charName, instance, "game")
+    gameLog = gameLogger.log
+    unloadGameLogger = gameLogger.unloadLogger
   }
 
   return { connect, sendCommand }

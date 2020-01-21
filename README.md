@@ -19,37 +19,35 @@ CHARACTER=Zoha
 
 - Is there a way to streamline login? what does SF client do differently? What message does it wait for?
 
-- Convert FE to React
 
-- XML
-  - shop verb/window
 
 - Support to enter your own account info
   - Support for multiple accounts
   - Protect accounts with master password and encrypt everything locally
   - local account config in new window
 
-- Logging
-  - ensure logging is in proper order!
-  - is logging batched? probably should be
-  - use non-xml logger in tandem - set up but needs to be passed to parent so that filterxml can access it?
-  - be sure to log script errors for debugging
-
 - Script system w/ pauses for now
-
-  - loaded via worker thread
-  - access to xml events, globals, and game text
+  - make example hunting script to flesh out system
 
 - Links: make links open in new window (login links, for instance)
 
+- Convert FE to React
+
+- XML
+  - shop verb/window
+
 - Non-xml parsing
 
-  - assess (and other windows)
+  - assess (and other windows - need window system)
   - attack parsing
   - info / stat parsing
   - exp command (useful to set vars after #xml reset)
 
 - Better visual for RT display and bodyPosition
+
+- Logging
+  - logging currently writing at 1 second interval, but not a true buffer (which would be more performant)
+  - be sure to log script errors for debugging
 
 - Skinning system (dynamically loading css variables)
 

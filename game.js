@@ -106,8 +106,9 @@ function game(messageFrontEnd) {
       const nonXMLtext = filterXML(strCopy)
       // Only send to front end if there is text to display:
       if (nonXMLtext) {
-        messageFrontEnd({ type: 'gametext', detail: nonXMLtext })
+        gameLog(nonXMLtext);
         sendTextToScript(nonXMLtext);
+        messageFrontEnd({ type: 'gametext', detail: nonXMLtext })
       }
     } catch (err) {
       console.error('Uncaught error parsing xml:', err)

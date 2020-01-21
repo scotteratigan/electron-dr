@@ -201,7 +201,7 @@ function processMsgFromServer(event, msg) {
     console.log(detail)
     return appendGameText(detail)
   }
-  if (type === 'gameTime') return
+  if (type === 'gameTime') return //todo: store gameTime?
   if (type === 'roundTime') return updateRoundTime(globals.roundTime)
   if (type === 'prepTime') return updateSpellTime(globals.prepTime)
   if (type === 'room') return updateRoom(globals.room)
@@ -221,7 +221,7 @@ function processMsgFromServer(event, msg) {
   if (type === 'worn') return updateWornInventory(globals.worn)
   if (type === 'experience') return updateExperience(globals.exp)
   if (type === 'stow') return updateStowItems(globals.stow)
-  if (type === 'playerId') return passCmdToServer('look')
+  // if (type === 'playerId') return passCmdToServer('look')
   console.log(' *** Unknown event fired:', type)
 }
 

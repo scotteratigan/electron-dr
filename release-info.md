@@ -1,0 +1,1 @@
+2020/01/21: Fixed "Please wait for connection to server." message spamming 6-8 times on login. Actual cause was bad logic in buffering of incoming data.

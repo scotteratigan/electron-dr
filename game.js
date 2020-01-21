@@ -84,26 +84,28 @@ function game(messageFrontEnd) {
     sendCommandToGame(command)
   }
 
-  let buffer = ''
+  let buffer = []
 
   // Game sends data:
   client.on('data', data => {
-    // detects incomplete data fragments - if line does not end with \r\n,
-    // the data is split and we need to wait for the next packet before displaying/parsing all the data
-    // This happens most frequently with logon text which is sent in huge chunks
-    let gameStr = buffer + data.toString() // todo: use actual buffer here?
-    if (!gameStr.match(/\r\n$/)) {
-      buffer += gameStr
+    // detects incomplete data fragments, mostly on login
+    // if line does not end with \r\n, the packet was fragmented
+    // assemble all text before displaying
+
+    const dataStr = data.toString()
+    dataStr.split('').forEach(letter => buffer.push(letter))
+    if (!dataStr.match(/\r\n$/)) {
       return
     }
-    buffer = ''
-
+    const gameStr = buffer.join('')
+    buffer = []
+    console.log('------------------------------')
+    console.log(gameStr)
     // Parse XML for updates:
     try {
       parseXML(gameStr)
-      const strCopy = gameStr.slice(0)
       // Send game data back to Main.js to pass on to client:
-      const nonXMLtext = filterXML(strCopy)
+      const nonXMLtext = filterXML(gameStr)
       // Only send to front end if there is text to display:
       if (nonXMLtext) {
         gameLog(nonXMLtext);
@@ -151,15 +153,19 @@ function game(messageFrontEnd) {
       console.log('Received connect key:', connectKey)
       client.connect(port, ip, function () {
         console.log('Connected, sending key.'.green)
+        const lineEnding = "\r\n"
         setTimeout(() => {
-          client.write(connectKey + '\n')
+          client.write(`<c>${connectKey}${lineEnding}<c>/FE:STORMFRONT /VERSION:1.0.1.26 /P:WIN_UNKNOWN /XML${lineEnding}`)
         }, 0)
         setTimeout(() => {
-          client.write('/FE:WIZARD /VERSION:1.0.1.22 /P:WIN_XP /XML\n')
-        }, 100)
+          client.write(`<c>${lineEnding}`)
+        }, 50)
         setTimeout(() => {
-          client.write('\n')
-        }, 300)
+          client.write(`<c>_STATE CHATMODE OFF${lineEnding}`)
+        }, 1000)
+        setTimeout(() => {
+          client.write(`<c>${lineEnding}`)
+        }, 1100)
         // todo: can we await specific text responses before sending this stuff instead of a timeout
       })
       globals.connected = true
@@ -171,7 +177,7 @@ function game(messageFrontEnd) {
 
   function sendCommandToGame(commands) {
     commands.split(';').forEach(command => {
-      client.write(command + '\n')
+      client.write('<c>' + command + '\n')
       console.log('COMMAND: ' + command)
     })
   }

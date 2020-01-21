@@ -17,10 +17,6 @@ CHARACTER=Zoha
 
 - Pipe sge server messages to main window
 
-- Is there a way to streamline login? what does SF client do differently? What message does it wait for?
-
-
-
 - Support to enter your own account info
   - Support for multiple accounts
   - Protect accounts with master password and encrypt everything locally
@@ -35,6 +31,9 @@ CHARACTER=Zoha
 
 - XML
   - shop verb/window
+  - filter this out, and send proper event to client:
+  <pushStream id="logons"/> * Rhylaris returns home from a hard day of adventuring.
+  <popStream/>
 
 - Non-xml parsing
 
@@ -48,6 +47,7 @@ CHARACTER=Zoha
 - Logging
   - logging currently writing at 1 second interval, but not a true buffer (which would be more performant)
   - be sure to log script errors for debugging
+  - possible to write to compressed format on the fly?
 
 - Skinning system (dynamically loading css variables)
 

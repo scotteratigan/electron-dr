@@ -1,10 +1,8 @@
 import React from 'react';
 import CommandInput from './CommandInput'
 import './App.css'
-import { List } from "react-virtualized";
-
-// https://stackoverflow.com/questions/39600808/how-to-measure-a-rows-height-in-react-virtualized-list
-// is this an easier way?
+// import { List } from "react-virtualized";
+import GameWindow from "./GameWindow"
 
 class App extends React.Component {
 
@@ -23,14 +21,6 @@ class App extends React.Component {
     })
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { gameText } = this.state;
-    const { gameText: prevGameText } = prevState;
-    if (gameText.length !== prevGameText.length) {
-      this.refs.gameTextList.scrollToRow(gameText.length);
-    }
-  }
-
   addGameText = gameString => {
     gameString = gameString.replace(/^\s*\r\n/g, "")
     if (gameString.match(/^\s*\r?\n$/)) return
@@ -47,40 +37,12 @@ class App extends React.Component {
     window.ipcRenderer.send('asynchronous-message', str)
   }
 
-  rowRenderer = ({
-    key, // Unique key within array of rows
-    index, // Index of row within collection
-    isScrolling, // The List is currently being scrolled
-    isVisible, // This row is visible within the List (eg it is not an overscanned row)
-    style // Style object to be applied to row (to position it)
-  }) => {
-    return (
-      <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: this.state.gameText[index] }}>
-        {/* {this.state.gameText[index]} */}
-      </div>
-    );
-  }
-
-  testHeight = ({ index }) => {
-    this.refs.measure.innerHTML = this.state.gameText[index]
-    return this.refs.measure.clientHeight
-  }
-
   render() {
     return (
       <div className="App">
-        <div style={{ height: "90vh", overflowY: "auto" }}>
-          <List
-            ref='gameTextList'
-            width={1000}
-            height={1000}
-            rowCount={this.state.gameText.length}
-            rowHeight={this.testHeight}
-            rowRenderer={this.rowRenderer}
-            tabIndex="-1"
-          />
+        <div style={{ height: "90vh" }}>
+          <GameWindow gameText={this.state.gameText} />
         </div>
-        <div ref="measure" id="measurer-div" className="game-text"></div>
         <CommandInput sendCommand={this.sendCommand} />
       </div >
     );

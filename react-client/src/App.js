@@ -1,5 +1,7 @@
 import React from 'react';
 import CommandInput from './CommandInput'
+import Exp from "./Exp"
+import Stowed from "./Stowed"
 import './App.css'
 // import { List } from "react-virtualized";
 import GameWindow from "./GameWindow"
@@ -9,14 +11,26 @@ class App extends React.Component {
   state = {
     gameText: [""],
     connected: false,
-    splitScreen: false
+    splitScreen: false,
+    exp: {},
+    stowed: { items: [], uniqueItems: {}, containerName: "" }
   }
 
   componentDidMount() {
     window.ipcRenderer.on('message', (event, message) => {
       const { detail, type } = message
-      if (type === "gametext") {
-        return this.addGameText(detail)
+      switch (type) {
+        case "gametext":
+          return this.addGameText(detail)
+      }
+      // Following cases need globals var:
+      const { globals } = message;
+      switch (type) {
+        case "experience":
+          return this.setState({ exp: globals.exp })
+        case "stow":
+          setTimeout(() => console.log(this.state), 500)
+          return this.setState({ stowed: globals.stow })
       }
       console.log(message)
     })
@@ -40,25 +54,38 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
-        <div style={{ height: "90vh" }}>
-          {this.state.splitScreen ? (
-            <>
-              <div style={{ height: "50%" }}>
-                <GameWindow gameText={this.state.gameText} autoScroll={false} />
-              </div>
-              <div style={{ height: "50%" }}>
-                <GameWindow gameText={this.state.gameText} autoScroll={true} />
-              </div>
-            </>
-          ) :
-            <GameWindow gameText={this.state.gameText} autoScroll={true} />
-          }
+      <div className="App" style={{ display: "flex" }}>
+        <div className="left-column">
+          <Exp exp={this.state.exp} />
+          <Stowed stowed={this.state.stowed} />
         </div>
-        <div>
-          <CommandInput sendCommand={this.sendCommand} />
-          <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
+        <div className="main-column">
+          <div style={{ height: "90vh" }}>
+            {this.state.splitScreen ? (
+              <>
+                <div style={{ height: "50%" }}>
+                  <GameWindow gameText={this.state.gameText} autoScroll={false} />
+                </div>
+                <div style={{ height: "50%" }}>
+                  <GameWindow gameText={this.state.gameText} autoScroll={true} />
+                </div>
+              </>
+            ) :
+              <GameWindow gameText={this.state.gameText} autoScroll={true} />
+            }
+          </div>
+          <div>
+            <CommandInput sendCommand={this.sendCommand} />
+            <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
+          </div>
+
         </div>
+        <div className="right-column">
+          Right<br />
+          Column
+        </div>
+
+
       </div >
     );
   }

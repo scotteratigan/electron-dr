@@ -54,8 +54,8 @@ export default class GameWindow extends Component {
             {({ width, height }) => (
               <List
                 ref={gameTextRef}
-                width={width - 1}
-                height={height - 1}
+                width={width - 2}
+                height={height - 2}
                 rowCount={gameText.length}
                 rowHeight={testHeight}
                 rowRenderer={rowRenderer}

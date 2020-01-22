@@ -13,6 +13,16 @@ html {
   box-sizing: border-box;
 }
 
+h2 {
+  font-family: 'Gelasio', serif;
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-family: 'Gelasio', serif;
+  font-size: 1.3rem;
+}
+
 .game-text {
   white-space: pre-wrap;
   margin-left: 3px;
@@ -28,10 +38,27 @@ strong {
   font-weight: 600;
 }
 
+.preserve-space {
+  white-space: pre-wrap;
+}
+
 #measurer-div {
   /* visibility: hidden; */
   white-space: pre-wrap;
   position: absolute;
   top: -9999px;
   width: 983px;
+}
+
+.left-column,
+.right-column {
+  flex-grow: 0;
+}
+
+.left-column {
+  width: 200px;
+}
+
+.main-column {
+  flex-grow: 1
 }

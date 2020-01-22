@@ -3,6 +3,7 @@ const { app, BrowserWindow, Menu } = require('electron')
 const { ipcMain } = require('electron') // to talk to the browser window
 const path = require('path')
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow

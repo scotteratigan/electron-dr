@@ -41,8 +41,9 @@ function setupXMLfilter() {
     // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
     // str = str.replace(/<exposeContainer id='stow'\/>/); //login...
     // str = str.replace(/<container id='.+' title=".+" target='.+' location='.+' save='.+' resident='.+'\/>/); // login - note this sends ID of stow container? maybe?
-    str = str.replace(/^\s*\r?\n/g, '') // empty lines
+    str = str.replace(/^\s*\n$/gm, '') // empty lines
     str = str.replace(/^\s*&lt;/, '<') // beginning of attack
+    console.log('returning str:', str)
     return str
   }
 }

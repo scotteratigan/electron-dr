@@ -14,11 +14,8 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-
-
     window.ipcRenderer.on('message', (event, message) => {
       const { detail, type } = message
-
       if (type === "gametext") {
         return this.addGameText(detail)
       }
@@ -37,6 +34,10 @@ class App extends React.Component {
   addGameText = gameString => {
     gameString = gameString.replace(/^\s*\r\n/g, "")
     if (gameString.match(/^\s*\r?\n$/)) return
+    gameString = gameString.replace(/<pushBold\/>/g, "<strong>")
+    gameString = gameString.replace(/<popBold\/>/g, "</strong>")
+    gameString = gameString.replace(/<output class="mono"\/>/g, "<div class='monospace'>")
+    gameString = gameString.replace(/<output class=""\/>/g, "</div>")
     console.log('gameString is:', gameString)
     return this.setState({ gameText: [...this.state.gameText, gameString] })
   }
@@ -54,14 +55,14 @@ class App extends React.Component {
     style // Style object to be applied to row (to position it)
   }) => {
     return (
-      <div key={key} style={style}>
-        {this.state.gameText[index]}
+      <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: this.state.gameText[index] }}>
+        {/* {this.state.gameText[index]} */}
       </div>
     );
   }
 
   testHeight = ({ index }) => {
-    this.refs.measure.textContent = this.state.gameText[index]
+    this.refs.measure.innerHTML = this.state.gameText[index]
     return this.refs.measure.clientHeight
   }
 
@@ -69,7 +70,6 @@ class App extends React.Component {
     return (
       <div className="App">
         <div style={{ height: "90vh", overflowY: "auto" }}>
-          {/* {this.state.gameText.map((str, i) => <div className="game-text" key={i}>{str}</div>)} */}
           <List
             ref='gameTextList'
             width={1000}
@@ -77,6 +77,7 @@ class App extends React.Component {
             rowCount={this.state.gameText.length}
             rowHeight={this.testHeight}
             rowRenderer={this.rowRenderer}
+            tabIndex="-1"
           />
         </div>
         <div ref="measure" id="measurer-div" className="game-text"></div>
@@ -85,14 +86,5 @@ class App extends React.Component {
     );
   }
 }
-
-// function testHeight(string) {
-//   testElm.textContent = string;
-//   // console.log(testElm);
-//   console.log(testElm.clientHeight);
-//   return testElm.clientHeight;
-//   // return 20; //testElm.clientHeight;
-// }
-
 
 export default App;

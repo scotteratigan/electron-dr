@@ -12,13 +12,20 @@ export default class GameWindow extends Component {
     this.gameTextRef = React.createRef();
   }
 
+  componentDidMount() {
+    // Timeout required for ref to exist
+    setTimeout(() => {
+      this.gameTextRef.current.scrollToRow(this.props.gameText.length);
+    }, 0)
+  }
+
   componentDidUpdate(prevProps, prevState) {
-    // console.log(this.gameTextRef.current.scrollToRow)
-    const { gameText } = prevProps;
-    const { gameText: prevGameText } = this.props;
-    if (gameText.length !== prevGameText.length) {
-      // this.refs.gameTextList.scrollToRow(gameText.length);
-      this.gameTextRef.current.scrollToRow(gameText.length);
+    if (this.props.autoScroll) {
+      const { gameText } = prevProps;
+      const { gameText: prevGameText } = this.props;
+      if (gameText.length !== prevGameText.length) {
+        this.gameTextRef.current.scrollToRow(gameText.length);
+      }
     }
   }
 

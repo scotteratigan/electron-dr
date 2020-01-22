@@ -7,8 +7,9 @@ import GameWindow from "./GameWindow"
 class App extends React.Component {
 
   state = {
-    gameText: [],
-    connected: false
+    gameText: [""],
+    connected: false,
+    splitScreen: false
   }
 
   componentDidMount() {
@@ -41,9 +42,23 @@ class App extends React.Component {
     return (
       <div className="App">
         <div style={{ height: "90vh" }}>
-          <GameWindow gameText={this.state.gameText} />
+          {this.state.splitScreen ? (
+            <>
+              <div style={{ height: "50%" }}>
+                <GameWindow gameText={this.state.gameText} autoScroll={false} />
+              </div>
+              <div style={{ height: "50%" }}>
+                <GameWindow gameText={this.state.gameText} autoScroll={true} />
+              </div>
+            </>
+          ) :
+            <GameWindow gameText={this.state.gameText} autoScroll={true} />
+          }
         </div>
-        <CommandInput sendCommand={this.sendCommand} />
+        <div>
+          <CommandInput sendCommand={this.sendCommand} />
+          <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
+        </div>
       </div >
     );
   }

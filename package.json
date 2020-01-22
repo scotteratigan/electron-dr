@@ -2,15 +2,19 @@
   "name": "electron-quick-start",
   "version": "1.0.0",
   "description": "A minimal Electron application",
-  "main": "main.js",
+  "main": "electron-main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "start-electron": "electron .",
+    "start-react": "cd react-client && npm start",
+    "start-all": "concurrently \"cd react-client && npm start\" \"electron .\" \"echo this isn't working\" "
   },
   "productName": "ElectronDR",
   "repository": "https://github.com/electron/electron-quick-start",
   "author": "GitHub",
   "license": "CC0-1.0",
   "devDependencies": {
+    "concurrently": "^5.0.2",
     "electron": "^7.1.7",
     "prettier": "^1.19.1"
   },

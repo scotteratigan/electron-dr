@@ -28,6 +28,7 @@ CHARACTER=Zoha
 - Links: make links open in new window (login links, for instance)
 
 - Convert FE to React
+  - https://www.freecodecamp.org/news/building-an-electron-application-with-create-react-app-97945861647c/
 
 - XML
   - shop verb/window

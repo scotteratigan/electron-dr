@@ -3,6 +3,7 @@ import CommandInput from './CommandInput'
 import Exp from "./Exp"
 import Stowed from "./Stowed"
 import Worn from "./Worn"
+import Hand from "./Hand"
 import './App.css'
 import GameWindow from "./GameWindow"
 
@@ -18,7 +19,13 @@ class App extends React.Component {
     splitScreen: false,
     exp: {},
     stowed: { items: [], uniqueItems: {}, containerName: "" },
-    worn: []
+    worn: [],
+    rightHand: {
+      id: "", item: "", noun: ""
+    },
+    leftHand: {
+      id: "", item: "", noun: ""
+    }
   }
 
   componentDidMount() {
@@ -35,6 +42,7 @@ class App extends React.Component {
         case "gametext":
           return this.addGameText(detail)
       }
+      setTimeout(() => console.log(this.state), 0)
       // Following cases need globals var:
       const { globals } = message;
       switch (type) {
@@ -43,10 +51,11 @@ class App extends React.Component {
         case "stowed":
           return this.setState({ stowed: globals.stowed })
         case "worn":
-          setTimeout(() => console.log(this.state), 500)
           return this.setState({ worn: globals.worn })
+        case "hand":
+          return this.setState({ rightHand: globals.rightHand, leftHand: globals.leftHand })
       }
-      console.log(message)
+      console.log("Unhandled:", message)
     })
   }
 
@@ -92,6 +101,8 @@ class App extends React.Component {
           <div>
             <CommandInput sendCommand={this.sendCommand} />
             <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
+            <Hand whichHand={"Right"} heldItem={this.state.rightHand} />
+            <Hand whichHand={"Left"} heldItem={this.state.leftHand} />
           </div>
 
         </div>

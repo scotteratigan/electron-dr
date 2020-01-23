@@ -4,6 +4,7 @@ import Exp from "./Exp"
 import Stowed from "./Stowed"
 import Worn from "./Worn"
 import Hand from "./Hand"
+import Spells from "./Spells"
 import './App.css'
 import GameWindow from "./GameWindow"
 
@@ -25,7 +26,8 @@ class App extends React.Component {
     },
     leftHand: {
       id: "", item: "", noun: ""
-    }
+    },
+    activeSpells: {}
   }
 
   componentDidMount() {
@@ -54,6 +56,8 @@ class App extends React.Component {
           return this.setState({ worn: globals.worn })
         case "hand":
           return this.setState({ rightHand: globals.rightHand, leftHand: globals.leftHand })
+        case "activeSpells":
+          return this.setState({ activeSpells: globals.activeSpells })
       }
       console.log("Unhandled:", message)
     })
@@ -82,6 +86,7 @@ class App extends React.Component {
           <Exp exp={this.state.exp} />
           <Stowed stowed={this.state.stowed} />
           <Worn worn={this.state.worn} />
+          <Spells activeSpells={this.state.activeSpells} />
         </div>
         <div className="main-column">
           <div style={{ height: "90vh" }}>

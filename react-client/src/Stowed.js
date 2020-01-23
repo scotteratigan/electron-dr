@@ -4,8 +4,6 @@ import React from 'react'
 
 export default function Stowed({ stowed }) {
   const { containerName, items, uniqueItems } = stowed;
-  console.log(containerName, items, uniqueItems)
-  // return null
   const uniqueItemKeys = Object.keys(uniqueItems)
   return (
     <div>

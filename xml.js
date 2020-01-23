@@ -125,7 +125,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.roundTime = 0
   globals.spellTime = 0
   globals.preparedSpell = ''
-  globals.activeSpells = []
+  globals.activeSpells = {}
   globals.worn = []
   globals.stow = {
     container: '',
@@ -233,13 +233,30 @@ function parseActiveSpells(str, globals, xmlUpdateEvent) {
   )
   // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
   if (!spellMatch) {
-    globals.activeSpells = []
+    globals.activeSpells = {}
   } else {
     // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
     const spellList = spellMatch[1].split('\r\n')
-    globals.activeSpells = spellList // todo: parse out durations and spells
+    const spellsObj = {}
+    spellList.forEach(spellDisplayText => {
+      const spellParseMatch = spellDisplayText.match(/([^\()]+)  \(([^\)]+)\)/)
+      if (!spellParseMatch) return console.error('Unable to parse spell name/duration with text:', spellDisplayText)
+      const spellName = spellParseMatch[1]
+      const spellDuration = spellParseMatch[2]
+      spellsObj[spellName] = spellDurationToNumber(spellDuration)
+    })
+    globals.activeSpells = spellsObj
   }
   xmlUpdateEvent('activeSpells')
+}
+
+function spellDurationToNumber(str) {
+  if (str === "Fading") return 0
+  if (str === "1 roisan") return 1
+  const durationMatch = str.match(/(\d+) roisaen/)
+  if (durationMatch) return parseInt(durationMatch[1])
+  console.error('Unable to determine spell duration of text:', str)
+  return -1
 }
 
 function parseInventory(str, globals, xmlUpdateEvent) {

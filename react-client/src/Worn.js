@@ -1,7 +1,6 @@
 import React from 'react'
 
 export default function Worn({ worn: items }) {
-  console.log('worn:', items)
   return (
     <div>
       <h2>Wearing:</h2>

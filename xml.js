@@ -249,7 +249,7 @@ function parseInventory(str, globals, xmlUpdateEvent) {
   }
   const wornMatch = str.match(/Your worn items are:\r\n([^<]+)<popStream\/>/)
   if (wornMatch) {
-    const items = wornMatch[1].split('\r\n').map(i => i.trim())
+    const items = wornMatch[1].split('\r\n').map(i => i.trim()).filter(i => i.length)
     globals.worn = items
     xmlUpdateEvent('worn')
   }
@@ -463,17 +463,17 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
 
 function parseStowed(str, globals, xmlUpdateEvent) {
   // getting spammed multiple times on login, so I need to limit the capture
-  const stow = { items: [], containerName: '' }
+  const stowed = { items: [], containerName: '' }
 
   const stowedMatch = str.match(/<clearContainer id="stow"\/>(.+)<\/inv>/)
   // "<inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a map</inv><inv id='stow'> a rock",
   if (!stowedMatch) return console.error('unable to get stowed items')
   const containerMatch = stowedMatch[1].match(/In the (\S+):/)
-  if (containerMatch) stow.containerName = containerMatch[1]
+  if (containerMatch) stowed.containerName = containerMatch[1]
   const items = stowedMatch[1]
     .replace(/^<inv id='stow'>In the \S+:<\/inv><inv id='stow'> /, '')
     .split("</inv><inv id='stow'> ")
-  stow.items = items
+  stowed.items = items
   const uniqueItems = {}
   items.forEach(item => {
     if (!uniqueItems[item]) {
@@ -482,9 +482,9 @@ function parseStowed(str, globals, xmlUpdateEvent) {
       uniqueItems[item] += 1
     }
   })
-  stow.uniqueItems = uniqueItems
-  globals.stow = stow
-  xmlUpdateEvent('stow')
+  stowed.uniqueItems = uniqueItems
+  globals.stowed = stowed
+  xmlUpdateEvent('stowed')
 }
 
 function parseExp(str, globals, xmlUpdateEvent) {

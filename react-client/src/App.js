@@ -2,23 +2,35 @@ import React from 'react';
 import CommandInput from './CommandInput'
 import Exp from "./Exp"
 import Stowed from "./Stowed"
+import Worn from "./Worn"
 import './App.css'
-// import { List } from "react-virtualized";
 import GameWindow from "./GameWindow"
+
+// todo: on first xml message after load, fire global state change
+// this allows faster refreshing of all existing xml after front end change
 
 class App extends React.Component {
 
   state = {
+    isHotReload: true,
     gameText: [""],
     connected: false,
     splitScreen: false,
     exp: {},
-    stowed: { items: [], uniqueItems: {}, containerName: "" }
+    stowed: { items: [], uniqueItems: {}, containerName: "" },
+    worn: []
   }
 
   componentDidMount() {
     window.ipcRenderer.on('message', (event, message) => {
       const { detail, type } = message
+
+      if (this.state.isHotReload && type !== "gametext" && message.globals && Object.keys(message.globals).length > 0) {
+        // sets all globals (except gameText), forcing a rerender of all xml objects
+        this.setState({ ...message.globals, isHotReload: false })
+        // not calling return here in case I add extra logic to individual xml events below
+      }
+
       switch (type) {
         case "gametext":
           return this.addGameText(detail)
@@ -28,9 +40,11 @@ class App extends React.Component {
       switch (type) {
         case "experience":
           return this.setState({ exp: globals.exp })
-        case "stow":
+        case "stowed":
+          return this.setState({ stowed: globals.stowed })
+        case "worn":
           setTimeout(() => console.log(this.state), 500)
-          return this.setState({ stowed: globals.stow })
+          return this.setState({ worn: globals.worn })
       }
       console.log(message)
     })
@@ -58,6 +72,7 @@ class App extends React.Component {
         <div className="left-column">
           <Exp exp={this.state.exp} />
           <Stowed stowed={this.state.stowed} />
+          <Worn worn={this.state.worn} />
         </div>
         <div className="main-column">
           <div style={{ height: "90vh" }}>

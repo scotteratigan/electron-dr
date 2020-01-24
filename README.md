@@ -13,24 +13,29 @@ CHARACTER=Zoha
 
 ## Todos
 
-- Configure linting settings for project
-
-- Pipe sge server messages to main window
-
 - Support to enter your own account info
   - Support for multiple accounts
   - Protect accounts with master password and encrypt everything locally
   - local account config in new window
+
+- Highlights system
+  - highlights dynamically applied so new highlights can be used on previous game text (should not be an issue)
+  - regex highlights w/ validity check
+  - test mode can show highlights applied to text in real-time
+  - saved to config file
+
+- Configure linting settings for project
+
+- Pipe sge server messages to main window
 
 - Script system w/ pauses for now
   - make example hunting script to flesh out system
 
 - Links: make links open in new window (login links, for instance)
 
-- Convert FE to React (in progress)
-  - https://www.freecodecamp.org/news/building-an-electron-application-with-create-react-app-97945861647c/
+- Highlight + something action to trigger elanthipedia search
 
-- Highlight + something to trigger elanthipedia search
+- Ensure prompt time matches system time, or calculate offset
 
 - XML
   - shop verb/window
@@ -39,18 +44,17 @@ CHARACTER=Zoha
   <popStream/>
 
 - Non-xml parsing
-
+  - exp command (useful to set vars after #xml reset)
   - assess (and other windows - need window system)
   - attack parsing
   - info / stat parsing
-  - exp command (useful to set vars after #xml reset)
 
 - Better visual for RT display and bodyPosition
 
 - Logging
   - logging currently writing at 1 second interval, but not a true buffer (which would be more performant)
-  - be sure to log script errors for debugging
-  - possible to write to compressed format on the fly?
+  - log all errors for debugging
+  - possible to write to compressed format on the fly? (not very important)
 
 - Skinning system (dynamically loading css variables)
 
@@ -64,23 +68,4 @@ CHARACTER=Zoha
     - https://www.arangodb.com/docs/stable/drivers/js-getting-started.html
   - Visualization using library (like deckGL but with drag/drop capabilities and non-spherical coordinate system)
 
-- Save description of character on look, store in DB, add ability to recall later
 
-- Ensure prompt time matches system time, or calculate offset
-
-## React DevTools Extension
-https://www.electronjs.org/docs/tutorial/devtools-extension
-
-1. Install it in Chrome browser.
-2. Navigate to chrome://extensions, and find its extension ID, which is a hash string like fmkadmapgofadopljbjfkapdkoienihi
-3. Find out filesystem location used by Chrome for storing extensions:
-  - on Windows it is %LOCALAPPDATA%\Google\Chrome\User Data\Default\Extensions;
-  - on macOS it is ~/Library/Application Support/Google/Chrome/Default/Extensions
-4. Pass the location of the extension to BrowserWindow.addDevToolsExtension API, for the React Developer Tools, it is something like:
-  const path = require('path')
-  const os = require('os')
-  BrowserWindow.addDevToolsExtension(
-    path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0')
-  )
-
-5. Note: The BrowserWindow.addDevToolsExtension API cannot be called before the ready event of the app module is emitted.

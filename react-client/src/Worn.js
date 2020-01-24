@@ -6,7 +6,7 @@ export default function Worn({ worn: items, sendCommand }) {
   const activeKeys = useContext(KeyboardContext)
   return (
     <div>
-      <h2>Wearing:</h2>
+      <h2>Wearing {items.length} items:</h2>
       {items.map(item => <WornItem key={item} item={item} sendCommand={sendCommand} activeKeys={activeKeys} />)}
     </div>
   )

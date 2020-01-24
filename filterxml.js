@@ -13,7 +13,9 @@ function setupXMLfilter() {
     if (spellsMatch) str = spellsMatch[1] + spellsMatch[2]
     str = str.replace(/<inv id='stow'>[^<]*<\/inv>/g, '')
     str = str.replace(/<pushStream id='inv'\/>[^<]*<popStream\/>/gm, '')
-    str = str.replace(/<clearStream id='inv' ifClosed='[^']*'\/>/, '')
+    str = str.replace(/<clearStream id='inv' ifClosed='[^']*'\/>/g, '')
+    str = str.replace(/<right>[^<]*<\/right>/g, '')
+    str = str.replace(/<left>[^<]*<\/left>/g, '')
 
     str = str.replace(/<clearStream id="percWindow"\/>/, '')
     str = str.replace(/<clearContainer id=.\S+.\/>/, '')

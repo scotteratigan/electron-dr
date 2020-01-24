@@ -11,7 +11,8 @@ export default function Stowed({ stowed, sendCommand }) {
   return (
     <div>
       <h2>In the {containerName}</h2>
-      <h3>{items.length} items, {uniqueItemKeys.length} unique</h3>
+      {/* <h3>  {items.length} items, {uniqueItemKeys.length} unique</h3> */}
+      <h3>{StowTextHeader(items.length, uniqueItemKeys.length)}</h3>
       <table style={{ width: "100%" }}>
         <tbody>
           {uniqueItemKeys.map(itemKey => <StowItem key={itemKey} name={itemKey} qty={uniqueItems[itemKey]} sendCommand={sendCommand} activeKeys={activeKeys} />)}
@@ -19,6 +20,10 @@ export default function Stowed({ stowed, sendCommand }) {
       </table>
     </div>
   )
+}
+
+function StowTextHeader(itemQty, uniqueItemQty) {
+  return itemQty === uniqueItemQty ? <span>{itemQty} items</span> : <span>{itemQty} items, {uniqueItemQty} unique</span>
 }
 
 function StowItem({ name, qty, sendCommand, activeKeys }) {

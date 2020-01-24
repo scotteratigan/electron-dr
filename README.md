@@ -67,3 +67,20 @@ CHARACTER=Zoha
 - Save description of character on look, store in DB, add ability to recall later
 
 - Ensure prompt time matches system time, or calculate offset
+
+## React DevTools Extension
+https://www.electronjs.org/docs/tutorial/devtools-extension
+
+1. Install it in Chrome browser.
+2. Navigate to chrome://extensions, and find its extension ID, which is a hash string like fmkadmapgofadopljbjfkapdkoienihi
+3. Find out filesystem location used by Chrome for storing extensions:
+  - on Windows it is %LOCALAPPDATA%\Google\Chrome\User Data\Default\Extensions;
+  - on macOS it is ~/Library/Application Support/Google/Chrome/Default/Extensions
+4. Pass the location of the extension to BrowserWindow.addDevToolsExtension API, for the React Developer Tools, it is something like:
+  const path = require('path')
+  const os = require('os')
+  BrowserWindow.addDevToolsExtension(
+    path.join(os.homedir(), '/Library/Application Support/Google/Chrome/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.3.0_0')
+  )
+
+5. Note: The BrowserWindow.addDevToolsExtension API cannot be called before the ready event of the app module is emitted.

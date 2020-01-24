@@ -519,7 +519,6 @@ function parseExp(str, globals, xmlUpdateEvent) {
           rate: 0,
           rateWord: "clear",
           displayName,
-          displayStr: '' // consider actually formatting this to allow clear skills to display?
         }
       }
       if (!skillsMatch) {
@@ -529,64 +528,17 @@ function parseExp(str, globals, xmlUpdateEvent) {
         const rank = parseFloat(skillsMatch[2] + '.' + skillsMatch[3])
         const rateWord = skillsMatch[4]
         const rate = expLookup[rateWord]
-        const displayStr = `${displayName.padStart(16, ' ')}: ${(
-          skillsMatch[2] +
-          '.' +
-          skillsMatch[3]
-        ).padStart(7, ' ')}% ${rate.toString().padStart(2, ' ')}/34`
         globals.exp[skill] = {
           rank,
           rate,
           rateWord,
-          displayName,
-          displayStr,
+          displayName
         }
       }
     }
   } while (m)
   xmlUpdateEvent('experience')
 }
-
-// function parseExp(str, globals, xmlUpdateEvent) {
-//   // <component id='exp Outdoorsmanship'><preset id='whisper'> Outdoorsmanship:    4 19% dabbling     </preset></component>
-//   // <component id='exp Perception'><preset id='whisper'>      Perception:    5 85% dabbling     </preset></component>
-//   // <roundTime value='1579154336'/>You wander around and poke your fingers into a few places, wondering what you might find.
-//   // Roundtime: 5 sec.
-//   // <component id='room objs'></component>
-//   // <prompt time="1579154331">&gt;</prompt>
-
-//   // todo: add parsing for clear skills, like at login:
-//   // <component id='exp Defending'></component>
-//   // <component id='exp Parry Ability'></component>
-
-//   // console.log('exp event:\n')
-//   // console.log(str)
-//   const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g
-//   let m
-//   do {
-//     m = skillRegex.exec(str)
-//     if (m) {
-//       const displayName = m[1]
-//       const skill = formatSkillName(displayName)
-//       const rank = parseFloat(m[2] + '.' + m[3])
-//       const rateWord = m[4]
-//       const rate = expLookup[rateWord]
-//       const displayStr = `${displayName.padStart(16, ' ')}: ${(
-//         m[2] +
-//         '.' +
-//         m[3]
-//       ).padStart(7, ' ')}% ${rate.toString().padStart(2, ' ')}/34`
-//       globals.exp[skill] = {
-//         rank,
-//         rate,
-//         rateWord,
-//         displayName,
-//         displayStr,
-//       }
-//     }
-//   } while (m)
-//   xmlUpdateEvent('experience')
-// }
 
 function formatSkillName(str) {
   // "Medium Edged" returns "mediumEdged"

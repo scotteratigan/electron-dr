@@ -3,8 +3,8 @@ import React from 'react'
 // todo: show tooltip explaining minutes remaining on hover
 // todo: apply color to spells that are fading
 
-export default function Spells({ activeSpells }) {
-  console.log(activeSpells)
+export default function Spells({ activeSpells, sendCommand }) {
+  // console.log(activeSpells)
   return (
     <div>
       <h2>Active Spells:</h2>
@@ -17,8 +17,7 @@ export default function Spells({ activeSpells }) {
         </thead>
         <tbody>
           {Object.keys(activeSpells).map(spellName => (
-            <SpellDisplay key={spellName} name={spellName} remaining={activeSpells[spellName]} />
-            // <div key={spellName}>{spellName}: {activeSpells[spellName]}</div>
+            <SpellDisplay key={spellName} name={spellName} remaining={activeSpells[spellName]} sendCommand={sendCommand} />
           ))}
         </tbody>
       </table>
@@ -27,9 +26,9 @@ export default function Spells({ activeSpells }) {
   )
 }
 
-function SpellDisplay({ name, remaining }) {
+function SpellDisplay({ name, remaining, sendCommand }) {
   return (
-    <tr>
+    <tr onClick={() => sendCommand(`discern ${name}`)}>
       <td>{name}</td>
       <td>{remaining}</td>
     </tr>

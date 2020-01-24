@@ -7,6 +7,7 @@ import Hand from "./Hand"
 import Spells from "./Spells"
 import './App.css'
 import GameWindow from "./GameWindow"
+import RoomWindow from "./Room"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -35,6 +36,17 @@ class App extends React.Component {
       ctrlKey: false,
       shiftKey: false,
       metaKey: false
+    },
+    room: {
+      description: "",
+      exits: [],
+      items: [],
+      mobs: [],
+      monsterCount: 0,
+      name: "",
+      playersArray: [],
+      playersString: ""
+      // todo: wtf is room.test?
     }
   }
 
@@ -78,6 +90,10 @@ class App extends React.Component {
         return this.setState({ rightHand: globals.rightHand, leftHand: globals.leftHand })
       case "activeSpells":
         return this.setState({ activeSpells: globals.activeSpells })
+      case "room":
+      case "room players":
+      case "room objects":
+        return this.setState({ room: globals.room })
     }
     console.log("Unhandled:", message)
   }
@@ -119,6 +135,7 @@ class App extends React.Component {
     }
     const { type } = event
     const value = type === "keydown" ? true : false
+    // todo: don't fire multiple events when key is held down
     const newKeyState = { ...this.state.keyState }
     newKeyState[keyName] = value
     this.setState({ keyState: newKeyState })
@@ -136,7 +153,10 @@ class App extends React.Component {
             <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
           </div>
           <div className="main-column">
-            <div style={{ height: "90vh" }}>
+            <div style={{ height: "10vh" }}>
+              <RoomWindow room={this.state.room} sendCommand={this.sendCommand} />
+            </div>
+            <div style={{ height: "80vh" }}>
               {this.state.splitScreen ? (
                 <>
                   <div style={{ height: "50%" }}>

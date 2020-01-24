@@ -13,7 +13,7 @@ export default function Worn({ worn: items, sendCommand }) {
 }
 
 function WornItem({ item, sendCommand, activeKeys }) {
-  return (<div onClick={() => handleWornItemClick(item, sendCommand, activeKeys)}>{item}</div>)
+  return (<div className="clickable" onClick={() => handleWornItemClick(item, sendCommand, activeKeys)}>{item}</div>)
 }
 
 function handleWornItemClick(item, sendCommand, activeKeys) {

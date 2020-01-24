@@ -27,8 +27,10 @@ CHARACTER=Zoha
 
 - Links: make links open in new window (login links, for instance)
 
-- Convert FE to React
+- Convert FE to React (in progress)
   - https://www.freecodecamp.org/news/building-an-electron-application-with-create-react-app-97945861647c/
+
+- Highlight + something to trigger elanthipedia search
 
 - XML
   - shop verb/window

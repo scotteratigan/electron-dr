@@ -107,6 +107,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     mobs: [],
     monsterCount: 0,
     exits: {
+      array: [],
       north: false,
       northeast: false,
       east: false,
@@ -259,6 +260,8 @@ function spellDurationToNumber(str) {
   return -1
 }
 
+// todo: handle case where both hands update (swap):
+// <left>Empty</left><right exist="19684328" noun="stick">cypress stick</right><clearStream id='inv' ifClosed=''/><pushStream id='inv'/>Your worn items are:
 function parseInventory(str, globals, xmlUpdateEvent) {
   const handMatch = str.match(/<(right|left)([^<]+)<\/(right|left)>/m)
   if (handMatch) {
@@ -450,6 +453,7 @@ function parseRoomPlayers(line, globals, xmlUpdateEvent) {
 
 function parseRoomExits(line, globals, xmlUpdateEvent) {
   const exits = {
+    array: [],
     north: false,
     northeast: false,
     east: false,
@@ -461,20 +465,18 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
     up: false,
     down: false,
     out: false,
-    array: [],
   }
-  const portalMatches = line.match(/<d>(\w+)<\/d>/g)
-  // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
-  portalMatches &&
-    portalMatches.forEach(portalStr => {
-      const dirMatch = portalStr.match(/<d>(\w+)<\/d>/)
-      if (dirMatch && dirMatch[1]) {
-        exits[dirMatch[1]] = true
-        exits.array.push(dirMatch[1])
-      }
-    })
+  const portalsMatch = line.match(/<component id='room exits'>Obvious paths: ([^\.]*)\.<compass><\/compass><\/component>/)
+  if (!portalsMatch) return console.error("Unable to match portals with string:", line)
+  const portals = portalsMatch[1].split(",")
+  portals.forEach(portalString => {
+    const portalMatch = portalString.match(/<d>([^<]+)<\/d>/)
+    if (!portalMatch) return console.error("Unable to match single portal with string:", portalString)
+    const portal = portalMatch[1]
+    exits[portal] = true
+    exits.array.push(portal)
+  })
   globals.room.exits = exits
-  globals.room.test = exits
   xmlUpdateEvent('room')
 }
 
@@ -548,6 +550,9 @@ function formatSkillName(str) {
 function stringListToArray(str) {
   // only match up to 5 words after " and " to help misfires on "a strong and stately mature oak" (TGSE)
   // will still break if this is last item in room
+  // todo: fix crossing inside west gate:
+  // Items: the Western Gate | the Guard House and some stone stairs leading to the top of the town wall
+  // is there a better way to only grab the last and from the end of a string?
   str = str.replace(/ and (\S+\s?\S*\s?\S*\s?\S*\s?\S*)$/, ', $1')
   return str.split(', ')
 }

@@ -23,7 +23,7 @@ export default function Stowed({ stowed, sendCommand }) {
 
 function StowItem({ name, qty, sendCommand, activeKeys }) {
   return (
-    <tr onClick={() => handleStowItemClick(name, sendCommand, activeKeys)}>
+    <tr className="clickable" onClick={() => handleStowItemClick(name, sendCommand, activeKeys)}>
       <td>{name}</td>
       <td style={{ textAlign: "right" }}>{qty > 1 ? qty : ""}</td>
     </tr>

@@ -18,9 +18,9 @@ function ExpItem({ skill, sendCommand }) {
   // rateWord also available in skill
   if (rate === 0) return null;
   return (
-    <tr onClick={() => sendCommand(`exp ${displayName}`)}>
-      <td>{displayName}</td>
-      <td style={{ textAlign: "right" }}>{parseFloat(rank).toFixed(2)}</td>
+    <tr>
+      <td className="clickable" onClick={() => sendCommand(`exp ${displayName}`)}>{displayName}</td>
+      <td style={{ textAlign: "right" }}>{parseFloat(rank).toFixed(2)}%</td>
       <td>{rate.toString().padStart(2, '0')}/34</td>
     </tr>
   )

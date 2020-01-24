@@ -3,7 +3,6 @@ const { app, BrowserWindow, Menu } = require('electron')
 const { ipcMain } = require('electron') // to talk to the browser window
 const path = require('path')
 
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -82,7 +81,12 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  BrowserWindow.addDevToolsExtension(
+    path.join(__dirname, 'react-devtools-4.4.0_3')
+  )
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

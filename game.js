@@ -6,6 +6,9 @@ const getConnectKey = require('./sge')
 const makeLogger = require('./log')
 const path = require('path')
 
+// Todo: investigate this as an option:
+// socket.setKeepAlive([enable][, initialDelay])
+
 function game(messageFrontEnd) {
   // Initialization Stuff:
   const globals = {}
@@ -86,6 +89,10 @@ function game(messageFrontEnd) {
 
   let buffer = []
 
+  client.on('drain', () => {
+    console.log('drained...')
+  })
+
   // Game sends data:
   client.on('data', data => {
     // detects incomplete data fragments, mostly on login
@@ -152,6 +159,7 @@ function game(messageFrontEnd) {
     getConnectKey((connectKey, ip, port) => {
       console.log('Received connect key:', connectKey)
       client.connect(port, ip, function () {
+        client.setNoDelay(true) // may help with packet buffering
         console.log('Connected, sending key.'.green)
         const lineEnding = "\r\n"
         setTimeout(() => {

@@ -83,10 +83,16 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   createWindow()
+  loadDevTools()
+})
+
+function loadDevTools() {
+  // note: only needs to be loaded once but doesn't hurt to attempt each time
+  // for dev mode only
   BrowserWindow.addDevToolsExtension(
     path.join(__dirname, 'react-devtools-4.4.0_3')
   )
-})
+}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {

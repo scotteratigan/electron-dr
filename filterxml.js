@@ -1,16 +1,20 @@
+// Issue with initial setup - I can receive two responses in one data event.
+// So when I send two commands simultaneously I'm filtering out relevant game text.
+// Example: get chest;stow chest
+// I think I've fixed it for inventory, but the spells match is potentially problematic
+
 function setupXMLfilter() {
   return function hideXML(str) {
     // login wall-of-text:
     str = str.replace(/<mode id="GAME"\/>.*<\/settings>/g, '')
-    // The above is sending 5-6 times, how to prevent? longer pause on connect?
     const spellsMatch = str.match(
       /^([\s\S\r\n]*)<pushStream id="percWindow"\/>[\w\(\)\d\r\n ]+<popStream\/>([\s\S\r\n]*)$/
     )
     if (spellsMatch) str = spellsMatch[1] + spellsMatch[2]
-    const invMatch = str.match(
-      /<pushStream id='inv'\/>[\s\S\r\n.]+<popStream\/>([\s\S\r\n]*)$/
-    )
-    if (invMatch) str = invMatch[1] // is the prefix here ever relevant?
+    str = str.replace(/<inv id='stow'>[^<]*<\/inv>/g, '')
+    str = str.replace(/<pushStream id='inv'\/>[^<]*<popStream\/>/gm, '')
+    str = str.replace(/<clearStream id='inv' ifClosed='[^']*'\/>/, '')
+
     str = str.replace(/<clearStream id="percWindow"\/>/, '')
     str = str.replace(/<clearContainer id=.\S+.\/>/, '')
     str = str.replace(/<prompt.*<\/prompt>/, '')
@@ -36,11 +40,6 @@ function setupXMLfilter() {
     str = str.replace(/<castTime value='\d+'\/>/, '')
     str = str.replace(/<playerID id='\d+'\/>/, '')
     str = str.replace(/<settingsInfo[^\/]+instance='\w+'\/>/, '')
-
-    // str = str.replace(/<mode id="GAME"\/>/, ""); // login, useless...
-    // str = str.replace(/<app char="Kruarnode" game="DR" title="[DR: Kruarnode] StormFront"\/>/); // login, could get char name and instance from here
-    // str = str.replace(/<exposeContainer id='stow'\/>/); //login...
-    // str = str.replace(/<container id='.+' title=".+" target='.+' location='.+' save='.+' resident='.+'\/>/); // login - note this sends ID of stow container? maybe?
     str = str.replace(/^\s*\n$/gm, '') // empty lines
     str = str.replace(/^\s*&lt;/, '<') // beginning of attack
     console.log('returning str:', str)

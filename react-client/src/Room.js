@@ -2,13 +2,10 @@ import React, { Fragment } from 'react'
 import { getObjNoun, getPlayerName } from './utils'
 
 export default function Room({ room, sendCommand }) {
-  console.log('_-----------------room:', room)
-  const { description, exits, items, mobs, monstercount, name, playersArray, playersString } = room
-  console.log('playersString:', playersString)
+  const { description, exits, items, mobs, name, playersArray } = room //monstercount and playersString also available
   return (
     <div>
       <h3>{name}</h3>
-      {/* <p>{description}</p> */}
       <RoomDescription description={description} sendCommand={sendCommand} />
       {!!items.length && <RoomItems items={items} sendCommand={sendCommand} />}
       {!!playersArray && !!playersArray.length && <RoomPlayers players={playersArray} sendCommand={sendCommand} />}

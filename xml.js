@@ -136,6 +136,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.vitals = {}
   globals.gameTime = 0
   globals.playerId = 0
+  globals.arrivals = []
 
   console.log('*** Globals Reset ***')
 
@@ -151,9 +152,6 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       }
     } while (m)
 
-    // console.log("--------------------------------")
-    // console.log(tagsObj)
-    // console.log("--------------------------------")
     let expParsed = false
 
     Object.keys(tagsObj).forEach(key => {
@@ -174,6 +172,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseInventory(str, globals, xmlUpdateEvent)
       if (key.startsWith('pushStream id="percWindow'))
         return parseActiveSpells(str, globals, xmlUpdateEvent)
+      if (key.startsWith('pushStream id="logons'))
+        return parseLogOn(str, globals, xmlUpdateEvent)
       if (key.startsWith("component id='exp") && !expParsed) {
         expParsed = true
         return parseExp(str, globals, xmlUpdateEvent)
@@ -434,6 +434,17 @@ function parseRoomObjects(line, globals, xmlUpdateEvent) {
 
 function parseRoomPlayers(line, globals, xmlUpdateEvent) {
   // <component id='room players'>Also here: Eblar.</component>
+  // todo: fix issue when there are 2 room player events in single packet
+
+  // Havifiga Gechifacha Chyronn came through the Northeast Gate.
+  // <component id='room players'>Also here: Chyronn and Everics.</component>
+  // <prompt time="1579988467">&gt;</prompt>
+  // Havifiga Gechifacha Chyronn went down a narrow footpath.
+  // <component id='room players'>Also here: Everics.</component>
+  // <prompt time="1579988467">&gt;</prompt>
+
+  // interative loop while there's a match?
+
   const roomPlayersMatch = line.match(
     /<component id='room players'>(.*)<\/component>/
   )
@@ -542,6 +553,25 @@ function parseExp(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent('experience')
 }
 
+function parseLogOn(str, globals, xmlUpdateEvent) {
+  const logOnRegex = /<pushStream id="logons"\/> \* ([^<]+)\n<popStream\/>/g
+  let m
+  do {
+    m = logOnRegex.exec(str)
+    if (m) {
+      globals.arrivals.push({ text: m[1], time: new Date() })
+      xmlUpdateEvent('logOn', m[1])
+    }
+  } while (m)
+
+  // Todo: compile list of logon/logoff meanings
+  // LogOn:
+  // joins the adventure.
+  // has woken up in search of new ale!
+  // LogOff:
+  // returns home from a hard day of adventuring.
+}
+
 function formatSkillName(str) {
   // "Medium Edged" returns "mediumEdged"
   return str.substring(0, 1).toLowerCase() + str.substring(1).replace(' ', '')
@@ -558,6 +588,12 @@ function stringListToArray(str) {
 }
 
 module.exports = setupXMLparser
+
+// <pushStream id="atmospherics"/>The dwalgim on Ysean's crown pulses with a soft light.
+// <popStream/>
+
+// <pushStream id="death"/> * Keriss was just struck down at Zaulfung, Ruined Shrine! 
+// <popStream/>
 
 // XML todos:
 // COMMAND: shop

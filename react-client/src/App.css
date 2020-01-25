@@ -67,3 +67,7 @@ strong {
   text-decoration: underline;
   cursor: default;
 }
+
+.unavailable {
+  background-color: grey;
+}

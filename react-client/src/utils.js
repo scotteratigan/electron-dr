@@ -6,7 +6,7 @@ export function getObjNoun(str) {
 }
 
 export function getPlayerName(str) {
-  str = str.replace(/ (\([^\)]+\))$/, '')
+  str = str.replace(/ (\([^)]+\))$/, '')
   str = str.replace(/ who is .+/, '')
   const nameMatch = str.match(/.+ (\S+)/)
   if (nameMatch && nameMatch[1]) return nameMatch[1]

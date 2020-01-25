@@ -42,6 +42,7 @@ function setupXMLfilter() {
     str = str.replace(/<castTime value='\d+'\/>/, '')
     str = str.replace(/<playerID id='\d+'\/>/, '')
     str = str.replace(/<settingsInfo[^\/]+instance='\w+'\/>/, '')
+    str = str.replace(/<pushStream id="logons"\/>[^<]*<popStream\/>/g, '')
     str = str.replace(/^\s*\n$/gm, '') // empty lines
     str = str.replace(/^\s*&lt;/, '<') // beginning of attack
     console.log('returning str:', str)
@@ -51,7 +52,5 @@ function setupXMLfilter() {
 
 module.exports = setupXMLfilter
 
-// Additional filters needed:
-{/* <playerID id='598697'/> - dunno why this isn't getting filtered
-<settingsInfo  client="1.0.1.26" major="2" crc='3026568258' instance='DR'/> - or this?
-<mode id="GAME"/> */}
+// <pushStream id="atmospherics"/>The dwalgim on Ysean's crown pulses with a soft light.
+// <popStream/>

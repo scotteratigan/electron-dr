@@ -8,6 +8,7 @@ import Spells from "./Spells"
 import './App.css'
 import GameWindow from "./GameWindow"
 import RoomWindow from "./Room"
+import Arrivals from "./Arrivals"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -46,8 +47,9 @@ class App extends React.Component {
       name: "",
       playersArray: [],
       playersString: ""
-      // todo: wtf is room.test?
-    }
+    },
+    gameTime: 0,
+    arrivals: []
   }
 
   componentDidMount() {
@@ -72,10 +74,7 @@ class App extends React.Component {
       // not calling return here in case I add extra logic to individual xml events below
     }
 
-    switch (type) {
-      case "gametext":
-        return this.addGameText(detail)
-    }
+    if (type === "gametext") return this.addGameText(detail)
 
     // Following cases need globals var:
     const { globals } = message;
@@ -94,6 +93,10 @@ class App extends React.Component {
       case "room players":
       case "room objects":
         return this.setState({ room: globals.room })
+      case "gameTime":
+        return this.setState({ gameTime: globals.gameTime })
+      default:
+        break
     }
     console.log("Unhandled:", message)
   }
@@ -177,7 +180,8 @@ class App extends React.Component {
               <Hand whichHand={"Left"} heldItem={this.state.leftHand} sendCommand={this.sendCommand} />
             </div>
           </div>
-          <div className="right-column">
+          <div className="right-column" style={{ width: 400 }}>
+            <Arrivals arrivals={this.state.arrivals} sendCommand={this.sendCommand} />
           </div>
         </div >
       </KeyboardProvider>

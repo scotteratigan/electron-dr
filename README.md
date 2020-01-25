@@ -37,6 +37,14 @@ CHARACTER=Zoha
 
 - Ensure prompt time matches system time, or calculate offset
 
+- Multi-line command input
+  - input area is taller, enter key does newline, ctrl-enter sends command
+  - eventually allows quick composing of mini-scripts
+
+- Parse text input
+  - sends raw text to game for parsing, can include xml, etc
+  - useful for testing
+
 - XML
   - shop verb/window
   - filter this out, and send proper event to client:

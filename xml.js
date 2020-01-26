@@ -137,6 +137,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.gameTime = 0
   globals.playerId = 0
   globals.arrivals = []
+  globals.deaths = []
 
   console.log('*** Globals Reset ***')
 
@@ -174,6 +175,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseActiveSpells(str, globals, xmlUpdateEvent)
       if (key.startsWith('pushStream id="logons'))
         return parseLogOn(str, globals, xmlUpdateEvent)
+      if (key.startsWith('pushStream id="death'))
+        return parseDeath(str, globals, xmlUpdateEvent)
       if (key.startsWith("component id='exp") && !expParsed) {
         expParsed = true
         return parseExp(str, globals, xmlUpdateEvent)
@@ -260,13 +263,15 @@ function spellDurationToNumber(str) {
   return -1
 }
 
-// todo: handle case where both hands update (swap):
-// <left>Empty</left><right exist="19684328" noun="stick">cypress stick</right><clearStream id='inv' ifClosed=''/><pushStream id='inv'/>Your worn items are:
 function parseInventory(str, globals, xmlUpdateEvent) {
-  const handMatch = str.match(/<(right|left)([^<]+)<\/(right|left)>/m)
-  if (handMatch) {
-    parseHeldItem(str, globals, xmlUpdateEvent)
-  }
+
+  const handRegex = /<(left|right)[^>]*>[^<]*<\/(left|right)>/g
+  let m
+  do {
+    m = handRegex.exec(str)
+    if (m) parseHeldItem(m[0], globals, xmlUpdateEvent)
+  } while (m)
+
   const wornMatch = str.match(/Your worn items are:\r\n([^<]+)<popStream\/>/)
   if (wornMatch) {
     const items = wornMatch[1].split('\r\n').map(i => i.trim()).filter(i => i.length)
@@ -345,21 +350,17 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   }, 1000)
 }
 
-function parseHeldItem(str, globals, xmlUpdateEvent) {
-  // 3 cases
-  // hand is holding item, hand is emptied, hand gets item then empties (passthrough)
-  // (which is a str with 2 xml statements)
-  const handPassthroughMatch = str.match(
-    /<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/
-  )
-  if (handPassthroughMatch) return // no point in firing a change event, hand didn't change essentially
+function parseHeldItem(line, globals, xmlUpdateEvent) {
+  // 2 cases: hand is holding item, or hand is empty
+  // pass-through events now fire 2 changes, so you see a blip when grabbing and stowing an item
+  console.log('parseHeldItem called with:', line)
 
-  const handMatch = str.match(
+  const handMatch = line.match(
     /<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/
   )
   if (!handMatch) {
     // Hand is empty in this case
-    const emptyHandMatch = str.match(/<(right|left)>Empty<\/(right|left)>/)
+    const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/)
     if (!emptyHandMatch) return
     const hand = emptyHandMatch[1]
     const handKey = hand === 'left' ? 'leftHand' : 'rightHand'
@@ -563,13 +564,18 @@ function parseLogOn(str, globals, xmlUpdateEvent) {
       xmlUpdateEvent('logOn', m[1])
     }
   } while (m)
+}
 
-  // Todo: compile list of logon/logoff meanings
-  // LogOn:
-  // joins the adventure.
-  // has woken up in search of new ale!
-  // LogOff:
-  // returns home from a hard day of adventuring.
+function parseDeath(str, globals, xmlUpdateEvent) {
+  const deathRegex = /<pushStream id="death"\/> \* [^<]+\!<popStream\/>/g
+  let m
+  do {
+    m = deathRegex.exec(str)
+    if (m) {
+      globals.deaths.push({ text: m[1], time: new Date() })
+      xmlUpdateEvent('death', m[1])
+    }
+  } while (m)
 }
 
 function formatSkillName(str) {

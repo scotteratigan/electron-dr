@@ -18,7 +18,7 @@ function setupXMLfilter() {
     str = str.replace(/<left>[^<]*<\/left>/g, '')
 
     str = str.replace(/<clearStream id="percWindow"\/>/, '')
-    str = str.replace(/<clearContainer id=.\S+.\/>/, '')
+    str = str.replace(/<clearContainer id=.\S+.\/>/g, '')
     str = str.replace(/<prompt.*<\/prompt>/, '')
     str = str.replace(/<spell.*<\/spell>/, '')
     str = str.replace(/<prompt time=.\d+.>.*<\/prompt>/, '') // why is this necessary?
@@ -51,6 +51,8 @@ function setupXMLfilter() {
 }
 
 module.exports = setupXMLfilter
+
+// <clearContainer id="stow"/>
 
 // <pushStream id="atmospherics"/>The dwalgim on Ysean's crown pulses with a soft light.
 // <popStream/>

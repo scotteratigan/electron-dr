@@ -9,6 +9,7 @@ import './App.css'
 import GameWindow from "./GameWindow"
 import RoomWindow from "./Room"
 import Arrivals from "./Arrivals"
+import Deaths from "./Deaths"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -49,7 +50,8 @@ class App extends React.Component {
       playersString: ""
     },
     gameTime: 0,
-    arrivals: []
+    arrivals: [],
+    deaths: []
   }
 
   componentDidMount() {
@@ -95,6 +97,12 @@ class App extends React.Component {
         return this.setState({ room: globals.room })
       case "gameTime":
         return this.setState({ gameTime: globals.gameTime })
+      case "logOn":
+        return this.setState({ arrivals: globals.arrivals })
+      case "deaths":
+        console.log('A death, yay!')
+        setTimeout(() => console.log(globals.deaths), 0)
+        return this.setState({ deaths: globals.deaths })
       default:
         break
     }
@@ -182,6 +190,7 @@ class App extends React.Component {
           </div>
           <div className="right-column" style={{ width: 400 }}>
             <Arrivals arrivals={this.state.arrivals} sendCommand={this.sendCommand} />
+            <Deaths deaths={this.state.deaths} sendCommand={this.sendCommand} />
           </div>
         </div >
       </KeyboardProvider>

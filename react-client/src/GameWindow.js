@@ -5,6 +5,8 @@
 // https://github.com/malte-wessel/react-custom-scrollbars
 // https://github.com/bvaughn/react-virtualized/issues/692
 
+// honestly, I'm beginning to think I should just trim the game text array as needed - curious about real performance benefit here
+
 import React, { Component } from 'react'
 import { List } from "react-virtualized";
 
@@ -33,7 +35,7 @@ export default class GameWindow extends Component {
     }, 0)
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (this.props.autoScroll) {
       const { gameText } = prevProps;
       const { gameText: prevGameText } = this.props;
@@ -61,7 +63,24 @@ export default class GameWindow extends Component {
     style // Style object to be applied to row (to position it)
   }) => {
     // if (!isVisible) return <></> // works but introduces delay in content visibility on scroll
-    return <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: this.props.gameText[index] }} />
+    const text = this.props.gameText[index]
+    let highlighted = text;
+
+    // todo: line highlight vs text highlight
+
+    const highlights = [
+      {
+        regex: /(rat)/ig,
+        replace: "$1",
+        style: "background-color: pink; font-weight: bold;"
+      }
+    ]
+
+    highlights.forEach(highlight => {
+      highlighted = highlighted.replace(highlight.regex, `<span style="${highlight.style}">$1</span>`)
+    })
+
+    return <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: highlighted }} />
   }
 
   testHeight = ({ index }) => {

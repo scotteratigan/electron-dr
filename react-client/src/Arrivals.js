@@ -83,6 +83,7 @@ const arrivalsList = [
   { regex: /(.+) runs out amidst the discordant clatter of broken zills/, arrival: false }, // verified disconnect
   { regex: /(.+) quietly departs the adventure/, arrival: false },
   { regex: /(.+) snuck out of the shadow \w+ was hiding in/, arrival: true },
+  { regex: /(.+) arrives, looking forward to another day of fun/, arrival: true },
   { regex: /(.+) arrives, \w+ hands clasped in near perpetual prayer/, arrival: true },
   { regex: /(.+) arrives, bringing an air of celebration with \w+/, arrival: true },
   { regex: /(.+) has joined the adventure after escaping another/, arrival: true },

@@ -11,6 +11,8 @@ import RoomWindow from "./Room"
 import Arrivals from "./Arrivals"
 import Deaths from "./Deaths"
 import RoundTime from "./RoundTime"
+import PrepTime from "./PrepTime"
+import PreparedSpell from "./PreparedSpell"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -53,8 +55,11 @@ class App extends React.Component {
     gameTime: 0,
     roundTime: 0,
     totalRoundTime: 0,
+    prepTime: 0,
+    totalPrepTime: 0,
     arrivals: [],
-    deaths: []
+    deaths: [],
+    preparedSpell: ""
   }
 
   componentDidMount() {
@@ -102,12 +107,21 @@ class App extends React.Component {
         return this.setState({ gameTime: globals.gameTime })
       case "roundTime":
         return this.setRoundTime(globals)
+      case "prepTime":
+        return this.setPrepTime(globals)
       case "logOn":
         return this.setState({ arrivals: globals.arrivals })
+      case "preparedSpell":
+        return this.setState({ preparedSpell: globals.preparedSpell })
       case "deaths":
         console.log('A death, yay!')
         setTimeout(() => console.log(globals.deaths), 0)
         return this.setState({ deaths: globals.deaths })
+      case "globals":
+        console.log('----------------------')
+        console.log(globals)
+        console.log('----------------------')
+        return
       default:
         break
     }
@@ -122,6 +136,18 @@ class App extends React.Component {
       })
       return ({
         roundTime: globals.roundTime
+      })
+    })
+  }
+
+  setPrepTime = globals => {
+    this.setState(prevState => {
+      if (prevState.totalPrepTime < globals.prepTime) return ({
+        totalPrepTime: globals.prepTime,
+        prepTime: globals.prepTime
+      })
+      return ({
+        prepTime: globals.prepTime
       })
     })
   }
@@ -170,7 +196,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { keyState, roundTime, totalRoundTime } = this.state
+    const { keyState, roundTime, totalRoundTime, prepTime, totalPrepTime } = this.state
     return (
       <KeyboardProvider value={keyState}>
         <div className="App" style={{ display: "flex" }}>
@@ -204,6 +230,8 @@ class App extends React.Component {
               <Hand whichHand={"Right"} heldItem={this.state.rightHand} sendCommand={this.sendCommand} />
               <Hand whichHand={"Left"} heldItem={this.state.leftHand} sendCommand={this.sendCommand} />
               <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
+              <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
+              <PreparedSpell preparedSpell={this.state.preparedSpell} />
             </div>
           </div>
           <div className="right-column" style={{ width: 400 }}>

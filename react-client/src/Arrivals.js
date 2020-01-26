@@ -76,10 +76,12 @@ const arrivalsList = [
   { regex: /(.+) retires from the adventure for now/, arrival: false },
   { regex: /(.+) just wandered into another adventure/, arrival: false },
   { regex: /(.+) snuck out of the shadow \w+ was hiding in/, arrival: true },
+  { regex: /(.+) has joined the adventure after escaping another/, arrival: true },
   { regex: /After waking from a long catnap, (.+) once again prowls the lands/, arrival: false },
   { regex: /The mournful cry of a battle horn sounds as (.+) heads off toward home/, arrival: false },
   { regex: /A lone bell tolls faintly in the distance, waning into silence as (.+) retires to the shadows/, arrival: true },
   { regex: /The ring of a battle horn echoes across the area heralding the arrival of (.+)\./, arrival: true },
+  { regex: /A distant whistle signals (.+)'s departure from the adventure/, arrival: false },
 ]
 
 function extractPlayerNameAndTitleFromLoginStr(str) {

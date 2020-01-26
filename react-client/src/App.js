@@ -15,6 +15,7 @@ import RoundTime from "./RoundTime"
 import PrepTime from "./PrepTime"
 import PreparedSpell from "./PreparedSpell"
 import Compass from "./Compass"
+import BodyPosition from "./BodyPosition"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -124,6 +125,8 @@ class App extends React.Component {
         return this.setState({ arrivals: globals.arrivals })
       case "preparedSpell":
         return this.setState({ preparedSpell: globals.preparedSpell })
+      case "bodyPosition":
+        return this.setState({ bodyPosition: globals.bodyPosition })
       case "deaths":
         console.log('A death, yay!')
         setTimeout(() => console.log(globals.deaths), 0)
@@ -246,6 +249,7 @@ class App extends React.Component {
                   <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
                   <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
                   <PreparedSpell preparedSpell={this.state.preparedSpell} />
+                  <BodyPosition bodyPosition={this.state.bodyPosition} />
                 </div>
               </div>
             </div>

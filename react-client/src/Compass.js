@@ -36,7 +36,7 @@ function CompassSquare({ active, path }) {
   return (
     <div style={{ width: 15, height: 15, textAlign: "center" }}>
       {active &&
-        <svg id="Solid" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
           {path && path()}
         </svg>
       }

@@ -10,6 +10,7 @@ import GameWindow from "./GameWindow"
 import RoomWindow from "./Room"
 import Arrivals from "./Arrivals"
 import Deaths from "./Deaths"
+import RoundTime from "./RoundTime"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -50,6 +51,8 @@ class App extends React.Component {
       playersString: ""
     },
     gameTime: 0,
+    roundTime: 0,
+    totalRoundTime: 0,
     arrivals: [],
     deaths: []
   }
@@ -97,6 +100,8 @@ class App extends React.Component {
         return this.setState({ room: globals.room })
       case "gameTime":
         return this.setState({ gameTime: globals.gameTime })
+      case "roundTime":
+        return this.setRoundTime(globals)
       case "logOn":
         return this.setState({ arrivals: globals.arrivals })
       case "deaths":
@@ -107,6 +112,18 @@ class App extends React.Component {
         break
     }
     console.log("Unhandled:", message)
+  }
+
+  setRoundTime = globals => {
+    this.setState(prevState => {
+      if (prevState.totalRoundTime < globals.roundTime) return ({
+        totalRoundTime: globals.roundTime,
+        roundTime: globals.roundTime
+      })
+      return ({
+        roundTime: globals.roundTime
+      })
+    })
   }
 
   addGameText = gameString => {
@@ -153,7 +170,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { keyState } = this.state
+    const { keyState, roundTime, totalRoundTime } = this.state
     return (
       <KeyboardProvider value={keyState}>
         <div className="App" style={{ display: "flex" }}>
@@ -186,6 +203,7 @@ class App extends React.Component {
               <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
               <Hand whichHand={"Right"} heldItem={this.state.rightHand} sendCommand={this.sendCommand} />
               <Hand whichHand={"Left"} heldItem={this.state.leftHand} sendCommand={this.sendCommand} />
+              <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
             </div>
           </div>
           <div className="right-column" style={{ width: 400 }}>

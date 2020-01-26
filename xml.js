@@ -344,6 +344,7 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   rtInterval = setInterval(() => {
     globals.roundTime -= 1
     xmlUpdateEvent('roundTime')
+    console.log('counting down roundtime...')
     if (globals.roundTime <= 0) {
       clearInterval(rtInterval)
     }

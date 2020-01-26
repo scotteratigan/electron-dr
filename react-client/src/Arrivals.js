@@ -73,6 +73,8 @@ const arrivalsList = [
   { regex: /(.+) departs from the adventure with little fanfare/, arrival: false },
   { regex: /(.+) limped away from the adventure for now/, arrival: false },
   { regex: /(.+) has left to contemplate the life of a warrior/, arrival: false },
+  { regex: /(.+) retires from the adventure for now/, arrival: false },
+  { regex: /(.+) just wandered into another adventure/, arrival: false },
   { regex: /(.+) snuck out of the shadow \w+ was hiding in/, arrival: true },
   { regex: /After waking from a long catnap, (.+) once again prowls the lands/, arrival: false },
   { regex: /The mournful cry of a battle horn sounds as (.+) heads off toward home/, arrival: false },

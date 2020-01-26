@@ -13,6 +13,7 @@ import Deaths from "./Deaths"
 import RoundTime from "./RoundTime"
 import PrepTime from "./PrepTime"
 import PreparedSpell from "./PreparedSpell"
+import Compass from "./Compass"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -229,9 +230,14 @@ class App extends React.Component {
               <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
               <Hand whichHand={"Right"} heldItem={this.state.rightHand} sendCommand={this.sendCommand} />
               <Hand whichHand={"Left"} heldItem={this.state.leftHand} sendCommand={this.sendCommand} />
-              <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
-              <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
-              <PreparedSpell preparedSpell={this.state.preparedSpell} />
+              <div style={{ display: "flex" }}>
+                <Compass exits={this.state.room.exits} />
+                <div>
+                  <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
+                  <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
+                  <PreparedSpell preparedSpell={this.state.preparedSpell} />
+                </div>
+              </div>
             </div>
           </div>
           <div className="right-column" style={{ width: 400 }}>

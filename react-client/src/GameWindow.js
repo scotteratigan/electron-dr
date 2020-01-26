@@ -70,7 +70,7 @@ export default class GameWindow extends Component {
 
     const highlights = [
       {
-        regex: /(rat)/ig,
+        regex: /\b(rat)\b/ig,
         replace: "$1",
         style: "background-color: pink; font-weight: bold;"
       }

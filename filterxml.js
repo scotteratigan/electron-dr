@@ -1,7 +1,5 @@
-// Issue with initial setup - I can receive two responses in one data event.
-// So when I send two commands simultaneously I'm filtering out relevant game text.
-// Example: get chest;stow chest
-// I think I've fixed it for inventory, but the spells match is potentially problematic
+// Made all of these filters global because sending two commands simultaneously results in incomplete filtering otherwise
+// Probably less performant, but more reliable
 
 function setupXMLfilter() {
   return function hideXML(str) {
@@ -16,34 +14,32 @@ function setupXMLfilter() {
     str = str.replace(/<clearStream id='inv' ifClosed='[^']*'\/>/g, '')
     str = str.replace(/<right>[^<]*<\/right>/g, '')
     str = str.replace(/<left>[^<]*<\/left>/g, '')
-
-    str = str.replace(/<clearStream id="percWindow"\/>/, '')
+    str = str.replace(/<clearStream id="percWindow"\/>/g, '')
     str = str.replace(/<clearContainer id=.\S+.\/>/g, '')
-    str = str.replace(/<prompt.*<\/prompt>/, '')
-    str = str.replace(/<spell.*<\/spell>/, '')
-    str = str.replace(/<prompt time=.\d+.>.*<\/prompt>/, '') // why is this necessary?
-    // <prompt time="1234">blah</prompt>
+    str = str.replace(/<prompt.*<\/prompt>/g, '')
+    str = str.replace(/<spell.*<\/spell>/g, '')
     str = str.replace(/<component.*\/component>/g, '')
-    str = str.replace(/<resource picture="\d+"\/>/, '')
-    str = str.replace(/<style id="roomName" \/>/, '')
-    str = str.replace(/<style id=""\/>/, '')
-    str = str.replace(/<preset id='roomDesc'>/, '')
-    str = str.replace(/<\/preset>/, '')
+    str = str.replace(/<resource picture="\d+"\/>/g, '')
+    str = str.replace(/<style id="roomName" \/>/g, '')
+    str = str.replace(/<style id=""\/>/g, '')
+    str = str.replace(/<preset id='roomDesc'>/g, '')
+    str = str.replace(/<\/preset>/g, '')
     str = str.replace(/<\/?d>/g, '')
-    str = str.replace(/<compass>.*<\/compass>/, '')
-    str = str.replace(/<nav\/>/, '')
+    str = str.replace(/<compass>.*<\/compass>/g, '')
+    str = str.replace(/<nav\/>/g, '')
+    str = str.replace(/<castTime value='\d+'\/>/g, '')
     str = str.replace(/<streamWindow .+\/>/g, '')
-    str = str.replace(/<right.*<\/right>/, '')
-    str = str.replace(/<left.*<\/left>/, '')
+    str = str.replace(/<right.*<\/right>/g, '')
+    str = str.replace(/<left.*<\/left>/g, '')
     str = str.replace(/<inv id=.\S+.>[^<]*<\/inv>/g, '')
     str = str.replace(/<d cmd="\S*">/g, '') // useful for later, this is a command link
-    str = str.replace(/<roundTime value='\d+'\/>/, '')
-    str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/, '')
-    str = str.replace(/<castTime value='\d+'\/>/, '')
-    str = str.replace(/<playerID id='\d+'\/>/, '')
-    str = str.replace(/<settingsInfo[^\/]+instance='\w+'\/>/, '')
+    str = str.replace(/<roundTime value='\d+'\/>/g, '')
+    str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/g, '')
+    str = str.replace(/<castTime value='\d+'\/>/g, '')
+    str = str.replace(/<playerID id='\d+'\/>/g, '')
+    str = str.replace(/<settingsInfo[^\/]+instance='\w+'\/>/g, '')
     str = str.replace(/<pushStream id="logons"\/>[^<]*<popStream\/>/g, '')
-    str = str.replace(/^\s*\n$/gm, '') // empty lines
+    str = str.replace(/^\s*$/gm, '') // empty lines
     str = str.replace(/^\s*&lt;/, '<') // beginning of attack
     console.log('returning str:', str)
     return str

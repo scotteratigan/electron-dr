@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from 'react-modal';
 import CommandInput from './CommandInput'
 import Exp from "./Exp"
 import Stowed from "./Stowed"
@@ -17,8 +18,16 @@ import Compass from "./Compass"
 
 import { KeyboardProvider } from './KeyboardContext'
 
-// todo: on first xml message after load, fire global state change
-// this allows faster refreshing of all existing xml after front end change
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)'
+  }
+};
 
 class App extends React.Component {
 
@@ -60,7 +69,8 @@ class App extends React.Component {
     totalPrepTime: 0,
     arrivals: [],
     deaths: [],
-    preparedSpell: ""
+    preparedSpell: "",
+    accountModalIsOpen: false
   }
 
   componentDidMount() {
@@ -154,13 +164,13 @@ class App extends React.Component {
   }
 
   addGameText = gameString => {
-    gameString = gameString.replace(/^\s*\r\n/g, "")
+    console.log('gameString is:', gameString)
+    // gameString = gameString.replace(/^\s*\r\n/g, "")
     if (gameString.match(/^\s*\r?\n$/)) return
     gameString = gameString.replace(/<pushBold\/>/g, "<strong>")
     gameString = gameString.replace(/<popBold\/>/g, "</strong>")
-    gameString = gameString.replace(/<output class="mono"\/>/g, "<div class='monospace'>")
-    gameString = gameString.replace(/<output class=""\/>/g, "</div>")
-    console.log('gameString is:', gameString)
+    gameString = gameString.replace(/<output class="mono"\/>\r?\n?/g, "<span class='monospace'>")
+    gameString = gameString.replace(/\r?\n?<output class=""\/>/g, "</span>")
     return this.setState({ gameText: [...this.state.gameText, gameString] })
   }
 

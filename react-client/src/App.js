@@ -208,7 +208,7 @@ class App extends React.Component {
             <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
           </div>
           <div className="main-column">
-            <div style={{ height: "10vh" }}>
+            <div style={{ height: "10vh", overflowY: "auto" }}>
               <RoomWindow room={this.state.room} sendCommand={this.sendCommand} />
             </div>
             <div style={{ height: "80vh" }}>
@@ -240,7 +240,7 @@ class App extends React.Component {
               </div>
             </div>
           </div>
-          <div className="right-column" style={{ width: 400 }}>
+          <div className="right-column">
             <Arrivals arrivals={this.state.arrivals} sendCommand={this.sendCommand} />
             <Deaths deaths={this.state.deaths} sendCommand={this.sendCommand} />
           </div>

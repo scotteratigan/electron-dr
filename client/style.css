@@ -67,6 +67,7 @@ p {
 }
 
 input {
+  display: inline-block;
   width: 100%;
   background-color: black;
   color: white;

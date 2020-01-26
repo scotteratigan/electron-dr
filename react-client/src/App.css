@@ -44,23 +44,23 @@ strong {
 
 #measurer-div {
   /* visibility: hidden; */
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
   position: absolute;
   top: -9999px;
-  width: 983px;
 }
 
 .left-column,
 .right-column {
+  flex-basis: 200px;
   flex-grow: 0;
-}
-
-.left-column {
-  width: 200px;
+  flex-shrink: 0;
 }
 
 .main-column {
-  flex-grow: 1
+  flex-basis: calc(100vw - 400px);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .clickable:hover {
@@ -71,3 +71,17 @@ strong {
 .unavailable {
   background-color: grey;
 }
+
+/* ::-webkit-scrollbar {
+  width: 12px;
+} */
+
+/* ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+} */

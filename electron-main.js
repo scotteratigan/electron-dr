@@ -28,7 +28,7 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
-        { label: 'Play', click: () => hardWire() },
+        // { label: 'Play', click: () => hardWire() }, // todo: allow this to open connect modal
         // { role: isMac ? 'close' : 'quit' }
         { role: 'quit' },
       ],
@@ -112,15 +112,22 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-function hardWire() {
+function hardWire(commandText) {
   {
+    console.log('hardWire received command:', commandText)
+    const fields = commandText.split(' ')
+    console.log('fields:', fields)
+    const account = fields[1]
+    const password = fields[2]
+    const instance = fields[3]
+    const characterName = fields[4]
     const gamePath = path.join(__dirname, "game.js")
     delete require.cache[gamePath];
     game = require("./game.js");
     const gameReturns = game(messageFrontEnd)
     const { connect } = gameReturns;
     sendCommand = gameReturns.sendCommand;
-    connect()
+    connect({ account, password, instance, characterName })
   }
 }
 
@@ -130,6 +137,6 @@ function messageFrontEnd(message) {
 
 // hacky, do not like...
 ipcMain.on('asynchronous-message', (event, command) => {
-  if (command.startsWith('#connect')) return hardWire()
+  if (command.startsWith('#connect')) return hardWire(command)
   else sendCommand(command); // (Command received from player, pass on to game)
 })

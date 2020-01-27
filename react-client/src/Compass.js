@@ -1,6 +1,4 @@
 import React from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
 
 // https://www.flaticon.com/categories/arrows/6 <- svgs which include angled arrows
 // https://www.flaticon.com/packs/arrow-20

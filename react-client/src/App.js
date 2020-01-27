@@ -67,7 +67,7 @@ class App extends React.Component {
     invisible: false,
     joined: false,
     stunned: false,
-    accountModalIsOpen: true,
+    accountModalIsOpen: false,
   }
 
   componentDidMount() {
@@ -82,6 +82,9 @@ class App extends React.Component {
     document.removeEventListener('keydown', this.setKeyState)
     document.removeEventListener('keyup', this.setKeyState)
   }
+
+  openConnectModal = () => this.setState({ accountModalIsOpen: true })
+  closeConnectModal = () => this.setState({ accountModalIsOpen: false })
 
   handleServerMessage = (message) => {
     const { detail, type } = message
@@ -249,6 +252,7 @@ class App extends React.Component {
             <div>
               <CommandInput sendCommand={this.sendCommand} />
               <button type="button" onClick={() => this.setState({ splitScreen: !this.state.splitScreen })}>Toggle Split</button>
+              <button type="button" onClick={this.openConnectModal}>Connect</button>
               <Hand whichHand={"Right"} heldItem={this.state.rightHand} sendCommand={this.sendCommand} />
               <Hand whichHand={"Left"} heldItem={this.state.leftHand} sendCommand={this.sendCommand} />
               <div style={{ display: "flex" }}>
@@ -270,7 +274,7 @@ class App extends React.Component {
             <Deaths deaths={this.state.deaths} sendCommand={this.sendCommand} />
           </div>
         </div >
-        {this.state.accountModalIsOpen && <AccountModal />}
+        {this.state.accountModalIsOpen && <AccountModal closeConnectModal={this.closeConnectModal} sendCommand={this.sendCommand} />}
       </KeyboardProvider>
     );
   }

@@ -155,8 +155,11 @@ function game(messageFrontEnd) {
 
   // Actual Connect process:
 
-  function connect() {
-    getConnectKey((connectKey, ip, port) => {
+  function connect({ account, password, instance, characterName }) {
+    console.log('connect received:', account, password, instance, characterName)
+    const temp = { account, password, instance, characterName }
+    console.log('temp is:', temp)
+    getConnectKey({ account, password, instance, characterName }, (connectKey, ip, port) => {
       console.log('Received connect key:', connectKey)
       client.connect(port, ip, function () {
         client.setNoDelay(true) // may help with packet buffering

@@ -1,6 +1,7 @@
 import React from 'react'
 
 const indicatorContainerStyle = { width: 18, height: 18, textAlign: "center"}
+// https://www.svgrepo.com/vectors/
 
 export default function Indicators({ bleeding, dead, hidden, invisible, joined, stunned }) {
   return (

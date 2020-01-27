@@ -1,5 +1,8 @@
 command: <sendSettings/> actually works, neat. should I parse it?
 
+Unable to match vitals: <dialogData id="befriend"><label id='nofriends' align='n' value='No friends added'/></dialogData>
+Unable to match vitals: <dialogData id="befriend" clear="t"></dialogData>
+
 Havifiga Gechifacha Chyronn came through the Northeast Gate.
 
 Havifiga Gechifacha Chyronn went down a narrow footpath.

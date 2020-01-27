@@ -1,5 +1,4 @@
 import React from 'react';
-import Modal from 'react-modal';
 import CommandInput from './CommandInput'
 import Exp from "./Exp"
 import Stowed from "./Stowed"
@@ -17,19 +16,9 @@ import PreparedSpell from "./PreparedSpell"
 import Compass from "./Compass"
 import BodyPosition from "./BodyPosition"
 import Indicators from "./Indicators"
+import AccountModal from "./AccountModal"
 
 import { KeyboardProvider } from './KeyboardContext'
-
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)'
-  }
-};
 
 class App extends React.Component {
 
@@ -78,7 +67,7 @@ class App extends React.Component {
     invisible: false,
     joined: false,
     stunned: false,
-    accountModalIsOpen: false,
+    accountModalIsOpen: true,
   }
 
   componentDidMount() {
@@ -281,6 +270,7 @@ class App extends React.Component {
             <Deaths deaths={this.state.deaths} sendCommand={this.sendCommand} />
           </div>
         </div >
+        {this.state.accountModalIsOpen && <AccountModal />}
       </KeyboardProvider>
     );
   }

@@ -290,12 +290,37 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
 
 function parseBodyPosition(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
-  const bodyPositionMatch = str.match(/<indicator.+id="Icon(\w+)" visible="y"/)
-  if (!bodyPositionMatch)
-    return console.error('Unable to determine verticality.')
-  const bodyPosition = bodyPositionMatch[1].toLowerCase()
-  globals.bodyPosition = bodyPosition
-  xmlUpdateEvent('bodyPosition')
+  const bodyPositionMatch = str.match(/<indicator.+id="Icon(STANDING|KNEELING|SITTING|PRONE)" visible="y"/)
+  if (bodyPositionMatch) {
+    const bodyPosition = bodyPositionMatch[1].toLowerCase()
+    globals.bodyPosition = bodyPosition
+    xmlUpdateEvent('bodyPosition')
+  }
+  // todo: check all in loop, this isn't very dry:
+  const bleedingMatch = str.match(/<indicator id='IconBLEEDING' visible='(y|n)'\/>/)
+  if (bleedingMatch) {
+    const bleeding = bleedingMatch[1] === 'y' ? true : false
+    globals.bleeding = bleeding
+    xmlUpdateEvent('bleeding')
+  }
+  const deadMatch = str.match(/<indicator id='IconDEAD' visible='(y|n)'\/>/)
+  if (deadMatch) {
+    const dead = deadMatch[1] === 'y' ? true : false
+    globals.dead = dead
+    xmlUpdateEvent('dead')
+  }
+  const joinedMatch = str.match(/<indicator id='IconJOINED' visible='(y|n)'\/>/)
+  if (joinedMatch) {
+    const joined = joinedMatch[1] === 'y' ? true : false
+    globals.joined = joined
+    xmlUpdateEvent('joined')
+  }
+  const stunnedMatch = str.match(/<indicator id='IconSTUNNED' visible='(y|n)'\/>/)
+  if (stunnedMatch) {
+    const stunned = stunnedMatch[1] === 'y' ? true : false
+    globals.stunned = stunned
+    xmlUpdateEvent('stunned')
+  }
 }
 
 function parseRoundTime(line, globals, xmlUpdateEvent) {

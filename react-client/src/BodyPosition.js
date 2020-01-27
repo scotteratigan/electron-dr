@@ -4,8 +4,6 @@ const bodyContainerStyle = { width: 25, height: 25}
 
 // standing, sitting, kneeling, prone
 export default function BodyPosition({ bodyPosition }) {
-  
-
   switch (bodyPosition) {
     case "standing":
       return Standing()

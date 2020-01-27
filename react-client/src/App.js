@@ -16,6 +16,7 @@ import PrepTime from "./PrepTime"
 import PreparedSpell from "./PreparedSpell"
 import Compass from "./Compass"
 import BodyPosition from "./BodyPosition"
+import Indicators from "./Indicators"
 
 import { KeyboardProvider } from './KeyboardContext'
 
@@ -71,7 +72,11 @@ class App extends React.Component {
     arrivals: [],
     deaths: [],
     preparedSpell: "",
-    accountModalIsOpen: false
+    bleeding: false,
+    dead: false,
+    joined: false,
+    stunned: false,
+    accountModalIsOpen: false,
   }
 
   componentDidMount() {
@@ -127,6 +132,14 @@ class App extends React.Component {
         return this.setState({ preparedSpell: globals.preparedSpell })
       case "bodyPosition":
         return this.setState({ bodyPosition: globals.bodyPosition })
+      case "bleeding":
+        return this.setState({ bleeding: globals.bleeding })
+      case "dead":
+        return this.setState({ dead: globals.dead })
+      case "joined":
+        return this.setState({ joined: globals.joined })
+      case "stunned":
+        return this.setState({ stunned: globals.stunned })
       case "deaths":
         console.log('A death, yay!')
         setTimeout(() => console.log(globals.deaths), 0)
@@ -250,6 +263,7 @@ class App extends React.Component {
                   <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
                   <PreparedSpell preparedSpell={this.state.preparedSpell} />
                   <BodyPosition bodyPosition={this.state.bodyPosition} />
+                  <Indicators bleeding={this.state.bleeding} dead={this.state.dead} joined={this.state.joined} stunned={this.state.stunned} />
                 </div>
               </div>
             </div>

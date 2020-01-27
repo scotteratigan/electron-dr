@@ -74,6 +74,8 @@ class App extends React.Component {
     preparedSpell: "",
     bleeding: false,
     dead: false,
+    hidden: false,
+    invisible: false,
     joined: false,
     stunned: false,
     accountModalIsOpen: false,
@@ -136,6 +138,10 @@ class App extends React.Component {
         return this.setState({ bleeding: globals.bleeding })
       case "dead":
         return this.setState({ dead: globals.dead })
+      case "hidden":
+        return this.setState({ hidden: globals.hidden })
+      case "invisible":
+        return this.setState({ invisible: globals.invisible })
       case "joined":
         return this.setState({ joined: globals.joined })
       case "stunned":
@@ -262,8 +268,10 @@ class App extends React.Component {
                   <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
                   <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
                   <PreparedSpell preparedSpell={this.state.preparedSpell} />
-                  <BodyPosition bodyPosition={this.state.bodyPosition} />
-                  <Indicators bleeding={this.state.bleeding} dead={this.state.dead} joined={this.state.joined} stunned={this.state.stunned} />
+                  <div style={{ display: "flex" }}>
+                    <BodyPosition bodyPosition={this.state.bodyPosition} />
+                    <Indicators bleeding={this.state.bleeding} dead={this.state.dead} hidden={this.state.hidden} invisible={this.state.invisible} joined={this.state.joined} stunned={this.state.stunned} />
+                  </div>
                 </div>
               </div>
             </div>

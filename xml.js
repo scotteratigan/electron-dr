@@ -182,7 +182,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseExp(str, globals, xmlUpdateEvent)
       }
       if (key.startsWith('indicator'))
-        return parseBodyPosition(str, globals, xmlUpdateEvent)
+        return parseIndicator(str, globals, xmlUpdateEvent)
       if (key.startsWith('progressBar'))
         return parseVital(line, globals, xmlUpdateEvent)
       if (key.startsWith('prompt time'))
@@ -288,8 +288,9 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent('preparedSpell')
 }
 
-function parseBodyPosition(str, globals, xmlUpdateEvent) {
+function parseIndicator(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
+  // '/><indicator id='IconHIDDEN' visible='y'/>'/><indicator id='IconINVISIBLE' visible='y'/>
   const bodyPositionMatch = str.match(/<indicator.+id="Icon(STANDING|KNEELING|SITTING|PRONE)" visible="y"/)
   if (bodyPositionMatch) {
     const bodyPosition = bodyPositionMatch[1].toLowerCase()
@@ -308,6 +309,18 @@ function parseBodyPosition(str, globals, xmlUpdateEvent) {
     const dead = deadMatch[1] === 'y' ? true : false
     globals.dead = dead
     xmlUpdateEvent('dead')
+  }
+  const hiddenMatch = str.match(/<indicator id='IconHIDDEN' visible='(y|n)'\/>/)
+  if (hiddenMatch) {
+    const hidden = hiddenMatch[1] === 'y' ? true : false
+    globals.hidden = hidden
+    xmlUpdateEvent('hidden')
+  }
+  const invisibleMatch = str.match(/<indicator id='IconINVISIBLE' visible='(y|n)'\/>/)
+  if (invisibleMatch) {
+    const invisible = invisibleMatch[1] === 'y' ? true : false
+    globals.invisible = invisible
+    xmlUpdateEvent('invisible')
   }
   const joinedMatch = str.match(/<indicator id='IconJOINED' visible='(y|n)'\/>/)
   if (joinedMatch) {

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const bodyContainerStyle = { width: 25, height: 25}
+const bodyPositionContainerStyle = { width: 25, height: 25}
 
 // standing, sitting, kneeling, prone
 export default function BodyPosition({ bodyPosition }) {
@@ -20,7 +20,7 @@ export default function BodyPosition({ bodyPosition }) {
 
 function Standing() {
   return (
-    <div style={bodyContainerStyle}>
+    <div style={bodyPositionContainerStyle}>
       <svg viewBox="0 0 53.355 53.355" xmlns="http://www.w3.org/2000/svg">
         <circle cx="26.677" cy="4.383" r="4.383"/>
         <path d="M40.201,28.096c-1.236-13.887-7.854-16.657-7.854-16.657s-6.396-3.845-13.129,1.052
@@ -35,7 +35,7 @@ function Standing() {
 
 function Sitting() {
   return (
-  <div style={bodyContainerStyle}>
+  <div style={bodyPositionContainerStyle}>
       <svg viewBox="0 0 199.216 199.216" xmlns="http://www.w3.org/2000/svg">
         <path d="M128.005,40.172c11.24,0.336,20.621-8.385,20.951-19.476c0.33-11.088-8.512-20.351-19.752-20.687
           c-11.234-0.335-20.617,8.385-20.947,19.471C107.925,30.573,116.771,39.836,128.005,40.172z"/>
@@ -51,7 +51,7 @@ function Sitting() {
 
 function Kneeling() {
   return (
-  <div style={bodyContainerStyle}>
+  <div style={bodyPositionContainerStyle}>
     <svg viewBox="0 0 78.732 78.732" xmlns="http://www.w3.org/2000/svg">
       <path d="M58.134,48.752l-10.83-23.024c-0.017-0.036-0.042-0.067-0.06-0.102c-0.392-1.202-1.509-2.078-2.84-2.078H38.02
         c-1.654,0-3,1.346-3,3v30.628c0,1.527,1.15,2.776,2.627,2.962l-0.05,7.409c-0.006,0.886-0.732,1.607-1.618,1.607H23.912
@@ -67,7 +67,7 @@ function Kneeling() {
 
 function Prone() {
   return (
-    <div style={bodyContainerStyle}>
+    <div style={bodyPositionContainerStyle}>
       <svg viewBox="0 0 125.417 125.417" xmlns="http://www.w3.org/2000/svg">
         <circle cx="112.82" cy="78.398" r="12.596"/>
         <path d="M99.414,75.356c-0.219-0.858-0.542-1.729-0.954-2.568l-0.079-33.486c-0.007-2.697-2.193-4.879-4.89-4.879

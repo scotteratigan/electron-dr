@@ -6,7 +6,7 @@ function setupXMLfilter() {
     // login wall-of-text:
     str = str.replace(/<mode id="GAME"\/>.*<\/settings>/g, '')
     const spellsMatch = str.match(
-      /^([\s\S\r\n]*)<pushStream id="percWindow"\/>[\w\(\)\d\r\n ]+<popStream\/>([\s\S\r\n]*)$/
+      /^([\s\S\r\n]*)<pushStream id="percWindow"\/>[^<]+<popStream\/>([\s\S\r\n]*)$/
     )
     if (spellsMatch) str = spellsMatch[1] + spellsMatch[2]
     str = str.replace(/<inv id='stow'>[^<]*<\/inv>/g, '')

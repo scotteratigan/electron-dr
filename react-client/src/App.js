@@ -67,7 +67,7 @@ class App extends React.Component {
     invisible: false,
     joined: false,
     stunned: false,
-    accountModalIsOpen: false,
+    accountModalIsOpen: true,
   }
 
   componentDidMount() {

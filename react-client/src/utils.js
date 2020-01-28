@@ -1,5 +1,5 @@
 export function getObjNoun(str) {
-  str = str.replace(/ (edged|with|entitled|constructed|shaped|capped|carved|set) .+/, '')
+  str = str.replace(/ (edged|with|entitled|constructed|shaped|capped|carved|set|crafted|worked|fitted) .+/, '')
   const nounMatch = str.match(/(\S+)$/)
   if (nounMatch && nounMatch[1]) return nounMatch[1]
   return str

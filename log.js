@@ -20,7 +20,6 @@ async function makeLogger(charName = 'Character', instance = 'UI', logType) {
         .getDate()
         .toString()
         .padStart(2, '0')
-    // const fileName = charName + '-' + instance + '-' + dateStr + '-' + logType + '-log.txt'
     const fileName = [charName, instance, dateStr, logType, 'log.txt'].join('-')
     const fileFullPath = path.resolve(__dirname, LOG_DIR, fileName)
     let logging = false

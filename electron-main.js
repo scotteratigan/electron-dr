@@ -28,7 +28,7 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
-        { label: 'Play', click: () => hardWire() },
+        // { label: 'Play', click: () => hardWire() }, // todo: allow this to open connect modal
         // { role: isMac ? 'close' : 'quit' }
         { role: 'quit' },
       ],
@@ -59,7 +59,9 @@ function createWindow() {
   Menu.setApplicationMenu(menu)
 
   // and load the index.html of the app.
-  mainWindow.loadFile('client/index.html')
+  // mainWindow.loadFile('client/index.html')
+  // mainWindow.loadFile('react-client/index.html')
+  mainWindow.loadURL('http://localhost:3000');
 
   // make it big:
   mainWindow.maximize()
@@ -79,7 +81,18 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  loadDevTools()
+})
+
+function loadDevTools() {
+  // note: only needs to be loaded once but doesn't hurt to attempt each time
+  // for dev mode only
+  BrowserWindow.addDevToolsExtension(
+    path.join(__dirname, 'react-devtools-4.4.0_3')
+  )
+}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -99,15 +112,22 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-function hardWire() {
+function hardWire(commandText) {
   {
+    console.log('hardWire received command:', commandText)
+    const fields = commandText.split(' ')
+    console.log('fields:', fields)
+    const account = fields[1]
+    const password = fields[2]
+    const instance = fields[3]
+    const characterName = fields[4]
     const gamePath = path.join(__dirname, "game.js")
     delete require.cache[gamePath];
     game = require("./game.js");
     const gameReturns = game(messageFrontEnd)
     const { connect } = gameReturns;
     sendCommand = gameReturns.sendCommand;
-    connect()
+    connect({ account, password, instance, characterName })
   }
 }
 
@@ -117,6 +137,6 @@ function messageFrontEnd(message) {
 
 // hacky, do not like...
 ipcMain.on('asynchronous-message', (event, command) => {
-  if (command.startsWith('#connect')) return hardWire()
+  if (command.startsWith('#connect')) return hardWire(command)
   else sendCommand(command); // (Command received from player, pass on to game)
 })

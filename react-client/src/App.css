@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css?family=Gelasio:400,400i,600,600i|Source+Code+Pro:400,400i,600,600i&display=swap');
+
+* {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  font-family: 'Gelasio', serif;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+h2 {
+  font-family: 'Gelasio', serif;
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-family: 'Gelasio', serif;
+  font-size: 1.3rem;
+}
+
+.game-text {
+  white-space: pre-wrap;
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.monospace {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.85rem;
+}
+
+strong {
+  font-weight: 600;
+}
+
+.preserve-space {
+  white-space: pre-wrap;
+}
+
+#measurer-div {
+  /* visibility: hidden; */
+  /* white-space: pre-wrap; */
+  position: absolute;
+  top: -9999px;
+}
+
+.left-column,
+.right-column {
+  flex-basis: 200px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.main-column {
+  flex-basis: calc(100vw - 400px);
+  flex-grow: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+  cursor: default;
+}
+
+.unavailable {
+  background-color: grey;
+}
+
+.form-group {
+  margin: 5px;
+  padding: 10px;
+}
+
+/* ::-webkit-scrollbar {
+  width: 12px;
+} */
+
+/* ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+  -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.5);
+} */

@@ -107,6 +107,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     mobs: [],
     monsterCount: 0,
     exits: {
+      array: [],
       north: false,
       northeast: false,
       east: false,
@@ -125,7 +126,7 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.roundTime = 0
   globals.spellTime = 0
   globals.preparedSpell = ''
-  globals.activeSpells = []
+  globals.activeSpells = {}
   globals.worn = []
   globals.stow = {
     container: '',
@@ -135,6 +136,8 @@ function setupXMLparser(globals, xmlUpdateEvent) {
   globals.vitals = {}
   globals.gameTime = 0
   globals.playerId = 0
+  globals.arrivals = []
+  globals.deaths = []
 
   console.log('*** Globals Reset ***')
 
@@ -150,9 +153,6 @@ function setupXMLparser(globals, xmlUpdateEvent) {
       }
     } while (m)
 
-    // console.log("--------------------------------")
-    // console.log(tagsObj)
-    // console.log("--------------------------------")
     let expParsed = false
 
     Object.keys(tagsObj).forEach(key => {
@@ -173,12 +173,16 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         return parseInventory(str, globals, xmlUpdateEvent)
       if (key.startsWith('pushStream id="percWindow'))
         return parseActiveSpells(str, globals, xmlUpdateEvent)
+      if (key.startsWith('pushStream id="logons'))
+        return parseLogOn(str, globals, xmlUpdateEvent)
+      if (key.startsWith('pushStream id="death'))
+        return parseDeath(str, globals, xmlUpdateEvent)
       if (key.startsWith("component id='exp") && !expParsed) {
         expParsed = true
         return parseExp(str, globals, xmlUpdateEvent)
       }
       if (key.startsWith('indicator'))
-        return parseBodyPosition(str, globals, xmlUpdateEvent)
+        return parseIndicator(str, globals, xmlUpdateEvent)
       if (key.startsWith('progressBar'))
         return parseVital(line, globals, xmlUpdateEvent)
       if (key.startsWith('prompt time'))
@@ -233,23 +237,44 @@ function parseActiveSpells(str, globals, xmlUpdateEvent) {
   )
   // 'Minor Physical Protection  (10 roisaen)\r\nEase Burden  (7 roisaen)'
   if (!spellMatch) {
-    globals.activeSpells = []
+    globals.activeSpells = {}
   } else {
     // [ 'Ease Burden  (1 roisan)', 'Minor Physical Protection  (Fading)' ]
     const spellList = spellMatch[1].split('\r\n')
-    globals.activeSpells = spellList // todo: parse out durations and spells
+    const spellsObj = {}
+    spellList.forEach(spellDisplayText => {
+      const spellParseMatch = spellDisplayText.match(/([^\()]+)  \(([^\)]+)\)/)
+      if (!spellParseMatch) return console.error('Unable to parse spell name/duration with text:', spellDisplayText)
+      const spellName = spellParseMatch[1]
+      const spellDuration = spellParseMatch[2]
+      spellsObj[spellName] = spellDurationToNumber(spellDuration)
+    })
+    globals.activeSpells = spellsObj
   }
   xmlUpdateEvent('activeSpells')
 }
 
+function spellDurationToNumber(str) {
+  if (str === "Fading") return 0
+  if (str === "1 roisan") return 1
+  const durationMatch = str.match(/(\d+) roisaen/)
+  if (durationMatch) return parseInt(durationMatch[1])
+  console.error('Unable to determine spell duration of text:', str)
+  return -1
+}
+
 function parseInventory(str, globals, xmlUpdateEvent) {
-  const handMatch = str.match(/<(right|left)([^<]+)<\/(right|left)>/m)
-  if (handMatch) {
-    parseHeldItem(str, globals, xmlUpdateEvent)
-  }
+
+  const handRegex = /<(left|right)[^>]*>[^<]*<\/(left|right)>/g
+  let m
+  do {
+    m = handRegex.exec(str)
+    if (m) parseHeldItem(m[0], globals, xmlUpdateEvent)
+  } while (m)
+
   const wornMatch = str.match(/Your worn items are:\r\n([^<]+)<popStream\/>/)
   if (wornMatch) {
-    const items = wornMatch[1].split('\r\n').map(i => i.trim())
+    const items = wornMatch[1].split('\r\n').map(i => i.trim()).filter(i => i.length)
     globals.worn = items
     xmlUpdateEvent('worn')
   }
@@ -263,14 +288,52 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent('preparedSpell')
 }
 
-function parseBodyPosition(str, globals, xmlUpdateEvent) {
+function parseIndicator(str, globals, xmlUpdateEvent) {
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
-  const bodyPositionMatch = str.match(/<indicator.+id="Icon(\w+)" visible="y"/)
-  if (!bodyPositionMatch)
-    return console.error('Unable to determine verticality.')
-  const bodyPosition = bodyPositionMatch[1].toLowerCase()
-  globals.bodyPosition = bodyPosition
-  xmlUpdateEvent('bodyPosition')
+  // '/><indicator id='IconHIDDEN' visible='y'/>'/><indicator id='IconINVISIBLE' visible='y'/>
+  const bodyPositionMatch = str.match(/<indicator.+id="Icon(STANDING|KNEELING|SITTING|PRONE)" visible="y"/)
+  if (bodyPositionMatch) {
+    const bodyPosition = bodyPositionMatch[1].toLowerCase()
+    globals.bodyPosition = bodyPosition
+    xmlUpdateEvent('bodyPosition')
+  }
+  // todo: check all in loop, this isn't very dry:
+  const bleedingMatch = str.match(/<indicator id='IconBLEEDING' visible='(y|n)'\/>/)
+  if (bleedingMatch) {
+    const bleeding = bleedingMatch[1] === 'y' ? true : false
+    globals.bleeding = bleeding
+    xmlUpdateEvent('bleeding')
+  }
+  const deadMatch = str.match(/<indicator id='IconDEAD' visible='(y|n)'\/>/)
+  if (deadMatch) {
+    const dead = deadMatch[1] === 'y' ? true : false
+    globals.dead = dead
+    xmlUpdateEvent('dead')
+  }
+  const hiddenMatch = str.match(/<indicator id='IconHIDDEN' visible='(y|n)'\/>/)
+  if (hiddenMatch) {
+    const hidden = hiddenMatch[1] === 'y' ? true : false
+    globals.hidden = hidden
+    xmlUpdateEvent('hidden')
+  }
+  const invisibleMatch = str.match(/<indicator id='IconINVISIBLE' visible='(y|n)'\/>/)
+  if (invisibleMatch) {
+    const invisible = invisibleMatch[1] === 'y' ? true : false
+    globals.invisible = invisible
+    xmlUpdateEvent('invisible')
+  }
+  const joinedMatch = str.match(/<indicator id='IconJOINED' visible='(y|n)'\/>/)
+  if (joinedMatch) {
+    const joined = joinedMatch[1] === 'y' ? true : false
+    globals.joined = joined
+    xmlUpdateEvent('joined')
+  }
+  const stunnedMatch = str.match(/<indicator id='IconSTUNNED' visible='(y|n)'\/>/)
+  if (stunnedMatch) {
+    const stunned = stunnedMatch[1] === 'y' ? true : false
+    globals.stunned = stunned
+    xmlUpdateEvent('stunned')
+  }
 }
 
 function parseRoundTime(line, globals, xmlUpdateEvent) {
@@ -319,27 +382,24 @@ function countdownRT(rtEnds, globals, xmlUpdateEvent) {
   rtInterval = setInterval(() => {
     globals.roundTime -= 1
     xmlUpdateEvent('roundTime')
+    console.log('counting down roundtime...')
     if (globals.roundTime <= 0) {
       clearInterval(rtInterval)
     }
   }, 1000)
 }
 
-function parseHeldItem(str, globals, xmlUpdateEvent) {
-  // 3 cases
-  // hand is holding item, hand is emptied, hand gets item then empties (passthrough)
-  // (which is a str with 2 xml statements)
-  const handPassthroughMatch = str.match(
-    /<(left|right) exist="\d+" noun="\S+">[^<]+<\/(left|right)><(left|right)>Empty<\/(left|right)>/
-  )
-  if (handPassthroughMatch) return // no point in firing a change event, hand didn't change essentially
+function parseHeldItem(line, globals, xmlUpdateEvent) {
+  // 2 cases: hand is holding item, or hand is empty
+  // pass-through events now fire 2 changes, so you see a blip when grabbing and stowing an item
+  console.log('parseHeldItem called with:', line)
 
-  const handMatch = str.match(
+  const handMatch = line.match(
     /<(left|right) exist="(\d*)" noun="(\S+)">([^<]*)<\/(left|right)>/
   )
   if (!handMatch) {
     // Hand is empty in this case
-    const emptyHandMatch = str.match(/<(right|left)>Empty<\/(right|left)>/)
+    const emptyHandMatch = line.match(/<(right|left)>Empty<\/(right|left)>/)
     if (!emptyHandMatch) return
     const hand = emptyHandMatch[1]
     const handKey = hand === 'left' ? 'leftHand' : 'rightHand'
@@ -414,6 +474,17 @@ function parseRoomObjects(line, globals, xmlUpdateEvent) {
 
 function parseRoomPlayers(line, globals, xmlUpdateEvent) {
   // <component id='room players'>Also here: Eblar.</component>
+  // todo: fix issue when there are 2 room player events in single packet
+
+  // Havifiga Gechifacha Chyronn came through the Northeast Gate.
+  // <component id='room players'>Also here: Chyronn and Everics.</component>
+  // <prompt time="1579988467">&gt;</prompt>
+  // Havifiga Gechifacha Chyronn went down a narrow footpath.
+  // <component id='room players'>Also here: Everics.</component>
+  // <prompt time="1579988467">&gt;</prompt>
+
+  // interative loop while there's a match?
+
   const roomPlayersMatch = line.match(
     /<component id='room players'>(.*)<\/component>/
   )
@@ -433,6 +504,7 @@ function parseRoomPlayers(line, globals, xmlUpdateEvent) {
 
 function parseRoomExits(line, globals, xmlUpdateEvent) {
   const exits = {
+    array: [],
     north: false,
     northeast: false,
     east: false,
@@ -444,36 +516,34 @@ function parseRoomExits(line, globals, xmlUpdateEvent) {
     up: false,
     down: false,
     out: false,
-    array: [],
   }
-  const portalMatches = line.match(/<d>(\w+)<\/d>/g)
-  // portalMatches: [ '<d>east</d>', '<d>west</d>', '<d>east</d>', '<d>west</d>' ]
-  portalMatches &&
-    portalMatches.forEach(portalStr => {
-      const dirMatch = portalStr.match(/<d>(\w+)<\/d>/)
-      if (dirMatch && dirMatch[1]) {
-        exits[dirMatch[1]] = true
-        exits.array.push(dirMatch[1])
-      }
-    })
+  const portalsMatch = line.match(/<component id='room exits'>Obvious paths: ([^\.]*)\.<compass><\/compass><\/component>/)
+  if (!portalsMatch) return console.error("Unable to match portals with string:", line)
+  const portals = portalsMatch[1].split(",")
+  portals.forEach(portalString => {
+    const portalMatch = portalString.match(/<d>([^<]+)<\/d>/)
+    if (!portalMatch) return console.error("Unable to match single portal with string:", portalString)
+    const portal = portalMatch[1]
+    exits[portal] = true
+    exits.array.push(portal)
+  })
   globals.room.exits = exits
-  globals.room.test = exits
   xmlUpdateEvent('room')
 }
 
 function parseStowed(str, globals, xmlUpdateEvent) {
   // getting spammed multiple times on login, so I need to limit the capture
-  const stow = { items: [], containerName: '' }
+  const stowed = { items: [], containerName: '' }
 
   const stowedMatch = str.match(/<clearContainer id="stow"\/>(.+)<\/inv>/)
   // "<inv id='stow'>In the carpetbag:</inv><inv id='stow'> a rock</inv><inv id='stow'> a wood-hilted broadsword</inv><inv id='stow'> a rock</inv><inv id='stow'> a rock</inv><inv id='stow'> a steel pin</inv><inv id='stow'> a map</inv><inv id='stow'> a rock",
   if (!stowedMatch) return console.error('unable to get stowed items')
   const containerMatch = stowedMatch[1].match(/In the (\S+):/)
-  if (containerMatch) stow.containerName = containerMatch[1]
+  if (containerMatch) stowed.containerName = containerMatch[1]
   const items = stowedMatch[1]
     .replace(/^<inv id='stow'>In the \S+:<\/inv><inv id='stow'> /, '')
     .split("</inv><inv id='stow'> ")
-  stow.items = items
+  stowed.items = items
   const uniqueItems = {}
   items.forEach(item => {
     if (!uniqueItems[item]) {
@@ -482,9 +552,9 @@ function parseStowed(str, globals, xmlUpdateEvent) {
       uniqueItems[item] += 1
     }
   })
-  stow.uniqueItems = uniqueItems
-  globals.stow = stow
-  xmlUpdateEvent('stow')
+  stowed.uniqueItems = uniqueItems
+  globals.stowed = stowed
+  xmlUpdateEvent('stowed')
 }
 
 function parseExp(str, globals, xmlUpdateEvent) {
@@ -502,7 +572,6 @@ function parseExp(str, globals, xmlUpdateEvent) {
           rate: 0,
           rateWord: "clear",
           displayName,
-          displayStr: '' // consider actually formatting this to allow clear skills to display?
         }
       }
       if (!skillsMatch) {
@@ -512,17 +581,11 @@ function parseExp(str, globals, xmlUpdateEvent) {
         const rank = parseFloat(skillsMatch[2] + '.' + skillsMatch[3])
         const rateWord = skillsMatch[4]
         const rate = expLookup[rateWord]
-        const displayStr = `${displayName.padStart(16, ' ')}: ${(
-          skillsMatch[2] +
-          '.' +
-          skillsMatch[3]
-        ).padStart(7, ' ')}% ${rate.toString().padStart(2, ' ')}/34`
         globals.exp[skill] = {
           rank,
           rate,
           rateWord,
-          displayName,
-          displayStr,
+          displayName
         }
       }
     }
@@ -530,46 +593,29 @@ function parseExp(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent('experience')
 }
 
-// function parseExp(str, globals, xmlUpdateEvent) {
-//   // <component id='exp Outdoorsmanship'><preset id='whisper'> Outdoorsmanship:    4 19% dabbling     </preset></component>
-//   // <component id='exp Perception'><preset id='whisper'>      Perception:    5 85% dabbling     </preset></component>
-//   // <roundTime value='1579154336'/>You wander around and poke your fingers into a few places, wondering what you might find.
-//   // Roundtime: 5 sec.
-//   // <component id='room objs'></component>
-//   // <prompt time="1579154331">&gt;</prompt>
+function parseLogOn(str, globals, xmlUpdateEvent) {
+  const logOnRegex = /<pushStream id="logons"\/> \* ([^<]+)\n<popStream\/>/g
+  let m
+  do {
+    m = logOnRegex.exec(str)
+    if (m) {
+      globals.arrivals.push({ text: m[1], time: new Date() })
+      xmlUpdateEvent('logOn', m[1])
+    }
+  } while (m)
+}
 
-//   // todo: add parsing for clear skills, like at login:
-//   // <component id='exp Defending'></component>
-//   // <component id='exp Parry Ability'></component>
-
-//   // console.log('exp event:\n')
-//   // console.log(str)
-//   const skillRegex = /<component id='exp ([^']+)'>[^\d]+(\d+) (\d\d)% (\w+|\w+ \w+)\s+</g
-//   let m
-//   do {
-//     m = skillRegex.exec(str)
-//     if (m) {
-//       const displayName = m[1]
-//       const skill = formatSkillName(displayName)
-//       const rank = parseFloat(m[2] + '.' + m[3])
-//       const rateWord = m[4]
-//       const rate = expLookup[rateWord]
-//       const displayStr = `${displayName.padStart(16, ' ')}: ${(
-//         m[2] +
-//         '.' +
-//         m[3]
-//       ).padStart(7, ' ')}% ${rate.toString().padStart(2, ' ')}/34`
-//       globals.exp[skill] = {
-//         rank,
-//         rate,
-//         rateWord,
-//         displayName,
-//         displayStr,
-//       }
-//     }
-//   } while (m)
-//   xmlUpdateEvent('experience')
-// }
+function parseDeath(str, globals, xmlUpdateEvent) {
+  const deathRegex = /<pushStream id="death"\/> \* [^<]+\!<popStream\/>/g
+  let m
+  do {
+    m = deathRegex.exec(str)
+    if (m) {
+      globals.deaths.push({ text: m[1], time: new Date() })
+      xmlUpdateEvent('death', m[1])
+    }
+  } while (m)
+}
 
 function formatSkillName(str) {
   // "Medium Edged" returns "mediumEdged"
@@ -579,11 +625,20 @@ function formatSkillName(str) {
 function stringListToArray(str) {
   // only match up to 5 words after " and " to help misfires on "a strong and stately mature oak" (TGSE)
   // will still break if this is last item in room
+  // todo: fix crossing inside west gate:
+  // Items: the Western Gate | the Guard House and some stone stairs leading to the top of the town wall
+  // is there a better way to only grab the last and from the end of a string?
   str = str.replace(/ and (\S+\s?\S*\s?\S*\s?\S*\s?\S*)$/, ', $1')
   return str.split(', ')
 }
 
 module.exports = setupXMLparser
+
+// <pushStream id="atmospherics"/>The dwalgim on Ysean's crown pulses with a soft light.
+// <popStream/>
+
+// <pushStream id="death"/> * Keriss was just struck down at Zaulfung, Ruined Shrine! 
+// <popStream/>
 
 // XML todos:
 // COMMAND: shop

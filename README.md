@@ -1,33 +1,49 @@
 # Electron-Dr
 
-After cloning, npm install.
+## Installation
+
+- `npm install`
+- `cd react-client`
+- `npm install`
+- `cd ..`
+- `npm run start-all`
 
 Do not try to run this in Windows Linux Subsystem, it will not work. Mac/Windows/Linux should be fine though.
 
-Note: you will need a username and password saved in a .env file in the root directory of this project, in this format:
-
-ACCOUNT=accountName
-PASSWORD=hunter2
-INSTANCE=DR
-CHARACTER=Zoha
-
 ## Todos
+
+- Support to enter your own account info
+  - Save account info
+  - Support for multiple accounts
+  - Protect accounts with master password and encrypt everything locally
+  - local account config in new window
+
+- Highlights system
+  - highlights dynamically applied so new highlights can be used on previous game text (should not be an issue)
+  - regex highlights w/ validity check
+  - test mode can show highlights applied to text in real-time
+  - saved to config file
 
 - Configure linting settings for project
 
 - Pipe sge server messages to main window
-
-- Support to enter your own account info
-  - Support for multiple accounts
-  - Protect accounts with master password and encrypt everything locally
-  - local account config in new window
 
 - Script system w/ pauses for now
   - make example hunting script to flesh out system
 
 - Links: make links open in new window (login links, for instance)
 
-- Convert FE to React
+- Highlight + something action to trigger elanthipedia search
+
+- Ensure prompt time matches system time, or calculate offset
+
+- Multi-line command input
+  - input area is taller, enter key does newline, ctrl-enter sends command
+  - eventually allows quick composing of mini-scripts
+
+- Parse text input
+  - sends raw text to game for parsing, can include xml, etc
+  - useful for testing
 
 - XML
   - shop verb/window
@@ -36,18 +52,17 @@ CHARACTER=Zoha
   <popStream/>
 
 - Non-xml parsing
-
+  - exp command (useful to set vars after #xml reset)
   - assess (and other windows - need window system)
   - attack parsing
   - info / stat parsing
-  - exp command (useful to set vars after #xml reset)
 
 - Better visual for RT display and bodyPosition
 
 - Logging
   - logging currently writing at 1 second interval, but not a true buffer (which would be more performant)
-  - be sure to log script errors for debugging
-  - possible to write to compressed format on the fly?
+  - log all errors for debugging
+  - possible to write to compressed format on the fly? (not very important)
 
 - Skinning system (dynamically loading css variables)
 
@@ -61,6 +76,4 @@ CHARACTER=Zoha
     - https://www.arangodb.com/docs/stable/drivers/js-getting-started.html
   - Visualization using library (like deckGL but with drag/drop capabilities and non-spherical coordinate system)
 
-- Save description of character on look, store in DB, add ability to recall later
 
-- Ensure prompt time matches system time, or calculate offset

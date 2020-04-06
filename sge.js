@@ -19,13 +19,19 @@
 const SGE_URL = 'eaccess.play.net'
 const SGE_PORT = 7900
 
-function getGameKey(cb) {
+function getGameKey({ account, password, instance, characterName }, cb) {
   console.log('getGameKey initiated...')
-  require('dotenv').config()
-  if (!(process.env.ACCOUNT && process.env.PASSWORD && process.env.INSTANCE)) {
-    console.error('Required environment variable not present, aborting.')
-    process.exit(1)
-  }
+  // require('dotenv').config()
+  // if (!(process.env.ACCOUNT && process.env.PASSWORD && process.env.INSTANCE)) {
+  //   console.error('Required environment variable not present, aborting.')
+  //   process.exit(1)
+  // }
+  // const account = process.env.ACCOUNT
+  // const password = process.env.PASSWORD
+  // const instance = process.env.INSTANCE
+  // const characterName = process.env.CHARACTER
+  console.log(account, password, instance, characterName)
+  console.log(cb)
   const net = require('net')
   let connectKey = null
   let connectIP = null
@@ -47,9 +53,8 @@ function getGameKey(cb) {
       // console.log("HASH KEY:", JSON.stringify(hashKey));
       return setTimeout(() => {
         console.log('Sending hashed authentication string.')
-        const hashedPassArr = hashPassword()
-        // console.log(`SEND: A\t${process.env.ACCOUNT}\t${hashedPassArr}\r\n`);
-        sgeClient.write(`A\t${process.env.ACCOUNT}\t`)
+        const hashedPassArr = hashPassword(password)
+        sgeClient.write(`A\t${account}\t`)
         const buffPW = Buffer.from(hashedPassArr) // must be written as a buffer because of invalid ASCII values!
         sgeClient.write(buffPW)
         sgeClient.write('\r\n')
@@ -73,12 +78,12 @@ function getGameKey(cb) {
     }
     if (text.startsWith('M')) {
       console.log('Games List:\n', text.replace(/\t/g, '\n'))
-      sgeSendStr(`N\t${process.env.INSTANCE}\n`)
+      sgeSendStr(`N\t${instance}\n`)
       return
     }
     if (text.startsWith('N')) {
       console.log('Game Versions:\n', text.replace(/\t/g, '\n'))
-      sgeSendStr(`G\t${process.env.INSTANCE}\n`)
+      sgeSendStr(`G\t${instance}\n`)
       return
     }
     if (text.startsWith('G')) {
@@ -98,7 +103,7 @@ function getGameKey(cb) {
         charSlotNames[accountList[i + 1]] = accountList[i]
       }
       // grabbing character name from .env file, and ensuring the case is correct:
-      const desiredCharacterName = process.env.CHARACTER.toLowerCase().split('')
+      const desiredCharacterName = characterName.toLowerCase().split('')
       desiredCharacterName[0] = desiredCharacterName[0].toUpperCase()
       const charName = desiredCharacterName.join('')
       const slotName = charSlotNames[charName]
@@ -123,8 +128,8 @@ function getGameKey(cb) {
     console.error('\n\n*******************************\n\n')
   })
 
-  function hashPassword() {
-    const PASS = process.env.PASSWORD
+  function hashPassword(PASS) {
+    // const PASS = process.env.PASSWORD
     console.log('Hashing password.')
     let hashedPassword = []
     PASS.split('').forEach((char, i) => {
@@ -145,7 +150,7 @@ function getGameKey(cb) {
     sgeClient.write(str)
   }
 
-  sgeClient.on('close', function() {
+  sgeClient.on('close', function () {
     console.log('SGE connection closed.')
     cb(connectKey, connectIP, connectPort)
   })

@@ -10,36 +10,6 @@ const { Worker } = require('worker_threads') // to run game server
 // Pause, Resume, Toggle, Abort
 
 
-// function loadScript(scriptFileName, sendCommandToGame, globals) {
-//   return new Promise((resolve, reject) => {
-//     if (!scriptFileName) return console.error('Must specify a file name!')
-//     const directoryPath = path.join(__dirname, 'scripts')
-//     fs.readdir(directoryPath, async (err, fileNameList) => {
-//       if (err)
-//         return console.log(
-//           'Unable to open list of script files in /script directory:',
-//           err
-//         )
-//       // for now, no fancy checking:
-//       if (!fileNameList.includes(scriptFileName + '.js')) {
-//         console.error('Could not find script named', scriptFileName)
-//       }
-//       const scriptFullPath = path.join(directoryPath, scriptFileName + '.js')
-//       try {
-//         removeScriptFromCache(scriptFullPath)
-//         let load = require(scriptFullPath)
-//         let { run, parseText } = await load(sendCommandToGame, globals)
-//         resolve(parseText)
-//         await run()
-//         parseText = () => { }
-//         console.log('Script ended:', scriptFileName)
-//       } catch (err) {
-//         console.error('Error running script', scriptFileName, ':', err)
-//         return reject(() => { })
-//       }
-//     })
-//   })
-// }
 
 // todo: add function to parse raw xml in script as well
 
@@ -73,6 +43,7 @@ function loadScript(name, sendCommand) {
 
   function sendControlCommandToScript(command) {
     if (command === "#abort") {
+      console.log('ATTEMPTING TO TERMINATE SCRIPT')
       script.terminate();
     }
     else script.postMessage({ event: "control", command })

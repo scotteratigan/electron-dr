@@ -1,1 +1,257 @@
 command: <sendSettings/> actually works, neat. should I parse it?
+
+Unable to match vitals: <dialogData id="befriend"><label id='nofriends' align='n' value='No friends added'/></dialogData>
+Unable to match vitals: <dialogData id="befriend" clear="t"></dialogData>
+
+Havifiga Gechifacha Chyronn came through the Northeast Gate.
+
+Havifiga Gechifacha Chyronn went down a narrow footpath.
+
+todo: test death window with:
+<pushStream id="death"/> * Yvaene was just struck down! 
+<popStream/>
+
+<pushStream id="death"/> * Koreberg was just struck down at The Strand, Sandy Path! 
+<popStream/>
+
+Stun:
+<indicator id='IconSTUNNED' visible='y'/>Copernicus gestures at you.
+You feel an ominous pressure build up in your head.
+You jerk involuntarily as pain briefly lances through your skull.
+<component id='room players'>Also here: Copernicus.</component>
+<prompt time="1580078619">S&gt;</prompt>
+
+joining group:
+<indicator id='IconJOINED' visible='y'/>Copernicus holds your hand, giving you a friendly smile.
+<clearStream id='group'/>
+<pushStream id="group"/> Members of your group:
+<popStream/><pushStream id="group"/>  Copernicus(L): <popStream/><pushStream id="group"/>Invigorated<popStream/><pushStream id="group"/>.<popStream/><pushStream id="group"/>
+<popStream/><prompt time="1580080046">J&gt;</prompt>
+
+another join:
+You clasp Copernicus's hand tenderly.
+<clearStream id='group'/>
+<pushStream id="group"/> Members of your group:
+<popStream/><pushStream id="group"/>  Copernicus: <popStream/><pushStream id="group"/>Invigorated<popStream/><pushStream id="group"/>.<popStream/><pushStream id="group"/>
+<popStream/><prompt time="1580080109">&gt;</prompt>
+
+leaving group:
+<indicator id='IconJOINED' visible='n'/>Copernicus stops you from following him.
+<prompt time="1580080016">&gt;</prompt>
+
+atmospheric message:
+<pushStream id="atmospherics" />An emerald-eyed adder shifts its position on Copernicus's shoulders.  Flicking its tongue against his cheek, it slides down to coil about his finger.
+<popStream id="atmospherics" /><prompt time="1580080191">&gt;</prompt>
+
+accidental death:
+<prompt time="1580078662">&gt;</prompt>
+<component id='exp Shield Usage'></component>
+<component id='exp Light Armor'></component>
+<component id='exp Chain Armor'></component>
+<component id='exp Brigandine'></component>
+<component id='exp Plate Armor'></component>
+<component id='exp Defending'></component>
+<component id='exp Parry Ability'></component>
+<component id='exp Small Edged'></component>
+<component id='exp Large Edged'></component>
+<component id='exp Twohanded Edged'></component>
+<component id='exp Small Blunt'></component>
+<component id='exp Large Blunt'></component>
+<component id='exp Twohanded Blunt'></component>
+<component id='exp Slings'></component>
+<component id='exp Bow'></component>
+<component id='exp Crossbow'></component>
+<component id='exp Staves'></component>
+<component id='exp Polearms'></component>
+<component id='exp Light Thrown'></component>
+<component id='exp Heavy Thrown'></component>
+<component id='exp Brawling'></component>
+<component id='exp Offhand Weapon'></component>
+<component id='exp Melee Mastery'></component>
+<component id='exp Missile Mastery'></component>
+<component id='exp Arcane Magic'></component>
+<component id='exp Attunement'></component>
+<component id='exp Arcana'></component>
+<component id='exp Targeted Magic'></component>
+<component id='exp Augmentation'></component>
+<component id='exp Debilitation'></component>
+<component id='exp Utility'></component>
+<component id='exp Warding'></component>
+<component id='exp Sorcery'></component>
+<component id='exp Evasion'></component>
+<component id='exp Athletics'></component>
+<component id='exp Perception'></component>
+<component id='exp Stealth'></component>
+<component id='exp Locksmithing'></component>
+<component id='exp Thievery'></component>
+<component id='exp First Aid'></component>
+<component id='exp Outdoorsmanship'></component>
+<component id='exp Skinning'></component>
+<component id='exp Forging'></component>
+<component id='exp Engineering'></component>
+<component id='exp Outfitting'></component>
+<component id='exp Alchemy'></component>
+<component id='exp Enchanting'></component>
+<component id='exp Scholarship'></component>
+<component id='exp Mechanical Lore'></component>
+<component id='exp Appraisal'></component>
+<component id='exp Performance'></component>
+<component id='exp Thanatology'></component>
+<component id='exp Tactics'></component>
+<dialogData id='minivitals'><skin id='healthSkin' name='healthBar' controls='health' left='0%' top='0%' width='20%' height='100%'/><progressBar id='health' value='32' text='health 32%' left='0%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+<dialogData id='minivitals'><skin id='staminaSkin' name='staminaBar' controls='stamina' left='40%' top='0%' width='20%' height='100%'/><progressBar id='stamina' value='90' text='fatigue 90%' left='40%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+<dialogData id='minivitals'><progressBar id='concentration' value='100' text='concentration 100%' left='80%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+<indicator id="IconKNEELING" visible="n"/><indicator id="IconPRONE" visible="y"/><indicator id="IconSITTING" visible="n"/><indicator id="IconSTANDING" visible="n"/><indicator id='IconSTUNNED' visible='n'/><indicator id='IconDEAD' visible='y'/>Copernicus gestures at you.
+A crackling stream of energy flies at you!
+You feel the blow cushioned by your calcified hide.
+A sickening crunch comes from you as your abdomen collapses like an accordion.  An awkward moment passes before the pathetically flailing limbs fall away from your tortured body in an explosion of flesh and sinew.
+<pushStream id="death"/> * Rellie was just struck down at Fang Cove, Fate's Fortune Lane!
+<popStream/>The cysts in your eye pop one after another, deflated of their wondrous magic.
+Your lesser, Human sight returns.
+Your body rumbles, sending several short spasms of agony through you, as the ridges encompassing your form recede and vanish.
+You feel a weight settle over you, and realize the magic that has been easing your burden has faded.
+An unpleasant sensation jolts through your body as your mutation fades, leaving you feeling briefly weakened as well as slower.
+Your death cry echoes in your brain as it quickly dawns on you that you have just died!  Already, you feel the tug of eternity upon your soul and you struggle to remain tied to this world.
+A chill takes the seat of your soul as your remaining spiritual strength bleeds away.  You feel the eyes of the gods upon you, eager to receive you in judgment.
+Your body will decay beyond its ability to hold your soul in 267 minutes.
+<component id='room players'>Also here: Copernicus.</component>
+<prompt time="1580078668">DEAD&gt;</prompt>
+
+chatter:
+You chatter away...
+<pushStream id="thoughts"/><preset id='thought'>Chatter[Rellie]</preset> heh, whoops
+<popStream/><prompt time="1580078710">&gt;</prompt>
+
+checking health with a bleeder:
+<output class="mono"/>
+Your body feels battered.
+Your spirit feels weak.
+You have a severely swollen and deeply bruised right leg compounded by deep cuts across the right leg.
+Bleeding
+            Area       Rate
+-----------------------------------------
+       right leg       slight
+   inside r. leg       slight
+<output class=""/>
+
+attack causing bleeder:
+<dialogData id='minivitals'><skin id='healthSkin' name='healthBar' controls='health' left='0%' top='0%' width='20%' height='100%'/><progressBar id='health' value='59' text='health 59%' left='0%' customText='t' top='0%' width='20%' height='100%'/></dialogData>
+<indicator id='IconBLEEDING' visible='y'/>* With strength, Copernicus feints a T'Kashi mirror blade at you.  You fail to dodge.  <pushBold/>The blade lands a hard hit that rips into the right calf.<popBold/>
+[You're very beat up, winded, drained, solidly balanced with opponent in strong position.]
+<prompt time="1580078837">!&gt;</prompt>
+
+whisper:
+<pushStream id="whispers"/><preset id="whisper">Odium whispers,</preset> "Lean for heals."
+<popStream/><preset id="whisper">Odium whispers,</preset> "Lean for heals."
+<prompt time="1580079079">!&gt;</prompt>
+
+talking:
+<pushStream id="talk"/><preset id='speech'>Copernicus says</preset>, "Hello sir."
+<popStream/><preset id='speech'>Copernicus says</preset>, "Hello sir."
+<prompt time="1580079169">&gt;</prompt>
+
+talking with emote:
+<pushStream id="talk"/><preset id='speech'>Copernicus vainly says</preset>, "Hello."
+<popStream/><preset id='speech'>Copernicus vainly says</preset>, "Hello."
+<prompt time="1580079220">&gt;</prompt>
+
+talking to you:
+<pushStream id="talk"/><preset id='speech'>Copernicus says to you</preset>, "Hi."
+<popStream/><preset id='speech'>Copernicus says to you</preset>, "Hi."
+<prompt time="1580079283">&gt;</prompt>
+
+talking to you with emote:
+<pushStream id="talk"/><preset id='speech'>Copernicus vainly says to you</preset>, "Well hi."
+<popStream/><preset id='speech'>Copernicus vainly says to you</preset>, "Well hi."
+<prompt time="1580079479">&gt;</prompt>
+
+whispering to you:
+<pushStream id="whispers"/><preset id="whisper">Copernicus whispers,</preset> "psst, this is a secret"
+<popStream/><preset id="whisper">Copernicus whispers,</preset> "psst, this is a secret"
+<prompt time="1580079348">&gt;</prompt>
+
+whispering to group:
+<pushStream id="whispers"/><preset id="whisper">Copernicus whispers to your group,</preset> "group text"
+<popStream/><preset id="whisper">Copernicus whispers to your group,</preset> "group text"
+<prompt time="1580079509">J&gt;</prompt>
+
+yelling:
+<pushStream id="talk"/><b>Copernicus yells,</b> "I am yelling."
+<popStream/><b>Copernicus yells,</b> "I am yelling."
+<prompt time="1580079404">&gt;</prompt>
+
+yelling loud:
+<pushStream id="talk"/><b>Copernicus loudly yells,</b> "Noises."
+<popStream/><b>Copernicus loudly yells,</b> "Noises."
+<prompt time="1580079381">&gt;</prompt>
+
+yelling (belt):
+<pushStream id="talk"/><b>Copernicus belts out,</b> "Test."
+<popStream/><b>Copernicus belts out,</b> "Test."
+
+ooc rellie 'test': (yes, it really sends three times)
+<pushStream id="whispers"/><preset id="whisper">Copernicus whispers,</preset> "OOC: test"
+<popStream/><pushStream id="ooc"/><preset id="whisper">Copernicus whispers,</preset> "OOC: test"
+<popStream/><preset id="whisper">Copernicus whispers,</preset> "OOC: test"
+<prompt time="1580079567">J&gt;</prompt>
+
+singing:
+Copernicus sings in a countertenor voice:
+    "This is a song
+     I can sing all day long"
+<prompt time="1580079802">J&gt;</prompt>
+
+tellstat:
+<prompt time="1580079707">J&gt;</prompt>
+<pushBold/>Copernicus is showing you his stats.
+<popBold/>Copernicus's stats are:
+    Strength : 100           Reflex : 100
+     Agility : 105         Charisma : 100
+  Discipline : 100           Wisdom : 138
+Intelligence : 100          Stamina : 100
+[If you wish to prevent players from sending you this information, please TELLSTAT AVOID.]
+<prompt time="1580079708">J&gt;</prompt>
+<clearStream id="percWindow"/>
+<pushStream id="percWindow"/>Devour  (29 roisaen)
+<popStream/><prompt time="1580079711">J&gt;</prompt>
+
+tellexp:
+Copernicus is showing you his skills.
+<popBold/><output class="mono"/>
+Showing all skills regardless of rank.
+          SKILL: Rank/Percent towards next rank/Amount learning/Mindstate Fraction
+    Shield Usage:   1152 30% clear          (0/34)     Light Armor:   1104 06% clear          (0/34)
+     Chain Armor:   1087 99% clear          (0/34)      Brigandine:    864 28% clear          (0/34)
+     Plate Armor:    870 00% clear          (0/34)       Defending:   1161 83% clear          (0/34)
+   Parry Ability:   1090 97% clear          (0/34)     Small Edged:    961 17% clear          (0/34)
+     Large Edged:    925 57% clear          (0/34) Twohanded Edged:    931 18% clear          (0/34)
+     Small Blunt:    876 70% clear          (0/34)     Large Blunt:    848 58% clear          (0/34)
+ Twohanded Blunt:    859 29% clear          (0/34)          Slings:    359 99% clear          (0/34)
+             Bow:    775 61% clear          (0/34)        Crossbow:    690 22% clear          (0/34)
+          Staves:    830 72% clear          (0/34)        Polearms:    887 57% clear          (0/34)
+    Light Thrown:    925 85% clear          (0/34)    Heavy Thrown:    855 24% clear          (0/34)
+        Brawling:    949 60% clear          (0/34)  Offhand Weapon:    910 92% clear          (0/34)
+   Melee Mastery:   1005 46% clear          (0/34) Missile Mastery:    920 83% clear          (0/34)
+     Lunar Magic:   1761 47% clear          (0/34)      Attunement:   1786 31% clear          (0/34)
+          Arcana:   1750 00% clear          (0/34)  Targeted Magic:   1424 77% clear          (0/34)
+    Augmentation:   1749 83% clear          (0/34)    Debilitation:   1234 93% clear          (0/34)
+         Utility:   1749 83% clear          (0/34)         Warding:   1749 96% clear          (0/34)
+         Sorcery:   1221 92% clear          (0/34)       Astrology:   1750 00% clear          (0/34)
+         Evasion:   1236 83% clear          (0/34)       Athletics:   1082 08% clear          (0/34)
+      Perception:   1750 00% clear          (0/34)         Stealth:   1198 30% clear          (0/34)
+    Locksmithing:    826 46% clear          (0/34)        Thievery:    562 54% clear          (0/34)
+       First Aid:   1105 42% clear          (0/34) Outdoorsmanship:   1750 00% clear          (0/34)
+        Skinning:   1286 72% clear          (0/34)         Forging:    586 64% clear          (0/34)
+     Engineering:    153 00% clear          (0/34)      Outfitting:    112 90% clear          (0/34)
+         Alchemy:      0 00% clear          (0/34)      Enchanting:      0 00% clear          (0/34)
+     Scholarship:   1741 23% clear          (0/34) Mechanical Lore:    878 26% clear          (0/34)
+       Appraisal:   1517 89% clear          (0/34)     Performance:    403 36% clear          (0/34)
+         Tactics:   1146 86% clear          (0/34)
+Total Ranks Displayed: 55337
+<output class=""/>
+[If you wish to prevent players from sending you this information, please TELLEXP AVOID.]
+<prompt time="1580079747">J&gt;</prompt>
+
+echocolumn test echo:
+test echo
+<prompt time="1580079881">J&gt;</prompt>

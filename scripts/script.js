@@ -14,8 +14,14 @@ const globalHasVal = (xmlVar, value) => new Promise((res, rej) => {
     }
   }, 25)
 })
+
+const scriptGlobals = {
+  textFound: false,
+  regex: null
+};
+
 const rt = () => new Promise(async (res, rej) => {
-  await sleep(.5)
+  await sleep(1)
   let interval = setInterval(() => {
     if (globals["roundTime"] <= 0) {
       clearInterval(interval)
@@ -45,10 +51,30 @@ const globalsLoaded = () => new Promise(res => {
   }, 1)
 })
 
+const waitFor = (regex) => new Promise(
+  res => {
+    scriptGlobals.textFound = false;
+    scriptGlobals.waitForRegex = regex;
+    let waitForInterval = setInterval(() => {
+      console.log('interval checking...', scriptGlobals.textFound)
+      if (scriptGlobals.textFound === true) {
+        clearInterval(waitForInterval)
+        scriptGlobals.waitForRegex = null;
+        // could even return match here
+        return res()
+      }
+    }, 500)
+  }
+);
+
+
 async function script() {
   await globalsLoaded()
-  await southToXing()
-  await northFromXing()
+  await waitFor(/Roundtime/)
+  send("mind")
+  await sleep(3)
+  // await southToXing()
+  // await northFromXing()
 
   // send("forage")
   // await rt()
@@ -81,6 +107,10 @@ connection.on('message', message => {
 function parseText(text) {
   console.log('parsing text:', text.substring(0, 15) + "...")
   // if (!text) return;
+  if (/*scriptGlobals.regex &&*/ text.match(/Roundtime/)) { // scriptGlobals.regex
+    console.log('****** match found *********', scriptGlobals.regex)
+    scriptGlobals.textFound = true
+  }
   if (text.includes("Obvious paths:")) {
     moved = true; // todo: do this in xml
   }
@@ -101,8 +131,6 @@ function parseXML(xmlVar, detail, gameGlobals) {
   // globals = gameGlobals; // assign local obj here to values from game
   // console.log('globals:', globals);
 }
-
-
 
 script();
 

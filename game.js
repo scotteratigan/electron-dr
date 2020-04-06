@@ -6,6 +6,9 @@ const getConnectKey = require('./sge')
 const makeLogger = require('./log')
 const path = require('path')
 
+// Todo: investigate this as an option:
+// socket.setKeepAlive([enable][, initialDelay])
+
 function game(messageFrontEnd) {
   // Initialization Stuff:
   const globals = {}
@@ -43,17 +46,14 @@ function game(messageFrontEnd) {
       sendControlCommandToScript = scriptFunctions.sendControlCommandToScript
       sendXMLeventToScript("all", "", globals) // so that script initializes with variables - should wait for this in script
       return
-    }
-    if (command.startsWith("#abort")) {
+    } else if (command.startsWith("#abort")) {
       console.log('*** Abort signal received from client ***');
       return sendControlCommandToScript("#abort")
-    }
-    if (command.startsWith("#echo ")) {
+    } else if (command.startsWith("#echo ")) {
       const detail = command.substring(6);
       // if (!detail) return console.error("Echo called with no text?")
       return messageFrontEnd({ type: 'gametext', detail })
-    }
-    if (command.startsWith('#log ')) {
+    } else if (command.startsWith('#log ')) {
       const logText = command.substring(4) // strips out '#log '
       try {
         console.log('attempting to log...')
@@ -63,28 +63,30 @@ function game(messageFrontEnd) {
         console.error(`Unable to log text "${logText}"`)
       }
       return
-    }
-    if (command.startsWith('#xml')) {
+    } else if (command.startsWith('#xml')) {
       messageFrontEnd({
         type: 'gametext',
         detail: '*** Reloading XML Parser. ***',
       })
       return loadXMLparser()
-    }
-    if (command.startsWith('#var')) {
+    } else if (command.startsWith('#var')) {
       return messageFrontEnd({ type: 'globals', globals })
-    }
-    if (command.startsWith('#')) {
+    } else if (command.startsWith('#')) {
       return messageFrontEnd({
         type: 'gametext',
         detail: 'Unknown command:' + command,
       })
+    } else {
+      sendCommandToGame(command)
     }
 
-    sendCommandToGame(command)
   }
 
   let buffer = []
+
+  client.on('drain', () => {
+    console.log('drained...')
+  })
 
   // Game sends data:
   client.on('data', data => {
@@ -148,10 +150,14 @@ function game(messageFrontEnd) {
 
   // Actual Connect process:
 
-  function connect() {
-    getConnectKey((connectKey, ip, port) => {
+  function connect({ account, password, instance, characterName }) {
+    console.log('connect received:', account, password, instance, characterName)
+    const temp = { account, password, instance, characterName }
+    console.log('temp is:', temp)
+    getConnectKey({ account, password, instance, characterName }, (connectKey, ip, port) => {
       console.log('Received connect key:', connectKey)
       client.connect(port, ip, function () {
+        client.setNoDelay(true) // may help with packet buffering
         console.log('Connected, sending key.'.green)
         const lineEnding = "\r\n"
         setTimeout(() => {

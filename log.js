@@ -61,17 +61,3 @@ async function makeLogger(charName = 'Character', instance = 'UI', logType) {
 }
 
 module.exports = makeLogger
-
-// async function setup() {
-//   const { log, unloadLogger } = await makeLogger("Kwarnode", "DR")
-//   log('test');
-//   log('test1');
-//   log('test2');
-//   log('test3');
-//   log('test4');
-//   log('test5');
-//   unloadLogger();
-//   log('testagain');
-// }
-
-// setup();

@@ -4,10 +4,9 @@
   "description": "React/JS DragonRealms Client",
   "main": "electron-main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "concurrently \"cd react-client && npm start\" \"electron .\"",
     "start-electron": "electron .",
-    "start-react": "cd react-client && npm start",
-    "start-all": "concurrently \"cd react-client && npm start\" \"electron .\""
+    "start-react": "cd react-client && npm start"
   },
   "productName": "ElectronDR",
   "repository": "https://github.com/scotteratigan/electron-dr/",

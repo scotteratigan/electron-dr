@@ -14,14 +14,21 @@
   A       ACCOUNTNAME  PROBLEM
   */
 
+// Instances are an array of objects with keys name and gameCode
+// gameCode is used to select the game server
+
 // todo: capture port and ip for selected (also need to be able to select) game dynamically
 const net = require('net')
 const SGE_URL = 'eaccess.play.net'
 const SGE_PORT = 7900
 
-function accountIsValid({ account, password }) {
+function sgeValidates({ account, password, gameCode = "" }) {
+  // If called with account and password, validates that account exists and returns list of instances
+  // If supplied with gameCode, returns a list of characters for that account/instance
+
   return new Promise((resolve, reject) => {
     let attemptedValidation = false
+    let response = {}
     const sgeClient = new net.Socket()
 
     sgeClient.connect(SGE_PORT, SGE_URL, res => {
@@ -43,18 +50,78 @@ function accountIsValid({ account, password }) {
       if (text.startsWith('A')) {
         // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
         if (text.includes('KEY')) {
-          sgeClient.destroy()
-          return resolve(true)
+          // sgeClient.destroy()
+          return sgeClient.write('M\n')
         } else {
           console.error('Authentication failed. Please check USERNAME and PASSWORD.')
           console.error('Response:', text)
           sgeClient.destroy()
-          return resolve(false)
+          return resolve([])
         }
       }
+
+      if (text.startsWith('M')) {
+        // instances are: M\tCS\tCyberStrike\tDR\tDragonRealms
+        const instances = text.split('\t')
+          .filter(text => !["M", "CS", "CyberStrike"].includes(text.trim()))
+        const formattedInstances = []; 
+        for(let i = 0; i < instances.length; i+=2) {
+          const gameCode = instances[i]
+          const name = instances[i+1]
+          formattedInstances.push({name, gameCode})
+        }
+        response.instances = formattedInstances
+        if (!gameCode) {
+          sgeClient.destroy()
+          return resolve({ ...response, success: true })
+        } else {
+          sgeClient.write(`N\t${gameCode}\n`)
+        }
+      }
+
+      if (text.startsWith('N')) {
+        console.log('Game Versions:\n', text)
+        // G PRODUCTION|STORM|TRIAL
+        sgeClient.write(`G\t${gameCode}\n`)
+        return
+      }
+      if (text.startsWith('G')) {
+        console.log('Game Info:\n', text)
+        //  G      DragonRealms    FREE_TO_PLAY    0               ROOT=sgc/dr     MKTG=info/default.htm   MAIN=main/default.htm   GAMEINFO=information/default.htm        PLAYINFO=main/default.htm       MSGBRD=message/default.htm      CHAT=chat/default.htm   FILES=files/default.htm COMMING=main/default.htm STUFF=main/comingsoon.htm       BILLINGFAQ=account/default.htm  BILLINGOPTIONS=offer/payment.htm        LTSIGNUP=https://account.play.net/simunet_private/cc-signup.cgi BILLINGINFO=http://account.play.net/simunet_private/acctInfo.cgi?key={KEY}&SITE=sgc     GAMES=main/games.htm    FEEDBACK=feedback/default.htm    MAILFAIL=/sgc/dr/feedback/mailfail.htm  MAILSUCC=/sgc/dr/feedback/mailsent.htm  MAILSERVE=SGC   SIGNUP=http://ad-track.play.net/sgc/signup_redirect.cgi SIGNUPA=http://ad-track.play.net/sgc/signup_again.cgi
+        const gameInfo = text.split('\t')
+        // console.log('gameInfo.length:', gameInfo.length)
+        // console.log('gameInfo:', gameInfo)
+        // Add account type to this account (not a global setting)
+        const activeInstance = response.instances.find(instance => instance.name === gameInfo[1])
+        activeInstance.accountType = gameInfo[2]
+        sgeClient.write('C\n')
+        return
+      }
+
+      if (text.startsWith('C')) {
+        // Todo: determine what these numbers mean:
+        // C       1       1       0       0       W_DRNODER_000   Kruarnode
+        console.log('characterInfo:')
+        console.log(text)
+        const characterInfo = text.split('\t')
+        const activeInstance = response.instances.find(instance => instance.gameCode === gameCode)
+        const charactersInfo = characterInfo.splice(5) // W_DRNODER_000   Kruarnode
+        const characterList = []
+        for(let i = 0; i < charactersInfo.length; i += 2) {
+          const slotCode = charactersInfo[i]
+          const name = charactersInfo[i+1].trim().replace('\n', '')
+          characterList.push({ name, slotCode })
+        }
+        activeInstance.characterList = characterList
+        sgeClient.destroy()
+        return resolve({ ...response, success: true })
+      }
+
     })
   })
 }
+
+
 
 function getGameKey({ account, password, instance, characterName }, cb) {
   console.log('getGameKey initiated...')
@@ -174,9 +241,9 @@ function sendHashedPassword({ account, password, hashKey, sgeClient }) {
 }
 
 (async () => {
-  const valid = await accountIsValid({account: "drnoder", password: "secret"})
-  if (valid) {
-    console.log('success is my only motherfuckin\' option...')
+  const res = await sgeValidates({account: 'drnoder', password: 'secret', gameCode: 'DR'})
+  if (res.success) {
+    console.log(JSON.stringify(res))
   } else {
     console.log('vomit on my sweater already, mom\'s spaghetti...')
   }

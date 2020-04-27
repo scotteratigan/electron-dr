@@ -18,6 +18,13 @@ Do not try to run this in Windows Linux Subsystem, it will not work. Mac/Windows
   - Protect accounts with master password and encrypt everything locally
   - local account config in new window
 
+- Auth flow:
+  -Add account with username, password. Once complete, run authentication of account to verify validity.
+  -Once account added, get games list (instance), save it, and allow user to select instance.
+  -Once instance/game is selected, load characters
+  -once character is selected, user can choose to connect
+  -after auth info is saved, in the future user can connect with #connect drf charname
+
 - Highlights system
   - highlights dynamically applied so new highlights can be used on previous game text (should not be an issue)
   - regex highlights w/ validity check

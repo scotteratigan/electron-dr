@@ -15,51 +15,73 @@
   */
 
 // todo: capture port and ip for selected (also need to be able to select) game dynamically
-
+const net = require('net')
 const SGE_URL = 'eaccess.play.net'
 const SGE_PORT = 7900
 
+function accountIsValid({ account, password }) {
+  return new Promise((resolve, reject) => {
+    let attemptedValidation = false
+    const sgeClient = new net.Socket()
+
+    sgeClient.connect(SGE_PORT, SGE_URL, res => {
+      console.log(`Connected to ${SGE_URL}:${SGE_PORT}`)
+      sgeClient.write('K\n')
+    })
+  
+    sgeClient.on('data', data => {
+      // First, send validation if not done yet:
+      if (!attemptedValidation) {
+        const hashKey = [...data] // hashKey vals can be 64 <= x <= 127
+        attemptedValidation = true
+        return sendHashedPassword({ account, password, hashKey, sgeClient })
+      }
+
+      const text = data.toString()
+  
+      // Next, check for validation response:
+      if (text.startsWith('A')) {
+        // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
+        if (text.includes('KEY')) {
+          sgeClient.destroy()
+          return resolve(true)
+        } else {
+          console.error('Authentication failed. Please check USERNAME and PASSWORD.')
+          console.error('Response:', text)
+          sgeClient.destroy()
+          return resolve(false)
+        }
+      }
+    })
+  })
+}
+
 function getGameKey({ account, password, instance, characterName }, cb) {
   console.log('getGameKey initiated...')
-  // require('dotenv').config()
-  // if (!(process.env.ACCOUNT && process.env.PASSWORD && process.env.INSTANCE)) {
-  //   console.error('Required environment variable not present, aborting.')
-  //   process.exit(1)
-  // }
-  // const account = process.env.ACCOUNT
-  // const password = process.env.PASSWORD
-  // const instance = process.env.INSTANCE
-  // const characterName = process.env.CHARACTER
   console.log(account, password, instance, characterName)
-  console.log(cb)
-  const net = require('net')
+  
   let connectKey = null
   let connectIP = null
   let connectPort = null // todo: pass these vals instead of making global
-  let hashKey = null // hashKey vals can be 64 <= x <= 127
+  let attemptedValidation = false
   const sgeClient = new net.Socket()
 
   sgeClient.connect(SGE_PORT, SGE_URL, res => {
     // todo: add error handling here
     console.log(`Connected to ${SGE_URL}:${SGE_PORT}`)
-    setTimeout(() => {
-      sgeSendStr('K\n')
-    }, 5)
+    sgeClient.write('K\n')
   })
 
   sgeClient.on('data', data => {
-    if (!hashKey) {
-      hashKey = [...data]
-      // console.log("HASH KEY:", JSON.stringify(hashKey));
-      return setTimeout(() => {
-        console.log('Sending hashed authentication string.')
-        const hashedPassArr = hashPassword(password)
-        sgeClient.write(`A\t${account}\t`)
-        const buffPW = Buffer.from(hashedPassArr) // must be written as a buffer because of invalid ASCII values!
-        sgeClient.write(buffPW)
-        sgeClient.write('\r\n')
-      }, 5)
+    console.log('DATA:', JSON.stringify(data))
+    // First, send validation if not done yet:
+    if (!attemptedValidation) {
+      const hashKey = [...data] // hashKey vals can be 64 <= x <= 127
+      console.log("HASH KEY:", JSON.stringify(hashKey));
+      attemptedValidation = true
+      return sendHashedPassword({ account, password, hashKey, sgeClient })
     }
+
     const text = data.toString()
 
     if (text.startsWith('A')) {
@@ -67,28 +89,28 @@ function getGameKey({ account, password, instance, characterName }, cb) {
       if (text.includes('KEY')) {
         console.log('Authentication Successful!')
         console.log('text here is:', text) //text.replace(/\t/g, "\n")
-        sgeSendStr('M\n')
+        sgeClient.write('M\n')
         return
       } else {
         console.error(
-          'Authentication failed. Please check USERNAME and PASSWORD in .env file.'
+          'Authentication failed. Please check USERNAME and PASSWORD.'
         )
         return
       }
     }
     if (text.startsWith('M')) {
       console.log('Games List:\n', text.replace(/\t/g, '\n'))
-      sgeSendStr(`N\t${instance}\n`)
+      sgeClient.write(`N\t${instance}\n`)
       return
     }
     if (text.startsWith('N')) {
       console.log('Game Versions:\n', text.replace(/\t/g, '\n'))
-      sgeSendStr(`G\t${instance}\n`)
+      sgeClient.write(`G\t${instance}\n`)
       return
     }
     if (text.startsWith('G')) {
       console.log('Game Info:\n', text.replace(/\t/g, '\n'))
-      sgeSendStr('C\n')
+      sgeClient.write('C\n')
       return
     }
     if (text.startsWith('C')) {
@@ -109,7 +131,7 @@ function getGameKey({ account, password, instance, characterName }, cb) {
       const slotName = charSlotNames[charName]
       console.log('charSlotNames:', charSlotNames)
       console.log('slotName:', slotName)
-      sgeSendStr(`L\t${slotName}\tSTORM\n`)
+      sgeClient.write(`L\t${slotName}\tSTORM\n`)
       return
     }
     // Login text: L   OK      UPPORT=5535     GAME=STORM      GAMECODE=DR     FULLGAMENAME=StormFront GAMEFILE=STORMFRONT.EXE GAMEHOST=dr.simutronics.net     GAMEPORT=11324  KEY=a33f64d541ee461cab92a460e149d6d1
@@ -128,28 +150,6 @@ function getGameKey({ account, password, instance, characterName }, cb) {
     console.error('\n\n*******************************\n\n')
   })
 
-  function hashPassword(PASS) {
-    // const PASS = process.env.PASSWORD
-    console.log('Hashing password.')
-    let hashedPassword = []
-    PASS.split('').forEach((char, i) => {
-      const result = hashChar(PASS[i], hashKey[i])
-      hashedPassword.push(result)
-    })
-    return hashedPassword // returning as an array of ints
-  }
-
-  function hashChar(pwChar, hashNum) {
-    let returnVal = hashNum ^ (pwChar.charCodeAt(0) - 32)
-    returnVal += 32
-    return returnVal
-  }
-
-  function sgeSendStr(str) {
-    console.log('Sending:', str)
-    sgeClient.write(str)
-  }
-
   sgeClient.on('close', function () {
     console.log('SGE connection closed.')
     cb(connectKey, connectIP, connectPort)
@@ -161,4 +161,31 @@ function getGameKey({ account, password, instance, characterName }, cb) {
   })
 }
 
+function sendHashedPassword({ account, password, hashKey, sgeClient }) {
+  console.log('Sending hashed authentication string.')
+  const hashedPassArr = password.split('').map((char, i) => {
+    const newVal = hashKey[i] ^ (char.charCodeAt(0) - 32)
+    return newVal + 32
+  })
+  sgeClient.write(`A\t${account}\t`)
+  const buffPW = Buffer.from(hashedPassArr) // must be written as a buffer because of invalid ASCII values!
+  sgeClient.write(buffPW)
+  sgeClient.write('\r\n')
+}
+
+(async () => {
+  const valid = await accountIsValid({account: "drnoder", password: "secret"})
+  if (valid) {
+    console.log('success is my only motherfuckin\' option...')
+  } else {
+    console.log('vomit on my sweater already, mom\'s spaghetti...')
+  }
+})()
+
+// (async () => {
+//   await getGameKey({ account: 'drnoder', password: 'secret', instance: 'DR', characterName: 'Kruarnode' }, () => console.log('we got that key...'))
+// })()
+
 module.exports = getGameKey
+
+

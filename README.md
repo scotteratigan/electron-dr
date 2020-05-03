@@ -1,6 +1,26 @@
 # Electron-Dr
 
-## Installation
+## A Front End for Simutronics' DragonRealms Games
+If you don't know the game already, it's a text-based multiplayer fantasy adventure game, which you can play for free. https://www.play.net/dr/
+
+## Current State
+- Playable alpha, developers only (requires npm/node and familiarity with JavaScript)
+
+## Key Challenges
+- Authentication - custom authentication scheme.
+  - Connect to auth server, get hash array, hash password (including invalid ascii values, as a buffer), and after passing commands in order, extract connect key (temporary password for specific character)
+- Connection
+  - raw tcp stream, packets can be split in transit
+- Parsing Game Data
+  - custom non-spec XML scheme requires custom solution
+- Electron Implementation
+  - browser (visible FE) is unpriveledged, so all commands and responses must be messaged back and forth between client FE and client BE
+- Scripting
+  - needs custom framework, partially implemented
+- Mapping
+  - not started yet
+
+## Developer Installation
 
 - `npm install`
 - `cd react-client`
@@ -11,13 +31,14 @@
 Do not try to run this in Windows Linux Subsystem, it will not work. Mac/Windows/Linux should be fine though.
 
 - Login:
-  -Add account with username, password. If valid, automatically downloads characters for all instances.
-  -With saved account, user can connect through the account modal using drop-downs to select account, instance, character
-  -after auth info is saved, user can connect with #connect drf charname
+  - Add account with username, password. If valid, automatically downloads characters for all instances.
+  - With saved account, user can connect through the account modal using drop-downs to select account, instance, character
+  - With saved account, ser can connect with #connect drf charname
 
 ## Todos
 
 - Fix connect when already connected (Connection lost?: Error: connect EISCONN 199.188.208.5:11024 - Local (10.0.0.210:63382))
+- Allow #connect charname and search stored json for that character
 
 - Make sidebars resizable
 - Make sidebar elements collapsable

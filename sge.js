@@ -28,9 +28,13 @@ function sgeValidate({ account, password = '', gameCode = '', characterName = ''
   // If invoked with account and password, validates returns '' if validation succeeds, or 'NORECORD', 'PASSWORD' or whatever auth error is
   // If invoked with gameCode in addition to account and password, returns a list of characters for that account/instance
   // If invoked with account, gameCode, and characterName, returns connect key (note: password not required - will look up from file)
-  if (gameCode && !validGameCodes.includes(gameCode)) {
-    throw new Error(`Invalid gameCode supplied: '${gameCode}'`)
+  if (gameCode) {
+    gameCode = gameCode.toUpperCase()
+    if (!validGameCodes.includes(gameCode)) {
+      throw new Error(`Invalid gameCode supplied: '${gameCode}'`)
+    }
   }
+  
 
   return new Promise(async (resolve, reject) => {
     let attemptedValidation = false

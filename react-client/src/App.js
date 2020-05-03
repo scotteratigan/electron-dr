@@ -68,6 +68,8 @@ class App extends React.Component {
     joined: false,
     stunned: false,
     accountModalIsOpen: true,
+    accounts: [],
+    characters: {}
   }
 
   componentDidMount() {
@@ -76,6 +78,8 @@ class App extends React.Component {
     })
     document.addEventListener('keydown', this.setKeyState)
     document.addEventListener('keyup', this.setKeyState)
+    this.loadAccounts()
+    this.loadCharacters()
   }
 
   componentWillUnmount() {
@@ -86,6 +90,9 @@ class App extends React.Component {
   openConnectModal = () => this.setState({ accountModalIsOpen: true })
   closeConnectModal = () => this.setState({ accountModalIsOpen: false })
 
+  loadAccounts = () => this.sendCommand('#loadAccounts')
+  loadCharacters = () => this.sendCommand('#loadCharacters')
+  
   handleServerMessage = (message) => {
     const { detail, type } = message
 
@@ -100,57 +107,68 @@ class App extends React.Component {
     // Following cases need globals var:
     const { globals } = message;
     switch (type) {
-      case "experience":
+      case 'experience':
         return this.setState({ exp: globals.exp })
-      case "stowed":
+      case 'stowed':
         return this.setState({ stowed: globals.stowed })
-      case "worn":
+      case 'worn':
         return this.setState({ worn: globals.worn })
-      case "hand":
+      case 'hand':
         return this.setState({ rightHand: globals.rightHand, leftHand: globals.leftHand })
-      case "activeSpells":
+      case 'activeSpells':
         return this.setState({ activeSpells: globals.activeSpells })
-      case "room":
-      case "room players":
-      case "room objects":
+      case 'room':
+      case 'room players':
+      case 'room objects':
         return this.setState({ room: globals.room })
-      case "gameTime":
+      case 'gameTime':
         return this.setState({ gameTime: globals.gameTime })
-      case "roundTime":
+      case 'roundTime':
         return this.setRoundTime(globals)
-      case "prepTime":
+      case 'prepTime':
         return this.setPrepTime(globals)
-      case "logOn":
+      case 'logOn':
         return this.setState({ arrivals: globals.arrivals })
-      case "preparedSpell":
+      case 'preparedSpell':
         return this.setState({ preparedSpell: globals.preparedSpell })
-      case "bodyPosition":
+      case 'bodyPosition':
         return this.setState({ bodyPosition: globals.bodyPosition })
-      case "bleeding":
+      case 'bleeding':
         return this.setState({ bleeding: globals.bleeding })
-      case "dead":
+      case 'dead':
         return this.setState({ dead: globals.dead })
-      case "hidden":
+      case 'hidden':
         return this.setState({ hidden: globals.hidden })
-      case "invisible":
+      case 'invisible':
         return this.setState({ invisible: globals.invisible })
-      case "joined":
+      case 'joined':
         return this.setState({ joined: globals.joined })
-      case "stunned":
+      case 'stunned':
         return this.setState({ stunned: globals.stunned })
-      case "deaths":
+      case 'deaths':
         console.log('A death, yay!')
         setTimeout(() => console.log(globals.deaths), 0)
         return this.setState({ deaths: globals.deaths })
-      case "globals":
+      case 'globals':
         console.log('----------------------')
         console.log(globals)
         console.log('----------------------')
         return
+      //  non-xml cases:
+      case 'loadAccounts':
+        this.setState({ accounts: detail })
+        return
+      case 'loadCharacters':
+        this.setState({ characters: detail })
+        return
+      case 'openConnectModal':
+        this.setState({accountModalIsOpen: true})
+        return
       default:
+        console.log()
         break
     }
-    console.log("Unhandled:", message)
+    console.log('Unhandled:', message)
   }
 
   setRoundTime = globals => {
@@ -274,7 +292,16 @@ class App extends React.Component {
             <Deaths deaths={this.state.deaths} sendCommand={this.sendCommand} />
           </div>
         </div >
-        {this.state.accountModalIsOpen && <AccountModal closeConnectModal={this.closeConnectModal} sendCommand={this.sendCommand} />}
+        {this.state.accountModalIsOpen && (
+          <AccountModal
+            closeConnectModal={this.closeConnectModal}
+            sendCommand={this.sendCommand}
+            accounts={this.state.accounts}
+            characters={this.state.characters}
+            loadAccounts={this.loadAccounts}
+            loadCharacters={this.loadCharacters}
+          />
+        )}
       </KeyboardProvider>
     );
   }

@@ -8,6 +8,7 @@ const path = require('path')
 let mainWindow
 let game
 let sendCommand
+let hardWired = false
 // const isMac = process.platform === 'darwin'
 
 function createWindow() {
@@ -28,6 +29,7 @@ function createWindow() {
     {
       label: 'File',
       submenu: [
+        { label: 'Connect', click: () => messageFrontEnd({type: 'openConnectModal'})},
         // { label: 'Play', click: () => hardWire() }, // todo: allow this to open connect modal
         // { role: isMac ? 'close' : 'quit' }
         { role: 'quit' },
@@ -74,6 +76,7 @@ function createWindow() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    // todo: send exit command if connected?
     mainWindow = null
   })
 }
@@ -113,30 +116,22 @@ app.on('activate', function () {
 // code. You can also put them in separate files and require them here.
 
 function hardWire(commandText) {
-  {
-    console.log('hardWire received command:', commandText)
-    const fields = commandText.split(' ')
-    console.log('fields:', fields)
-    const account = fields[1]
-    const password = fields[2]
-    const instance = fields[3]
-    const characterName = fields[4]
-    const gamePath = path.join(__dirname, "game.js")
-    delete require.cache[gamePath];
-    game = require("./game.js");
-    const gameReturns = game(messageFrontEnd)
-    const { connect } = gameReturns;
-    sendCommand = gameReturns.sendCommand;
-    connect({ account, password, instance, characterName })
-  }
+  const gamePath = path.join(__dirname, "game.js")
+  delete require.cache[gamePath];
+  game = require("./game.js");
+  const gameReturns = game(messageFrontEnd)
+  sendCommand = gameReturns.sendCommand;
 }
 
 function messageFrontEnd(message) {
   mainWindow.webContents.send('message', message)
 }
 
-// hacky, do not like...
+// todo: can we just hardwire at startup?
 ipcMain.on('asynchronous-message', (event, command) => {
-  if (command.startsWith('#connect')) return hardWire(command)
-  else sendCommand(command); // (Command received from player, pass on to game)
+  if (!hardWired) {
+    hardWired = true
+    hardWire()
+  }
+  sendCommand(command); // (Command received from player, pass on to game)
 })

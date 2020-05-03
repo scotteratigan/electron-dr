@@ -17,6 +17,11 @@ Do not try to run this in Windows Linux Subsystem, it will not work. Mac/Windows
 
 ## Todos
 
+- Fix connect when already connected (Connection lost?: Error: connect EISCONN 199.188.208.5:11024 - Local (10.0.0.210:63382))
+
+- Make sidebars resizable
+- Make sidebar elements collapsable
+
 - Highlights system
   - highlights dynamically applied so new highlights can be used on previous game text (should not be an issue)
   - regex highlights w/ validity check

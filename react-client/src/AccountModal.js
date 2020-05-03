@@ -9,14 +9,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 
 const modalStyle = {
-  background: "white",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  backgroundColor: 'white',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   zIndex: 100,
-  border: "1px solid rgba(0, 0, 0, 0.5)",
-  backgroundColor: "rgba(0, 0, 0, 0.02)",
+  border: '1px solid rgba(0, 0, 0, 0.5)',
   borderRadius: 2,
   padding: 10
 }
@@ -85,7 +84,7 @@ export default class AccountModal extends Component {
           <Box>
             <Button style={{ position: "fixed", right: 20 }} type="button" onClick={this.props.closeConnectModal}>x</Button>
             <form style={{ paddingTop: "2rem" }} autoComplete="off">
-              
+              <h3>Connect to Game</h3>
               <div style={{ marginTop: "2rem" }}>
                 <ButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
                   <Button variant="contained" onClick={() => this.handleChange('showAddAccount', true)}>Add Existing Account</Button>
@@ -214,7 +213,7 @@ class AddExistingAccount extends Component {
   }
 
   render() {
-    const higherModalStyle = {...modalStyle, zIndex: 101, backgroundColor: 'white'}
+    const higherModalStyle = {...modalStyle, zIndex: 101}
 
     return (
       <div style={higherModalStyle}>

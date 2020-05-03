@@ -2,9 +2,11 @@
 require('dotenv').config()
 const net = require('net')
 const client = new net.Socket()
-const getConnectKey = require('./sge')
+const { sgeValidate } = require('./sge')
 const makeLogger = require('./log')
 const path = require('path')
+const { addOrUpdateAccount, removeAccount, loadAccounts, loadSavedCharacters } = require('./save-config')
+const { shell } = require('electron')
 
 // Todo: investigate this as an option:
 // socket.setKeepAlive([enable][, initialDelay])
@@ -71,6 +73,31 @@ function game(messageFrontEnd) {
       return loadXMLparser()
     } else if (command.startsWith('#var')) {
       return messageFrontEnd({ type: 'globals', globals })
+    } else if (command.startsWith('#addOrUpdateAccount')) {
+      const accountName = command.split(' ')[1]
+      addOrUpdateAccount(accountName)
+    } else if (command.startsWith('#loadAccounts')) {
+      const accounts = await loadAccounts()
+      messageFrontEnd({ type: 'loadAccounts', detail: accounts })
+    } else if (command.startsWith('#loadCharacters')) {
+      const characters = await loadSavedCharacters()
+      messageFrontEnd({ type: 'loadCharacters', detail: characters })
+    } else if (command.startsWith('#url')) {
+      let url = command.substring(5)
+      if (!url.startsWith('http')) url = 'https://' + url
+      shell.openExternal(url)
+    } else if (command.startsWith('#validateAccount')) {
+      const [_, account, password] = command.split(' ')
+      console.log('attempting to validate account')
+      console.log(account)
+      console.log(password)
+      const res = await addOrUpdateAccount(account, password)
+      console.log('res:', res)
+    } else if (command.startsWith('#connect')) {
+      const [_, account, instance, characterName] = command.split(' ')
+      console.log('calling connect with:', {account, instance, characterName})
+      connect({account, instance, characterName})
+      // connect(...command.split(' '))
     } else if (command.startsWith('#')) {
       return messageFrontEnd({
         type: 'gametext',
@@ -79,7 +106,6 @@ function game(messageFrontEnd) {
     } else {
       sendCommandToGame(command)
     }
-
   }
 
   let buffer = []
@@ -150,33 +176,35 @@ function game(messageFrontEnd) {
 
   // Actual Connect process:
 
-  function connect({ account, password, instance, characterName }) {
-    console.log('connect received:', account, password, instance, characterName)
-    const temp = { account, password, instance, characterName }
-    console.log('temp is:', temp)
-    getConnectKey({ account, password, instance, characterName }, (connectKey, ip, port) => {
-      console.log('Received connect key:', connectKey)
-      client.connect(port, ip, function () {
-        client.setNoDelay(true) // may help with packet buffering
-        console.log('Connected, sending key.'.green)
-        const lineEnding = "\r\n"
-        setTimeout(() => {
-          client.write(`<c>${connectKey}${lineEnding}<c>/FE:STORMFRONT /VERSION:1.0.1.26 /P:WIN_UNKNOWN /XML${lineEnding}`)
-        }, 0)
-        setTimeout(() => {
-          client.write(`<c>${lineEnding}`)
-        }, 50)
-        setTimeout(() => {
-          client.write(`<c>_STATE CHATMODE OFF${lineEnding}`)
-        }, 1000)
-        setTimeout(() => {
-          client.write(`<c>${lineEnding}`)
-        }, 1100)
-        // todo: can we await specific text responses before sending this stuff instead of a timeout
-      })
-      globals.connected = true
-      globalUpdated('connected')
+  async function connect({ account, instance, characterName }) {
+    console.log('connect received:', account, instance, characterName)
+    // todo: detect failure here
+    const res = await sgeValidate({ account, gameCode: instance, characterName })
+    console.log('sgeRes:', res)
+    const { connectKey, connectIP, connectPort } = res
+    client.connect(connectPort, connectIP, function () {
+      client.setNoDelay(true) // may help with packet buffering
+      console.log('Connected, sending key.'.green)
+      const lineEnding = "\r\n"
+      setTimeout(() => {
+        client.write(`<c>${connectKey}${lineEnding}<c>/FE:STORMFRONT /VERSION:1.0.1.26 /P:WIN_UNKNOWN /XML${lineEnding}`)
+      }, 0)
+      setTimeout(() => {
+        client.write(`<c>${lineEnding}`)
+      }, 50)
+      setTimeout(() => {
+        client.write(`<c>_STATE CHATMODE OFF${lineEnding}`) // just to emulate SF? can we skip?
+      }, 1000)
+      setTimeout(() => {
+        client.write(`<c>${lineEnding}`)
+      }, 1100)
+      setTimeout(() => {
+        globals.connected = true
+        globalUpdated('connected')
+      }, 1500)
+      // todo: can we await specific text responses before sending this stuff instead of a timeout?
     })
+    
   }
 
   // Helper Functions:

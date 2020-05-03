@@ -14,21 +14,37 @@
   A       ACCOUNTNAME  PROBLEM
   */
 
-// Instances are an array of objects with keys name and gameCode
-// gameCode is used to select the game server
+// gameCode or instance are used interchangably - represents the game you wish to join (DR, DRF, DRX)
 
-// todo: capture port and ip for selected (also need to be able to select) game dynamically
+// todo: updated saved character list for that account/instance any time we log in
 const net = require('net')
+const { getAcctPass } = require('./get-acct-pass')
 const SGE_URL = 'eaccess.play.net'
 const SGE_PORT = 7900
 
-function sgeValidates({ account, password, gameCode = "" }) {
-  // If called with account and password, validates that account exists and returns list of instances
-  // If supplied with gameCode, returns a list of characters for that account/instance
+const validGameCodes = ['DR', 'DRD', 'DRF', 'DRT', 'DRX', 'GS3', 'GS4D', 'GSF', 'GST', 'GSX']
 
-  return new Promise((resolve, reject) => {
+function sgeValidate({ account, password = '', gameCode = '', characterName = '' }) {
+  // If invoked with account and password, validates returns '' if validation succeeds, or 'NORECORD', 'PASSWORD' or whatever auth error is
+  // If invoked with gameCode in addition to account and password, returns a list of characters for that account/instance
+  // If invoked with account, gameCode, and characterName, returns connect key (note: password not required - will look up from file)
+  if (gameCode && !validGameCodes.includes(gameCode)) {
+    throw new Error(`Invalid gameCode supplied: '${gameCode}'`)
+  }
+
+  return new Promise(async (resolve, reject) => {
     let attemptedValidation = false
-    let response = {}
+    let response = { success: false }
+    if (gameCode) response[gameCode] = {}
+
+    if (!password) {
+      // attempt to load password from file:
+      password = await getAcctPass(account)
+      console.log('password loaded from file as:', password)
+      // todo: handle case where password still blank because it couldn't be loaded
+    }
+
+    console.log('creating socket...')
     const sgeClient = new net.Socket()
 
     sgeClient.connect(SGE_PORT, SGE_URL, res => {
@@ -37,6 +53,7 @@ function sgeValidates({ account, password, gameCode = "" }) {
     })
   
     sgeClient.on('data', data => {
+      console.log('data:', data.toString())
       // First, send validation if not done yet:
       if (!attemptedValidation) {
         const hashKey = [...data] // hashKey vals can be 64 <= x <= 127
@@ -50,50 +67,35 @@ function sgeValidates({ account, password, gameCode = "" }) {
       if (text.startsWith('A')) {
         // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
         if (text.includes('KEY')) {
-          // sgeClient.destroy()
-          return sgeClient.write('M\n')
+          if (!gameCode) {
+            sgeClient.destroy()
+            return resolve('');
+          } else {
+            return sgeClient.write('M\n')
+          }
         } else {
-          console.error('Authentication failed. Please check USERNAME and PASSWORD.')
-          console.error('Response:', text)
+          const authFailReason = text.replace(/^A\s+/, '')
           sgeClient.destroy()
-          return resolve([])
+          return resolve(authFailReason)
         }
       }
 
       if (text.startsWith('M')) {
-        // instances are: M\tCS\tCyberStrike\tDR\tDragonRealms
-        const instances = text.split('\t')
-          .filter(text => !["M", "CS", "CyberStrike"].includes(text.trim()))
-        const formattedInstances = []; 
-        for(let i = 0; i < instances.length; i+=2) {
-          const gameCode = instances[i]
-          const name = instances[i+1]
-          formattedInstances.push({name, gameCode})
-        }
-        response.instances = formattedInstances
-        if (!gameCode) {
-          sgeClient.destroy()
-          return resolve({ ...response, success: true })
-        } else {
-          sgeClient.write(`N\t${gameCode}\n`)
-        }
+        sgeClient.write(`N\t${gameCode}\n`)
       }
 
       if (text.startsWith('N')) {
         console.log('Game Versions:\n', text)
         // G PRODUCTION|STORM|TRIAL
-        sgeClient.write(`G\t${gameCode}\n`)
+        sgeClient.write(`G\t${gameCode}\n`) // wait, shouldn't we send 'STORM' here?
         return
       }
+
       if (text.startsWith('G')) {
         console.log('Game Info:\n', text)
         //  G      DragonRealms    FREE_TO_PLAY    0               ROOT=sgc/dr     MKTG=info/default.htm   MAIN=main/default.htm   GAMEINFO=information/default.htm        PLAYINFO=main/default.htm       MSGBRD=message/default.htm      CHAT=chat/default.htm   FILES=files/default.htm COMMING=main/default.htm STUFF=main/comingsoon.htm       BILLINGFAQ=account/default.htm  BILLINGOPTIONS=offer/payment.htm        LTSIGNUP=https://account.play.net/simunet_private/cc-signup.cgi BILLINGINFO=http://account.play.net/simunet_private/acctInfo.cgi?key={KEY}&SITE=sgc     GAMES=main/games.htm    FEEDBACK=feedback/default.htm    MAILFAIL=/sgc/dr/feedback/mailfail.htm  MAILSUCC=/sgc/dr/feedback/mailsent.htm  MAILSERVE=SGC   SIGNUP=http://ad-track.play.net/sgc/signup_redirect.cgi SIGNUPA=http://ad-track.play.net/sgc/signup_again.cgi
         const gameInfo = text.split('\t')
-        // console.log('gameInfo.length:', gameInfo.length)
-        // console.log('gameInfo:', gameInfo)
-        // Add account type to this account (not a global setting)
-        const activeInstance = response.instances.find(instance => instance.name === gameInfo[1])
-        activeInstance.accountType = gameInfo[2]
+        response[gameCode].accountType = gameInfo[2]
         sgeClient.write('C\n')
         return
       }
@@ -103,128 +105,54 @@ function sgeValidates({ account, password, gameCode = "" }) {
         // C       1       1       0       0       W_DRNODER_000   Kruarnode
         console.log('characterInfo:')
         console.log(text)
-        const characterInfo = text.split('\t')
-        const activeInstance = response.instances.find(instance => instance.gameCode === gameCode)
-        const charactersInfo = characterInfo.splice(5) // W_DRNODER_000   Kruarnode
-        const characterList = []
-        for(let i = 0; i < charactersInfo.length; i += 2) {
-          const slotCode = charactersInfo[i]
-          const name = charactersInfo[i+1].trim().replace('\n', '')
-          characterList.push({ name, slotCode })
+        if (characterName == '') {
+          const characterInfo = text.split('\t')
+          response[gameCode].slotsUsed = parseInt(characterInfo[1])
+          response[gameCode].slotsTotal = parseInt(characterInfo[2])
+          const charactersInfo = characterInfo.splice(5) // W_DRNODER_000   Kruarnode
+          const characterList = []
+          for(let i = 0; i < charactersInfo.length; i += 2) {
+            const slotCode = charactersInfo[i]
+            const name = charactersInfo[i+1].trim().replace('\n', '')
+            characterList.push({ name, slotCode })
+          }
+          response[gameCode].characterList = characterList
+          sgeClient.destroy()
+          return resolve({ ...response, success: true })
+        } else {
+          // determine slotName based on charName
+          // create slot lookup
+          accountList = text.trim().split('\t').slice(5)
+          let charSlotNames = {}
+          for (let i = 0; i < accountList.length; i += 2) {
+            charSlotNames[accountList[i + 1]] = accountList[i]
+          }
+          characterName = formatCharacterName(characterName)
+          console.log('characterName:', characterName)
+          console.log('charSlotNames:', charSlotNames)
+          const slotName = charSlotNames[characterName]
+          console.log('slotName:', slotName)
+          return sgeClient.write(`L\t${slotName}\tSTORM\n`)
         }
-        activeInstance.characterList = characterList
-        sgeClient.destroy()
-        return resolve({ ...response, success: true })
       }
+
+      if (text.startsWith('L')) {
+        connectKey = text.match(/KEY=(\S+)/)[1]
+        connectIP = text.match(/GAMEHOST=(\S+)/)[1]
+        connectPort = text.match(/GAMEPORT=(\d+)/)[1]
+        console.log('Connect key captured as:', connectKey)
+        sgeClient.destroy()
+        // todo: also return port and ip right? need to capture above
+        return resolve({ ...response, connectKey, connectIP, connectPort, success: true })
+      }
+
+      // If we get here, we have a problem...
+      console.error('\n\n*******************************\n\n')
+      console.error(' Error - unknown text received:')
+      console.error(text)
+      console.error('\n\n*******************************\n\n')
 
     })
-  })
-}
-
-
-
-function getGameKey({ account, password, instance, characterName }, cb) {
-  console.log('getGameKey initiated...')
-  console.log(account, password, instance, characterName)
-  
-  let connectKey = null
-  let connectIP = null
-  let connectPort = null // todo: pass these vals instead of making global
-  let attemptedValidation = false
-  const sgeClient = new net.Socket()
-
-  sgeClient.connect(SGE_PORT, SGE_URL, res => {
-    // todo: add error handling here
-    console.log(`Connected to ${SGE_URL}:${SGE_PORT}`)
-    sgeClient.write('K\n')
-  })
-
-  sgeClient.on('data', data => {
-    console.log('DATA:', JSON.stringify(data))
-    // First, send validation if not done yet:
-    if (!attemptedValidation) {
-      const hashKey = [...data] // hashKey vals can be 64 <= x <= 127
-      console.log("HASH KEY:", JSON.stringify(hashKey));
-      attemptedValidation = true
-      return sendHashedPassword({ account, password, hashKey, sgeClient })
-    }
-
-    const text = data.toString()
-
-    if (text.startsWith('A')) {
-      // A       ACCOUNT KEY     longAlphaNumericString        Subscriber Name
-      if (text.includes('KEY')) {
-        console.log('Authentication Successful!')
-        console.log('text here is:', text) //text.replace(/\t/g, "\n")
-        sgeClient.write('M\n')
-        return
-      } else {
-        console.error(
-          'Authentication failed. Please check USERNAME and PASSWORD.'
-        )
-        return
-      }
-    }
-    if (text.startsWith('M')) {
-      console.log('Games List:\n', text.replace(/\t/g, '\n'))
-      sgeClient.write(`N\t${instance}\n`)
-      return
-    }
-    if (text.startsWith('N')) {
-      console.log('Game Versions:\n', text.replace(/\t/g, '\n'))
-      sgeClient.write(`G\t${instance}\n`)
-      return
-    }
-    if (text.startsWith('G')) {
-      console.log('Game Info:\n', text.replace(/\t/g, '\n'))
-      sgeClient.write('C\n')
-      return
-    }
-    if (text.startsWith('C')) {
-      accountList = text
-        .trim()
-        .split('\t')
-        .slice(5)
-      let charList = [] // not using this right now, but could be useful in the future
-      let charSlotNames = {}
-      for (let i = 0; i < accountList.length; i += 2) {
-        charList.push({ slot: accountList[i], name: accountList[i + 1] })
-        charSlotNames[accountList[i + 1]] = accountList[i]
-      }
-      // grabbing character name from .env file, and ensuring the case is correct:
-      const desiredCharacterName = characterName.toLowerCase().split('')
-      desiredCharacterName[0] = desiredCharacterName[0].toUpperCase()
-      const charName = desiredCharacterName.join('')
-      const slotName = charSlotNames[charName]
-      console.log('charSlotNames:', charSlotNames)
-      console.log('slotName:', slotName)
-      sgeClient.write(`L\t${slotName}\tSTORM\n`)
-      return
-    }
-    // Login text: L   OK      UPPORT=5535     GAME=STORM      GAMECODE=DR     FULLGAMENAME=StormFront GAMEFILE=STORMFRONT.EXE GAMEHOST=dr.simutronics.net     GAMEPORT=11324  KEY=a33f64d541ee461cab92a460e149d6d1
-    if (text.startsWith('L')) {
-      console.log('Login Info:\n', text.replace(/\t/g, '\n'))
-      connectKey = text.match(/KEY=(\S+)/)[1]
-      connectIP = text.match(/GAMEHOST=(\S+)/)[1]
-      connectPort = text.match(/GAMEPORT=(\d+)/)[1]
-      console.log('Connect key captured as:', connectKey)
-      sgeClient.destroy()
-      return
-    }
-    console.error('\n\n*******************************\n\n')
-    console.error(' Error - unknown text received:')
-    console.error(text)
-    console.error('\n\n*******************************\n\n')
-  })
-
-  sgeClient.on('close', function () {
-    console.log('SGE connection closed.')
-    cb(connectKey, connectIP, connectPort)
-  })
-
-  sgeClient.on('error', err => {
-    console.error('Error encountered:')
-    console.error(err)
   })
 }
 
@@ -234,25 +162,22 @@ function sendHashedPassword({ account, password, hashKey, sgeClient }) {
     const newVal = hashKey[i] ^ (char.charCodeAt(0) - 32)
     return newVal + 32
   })
+  console.log('sending:', `A\t${account}\t`)
+  console.log('hashedPassArr:', hashedPassArr.join(''))
   sgeClient.write(`A\t${account}\t`)
   const buffPW = Buffer.from(hashedPassArr) // must be written as a buffer because of invalid ASCII values!
   sgeClient.write(buffPW)
   sgeClient.write('\r\n')
+  console.log('password sent')
 }
 
-(async () => {
-  const res = await sgeValidates({account: 'drnoder', password: 'secret', gameCode: 'DR'})
-  if (res.success) {
-    console.log(JSON.stringify(res))
-  } else {
-    console.log('vomit on my sweater already, mom\'s spaghetti...')
-  }
-})()
+function formatCharacterName(name) {
+  // ensures name has first letter uppercase
+  const letterArr = name.toLowerCase().split('')
+  letterArr[0] = letterArr[0].toUpperCase()
+  return letterArr.join('')
+}
 
-// (async () => {
-//   await getGameKey({ account: 'drnoder', password: 'secret', instance: 'DR', characterName: 'Kruarnode' }, () => console.log('we got that key...'))
-// })()
+console.log('sge is exporting', sgeValidate)
 
-module.exports = getGameKey
-
-
+module.exports = { sgeValidate }

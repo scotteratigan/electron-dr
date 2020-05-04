@@ -1,24 +1,31 @@
 {
   "name": "electron-dr",
-  "version": "1.1.0",
+  "version": "2.0.0",
+  "homepage": "./",
   "description": "React/JS DragonRealms Client",
   "main": "electron-main.js",
   "scripts": {
-    "start": "concurrently \"cd react-client && npm start\" \"electron .\"",
-    "start-electron": "electron .",
-    "start-react": "cd react-client && npm start"
+    "start": "concurrently \"npm run start-react\" \"npm run start-electron\"",
+    "start-electron": "electron . --dev-mode",
+    "start-react": "cd react-client && npm start",
+    "pre-build": "rm -rf build && rm -rf dist && mkdir dist",
+    "build-react": "cd react-client && npm run build && mv build ../build && cd .. && node fix-path",
+    "build-electron": "electron-packager . ElectronDR --platform=all --overwrite --ignore \"(config/|dist/|logs/|notes/|react-client/|screenshots/)\"",
+    "build": "npm run pre-build && npm run build-react && npm run build-electron && npm run post-build",
+    "post-build": "mv ElectronDR-linux-x64 dist/ElectronDR-linux-x64 && mv ElectronDR-win32-x64 dist/ElectronDR-win32-x64 && node zip-dir.js"
   },
   "productName": "ElectronDR",
   "repository": "https://github.com/scotteratigan/electron-dr/",
   "author": "Scott Ratigan",
   "license": "MIT",
   "devDependencies": {
+    "archiver": "^4.0.1",
     "concurrently": "^5.0.2",
     "electron": "^7.1.7",
+    "electron-packager": "^14.2.1",
     "prettier": "^1.19.1"
   },
   "dependencies": {
-    "crypto-js": "^4.0.0",
-    "dotenv": "^8.2.0"
+    "crypto-js": "^4.0.0"
   }
 }

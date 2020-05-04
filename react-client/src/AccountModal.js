@@ -7,6 +7,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
+import Loading from './Loading'
 
 const modalStyle = {
   backgroundColor: 'white',
@@ -179,7 +180,8 @@ export default class AccountModal extends Component {
 class AddExistingAccount extends Component {
   state = {
     account: '',
-    password: ''
+    password: '',
+    loading: false
   }
 
   handleChange = (field, value) => {
@@ -197,16 +199,15 @@ class AddExistingAccount extends Component {
     return true
   }
 
-  validateAccount = async () => {
+  validateAccount = () => {
     const { account, password } = this.state
-    // can DR passwords have spaces?
     this.props.sendCommand(`#validateAccount ${account} ${password}`)
-    // todo: add spinner
+    this.setState({ loading: true })
     setTimeout(() => {
       this.props.loadAccounts()
       this.props.loadCharacters()
       this.props.closeModal()
-    }, 2000)
+    }, 5000)
     // todo: need a way to determine success
     // I need a global context to process incoming text and send outgoing commands
     // this context should also store global vars ($righthand, $gametime, etc)
@@ -216,27 +217,30 @@ class AddExistingAccount extends Component {
     const higherModalStyle = {...modalStyle, zIndex: 101}
 
     return (
-      <div style={higherModalStyle}>
-        <Box>
-          <Button style={{ position: "fixed", right: 20 }} type="button" onClick={this.props.closeModal}>x</Button>
-          <form style={{ paddingTop: "2rem", textAlign: 'center' }} autoComplete="off">
-            <h3>Add Existing Simutronics Account Credentials</h3>
-            <FormControl component="div" fullWidth={true} margin="normal">
-              <TextField variant="outlined" label="Account Name" value={this.state.account} onChange={e => this.handleChange("account", e.target.value)} />
-            </FormControl>
-            <FormControl component="div" fullWidth={true} margin="normal">
-              <TextField variant="outlined" label="Password" type="password" value={this.state.password} onChange={e => this.handleChange("password", e.target.value)} />
-            </FormControl>
-            {this.shouldRenderAddBtn() && (
-              <div>
-                <Button onClick={this.validateAccount}>
-                  Save Account Credentials
-                </Button>
-              </div>
-            )}
-          </form>
-        </Box>
-      </div>
+      <>
+        {this.state.loading && <Loading />}
+        <div style={higherModalStyle}>
+          <Box>
+            <Button style={{ position: "fixed", right: 20 }} type="button" onClick={this.props.closeModal}>x</Button>
+            <form style={{ paddingTop: "2rem", textAlign: 'center' }} autoComplete="off">
+              <h3>Add Existing Simutronics Account Credentials</h3>
+              <FormControl component="div" fullWidth={true} margin="normal">
+                <TextField variant="outlined" label="Account Name" value={this.state.account} onChange={e => this.handleChange("account", e.target.value)} />
+              </FormControl>
+              <FormControl component="div" fullWidth={true} margin="normal">
+                <TextField variant="outlined" label="Password" type="password" value={this.state.password} onChange={e => this.handleChange("password", e.target.value)} />
+              </FormControl>
+              {this.shouldRenderAddBtn() && (
+                <div>
+                  <Button onClick={this.validateAccount}>
+                    Save Account Credentials
+                  </Button>
+                </div>
+              )}
+            </form>
+          </Box>
+        </div>
+      </>
     )
   }
 }

@@ -2,6 +2,7 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const { ipcMain } = require('electron') // to talk to the browser window
 const path = require('path')
+const url = require('url')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -19,6 +20,7 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true, // necessary to get icpMain import in the window
+      webSecurity: false, // todo: better solution
     },
   })
   mainWindow.webContents.on('did-finish-load', () => {
@@ -30,7 +32,6 @@ function createWindow() {
       label: 'File',
       submenu: [
         { label: 'Connect', click: () => messageFrontEnd({type: 'openConnectModal'})},
-        // { label: 'Play', click: () => hardWire() }, // todo: allow this to open connect modal
         // { role: isMac ? 'close' : 'quit' }
         { role: 'quit' },
       ],
@@ -60,18 +61,22 @@ function createWindow() {
   const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
 
-  // and load the index.html of the app.
-  // mainWindow.loadFile('client/index.html')
-  // mainWindow.loadFile('react-client/index.html')
-  mainWindow.loadURL('http://localhost:3000');
+  // load the initial page:
+  if (app.commandLine.hasSwitch('dev-mode')) {
+    // hot reloaded webpack dev server:
+    mainWindow.loadURL('http://localhost:3000');
+  } else {
+    // for prod, load the built page:
+    mainWindow.loadFile(path.join('build', 'index.html'))
+  }
 
   // make it big:
   mainWindow.maximize()
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // Open the DevTools (if in dev mode):
+  if (app.commandLine.hasSwitch('dev-mode')) mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
+  // Emitted when the window is closed:
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
@@ -92,9 +97,9 @@ app.on('ready', () => {
 function loadDevTools() {
   // note: only needs to be loaded once but doesn't hurt to attempt each time
   // for dev mode only
-  BrowserWindow.addDevToolsExtension(
-    path.join(__dirname, 'react-devtools-4.4.0_3')
-  )
+  // BrowserWindow.addDevToolsExtension(
+  //   path.join(__dirname, 'react-devtools-4.4.0_3')
+  // )
 }
 
 // Quit when all windows are closed.
@@ -115,7 +120,7 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-function hardWire(commandText) {
+function hardWire() {
   const gamePath = path.join(__dirname, "game.js")
   delete require.cache[gamePath];
   game = require("./game.js");

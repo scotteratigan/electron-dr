@@ -37,6 +37,10 @@ Do not try to run this in Windows Linux Subsystem, it will not work. Mac/Windows
 
 ## Todos
 
+- Release playable exe
+  - add spinner, longer timeout when loading account characters
+  - https://www.npmjs.com/package/react-spinners
+- Check https://www.npmjs.com/package/electron-packager and https://github.com/strongloop/node-foreman
 - Fix connect when already connected (Connection lost?: Error: connect EISCONN 199.188.208.5:11024 - Local (10.0.0.210:63382))
 - Allow #connect charname and search stored json for that character
 

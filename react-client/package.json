@@ -1,17 +1,21 @@
 {
   "name": "react-client",
+  "browser": "none",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
-    "@testing-library/user-event": "^7.2.1",
     "rc-progress": "^2.5.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-loader-spinner": "^3.1.14",
     "react-scripts": "3.3.0",
     "react-virtualized": "^9.21.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.4.0",
+    "@testing-library/user-event": "^7.2.1"
   },
   "scripts": {
     "start": "react-scripts start",

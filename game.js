@@ -1,5 +1,4 @@
 'use strict'
-require('dotenv').config()
 const net = require('net')
 const client = new net.Socket()
 const { sgeValidate } = require('./sge')

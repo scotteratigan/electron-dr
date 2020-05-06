@@ -178,7 +178,7 @@ function game(messageFrontEnd) {
   async function connect({ account, instance, characterName }) {
     console.log('connect received:', account, instance, characterName)
     // todo: detect failure here
-    const res = await sgeValidate({ account, gameCode: instance, characterName })
+    const res = await sgeValidate({ account, gameCode: instance, characterName, messageFrontEnd })
     console.log('sgeRes:', res)
     const { connectKey, connectIP, connectPort } = res
     client.connect(connectPort, connectIP, function () {

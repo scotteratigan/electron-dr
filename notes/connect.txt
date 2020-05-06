@@ -1,0 +1,30 @@
+Note: fields here are tab delimited
+Connect to SGE Server
+Initiate authentication:
+  send 'K' <- lol, I guess this means Key
+  receive hash key: hMg[M}ZGcrFVkdiTgYatmqgsfI[siIwr
+Send authentication:
+  send 'A ACCOUNTNAME HASHEDPASSWORD'
+  receive 'A       ACCOUNTNAME KEY     4255af514befcfd573edf64a07e14cc0        FIRSTNAME LASTNAME'
+Request list of servers (modes?):
+  send 'M'
+  receive 'M       CS      CyberStrike     DR      DragonRealms    DRD     DragonRealms Development        DRF     DragonRealms The Fallen DRT     DragonRealms Prime Test DRX     DragonRealms Platinum   GS3     GemStone IV     GS4D    GemStone IV Development GSF     GemStone IV Shattered   GST     GemStone IV Prime Test  GSX     GemStone IV Platinum'
+Request connection types?:
+  send 'N DR' (depends on which game you want to play)
+  receive 'N  PRODUCTION|STORM|TRIAL'
+Request account info?:
+  send 'G DR' (depends on which game you want to play)
+  receive 'G       DragonRealms    FREE_TO_PLAY    0               ROOT=sgc/dr     MKTG=info/default.htm   MAIN=main/default.htm   GAMEINFO=information/default.htm        PLAYINFO=main/default.htm       MSGBRD=message/default.htm      CHAT=chat/default.htm   FILES=files/default.htm COMMING=main/default.htm        STUFF=main/comingsoon.htm       BILLINGFAQ=account/default.htm  BILLINGOPTIONS=offer/payment.htm        LTSIGNUP=https://account.play.net/simunet_private/cc-signup.cgi BILLINGINFO=http://account.play.net/simunet_private/acctInfo.cgi?key={KEY}&SITE=sgc     GAMES=main/games.htm    FEEDBACK=feedback/default.htm   MAILFAIL=/sgc/dr/feedback/mailfail.htm MAILSUCC=/sgc/dr/feedback/mailsent.htm   MAILSERVE=SGC   SIGNUP=http://ad-track.play.net/sgc/signup_redirect.cgi SIGNUPA=http://ad-track.play.net/sgc/signup_again.cgi'
+Request character list for that account/server combo:
+  send 'C'
+  receive character list 'C       1       1       0       0       W_DRNODER_000   Kruarnode'
+Request login key:
+  send 'L     W_DRNODER_000   STORM'
+  receive ok: 'L       OK      UPPORT=5535     GAME=STORM      GAMECODE=DR     FULLGAMENAME=StormFront GAMEFILE=STORMFRONT.EXE GAMEHOST=dr.simutronics.net     GAMEPORT=11024  KEY=4255af528befcfd573edf64a07e14cc0'
+...and we're done. Disconnect now.
+
+Notes:
+See https://github.com/WarlockFE/warlock2/wiki/EAccess-Protocol for additional information.
+Sounds like F and B are additional commands that require parameters, not sure what they are used for.
+SGE also has a version check (possibly before login?):
+'AL4334 SGE16 1 14'

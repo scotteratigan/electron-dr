@@ -145,7 +145,7 @@ export default class AccountModal extends Component {
                       {this.props.characters[this.state.account][this.state.instance].characterList.map(({name}) => (
                         <MenuItem key={name} value={name}>{name}</MenuItem>
                       ))}
-                      <MenuItem value='-NewChar-'>Create New Character</MenuItem>
+                      {/* <MenuItem value='-NewChar-'>Create New Character</MenuItem> */}
                     </Select>
                     
                   </div>

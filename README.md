@@ -6,7 +6,7 @@ If you don't know the game already, it's a text-based multiplayer fantasy advent
 ## Current State
 - Playable alpha:
   - [Windows 64 bit](https://drive.google.com/open?id=18pBQOA6ISHLldL7tHtSkUYgWEV3cKLJj)
-  - [Linux 64 bit](https://drive.google.com/open?id=18pBQOA6ISHLldL7tHtSkUYgWEV3cKLJj)
+  - [Linux 64 bit](https://drive.google.com/open?id=1egvHHPpTznyZW0pSk74L4Cpk4xzUPC2D)
   - MacOS coming soon  
 
 ## Installation (non-developer)

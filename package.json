@@ -21,7 +21,7 @@
   "devDependencies": {
     "archiver": "^4.0.1",
     "concurrently": "^5.0.2",
-    "electron": "^7.1.7",
+    "electron": "^7.2.4",
     "electron-packager": "^14.2.1",
     "prettier": "^1.19.1"
   },

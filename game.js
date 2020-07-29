@@ -7,6 +7,7 @@ const path = require('path')
 const { addOrUpdateAccount, removeAccount, loadAccounts, loadSavedCharacters } = require('./save-config')
 const { shell } = require('electron')
 
+
 // Todo: investigate this as an option:
 // socket.setKeepAlive([enable][, initialDelay])
 
@@ -21,10 +22,11 @@ function game(messageFrontEnd) {
   let unloadGameLogger = () => { }
   loadXMLparser() // loads or re-loads the parseXML function
   setupNewLogger()
-  let sendTextToScript = () => { }
-  let sendXMLeventToScript = () => { }
-  let sendControlCommandToScript = () => { }
-  let scriptLoader;
+  // let sendTextToScript = () => { }
+  // let sendXMLeventToScript = () => { }
+  // let sendControlCommandToScript = () => { }
+  let runningScriptArr = [];
+  // let scriptLoader;
 
   // Actions / Runtime:
 
@@ -34,22 +36,62 @@ function game(messageFrontEnd) {
       // Figure out sharing of globals array (read-only in scripts)
       console.log('prepare to launch script!')
       const scriptLoaderPath = path.join(__dirname, "loadscript.js")
+      // really might want to be blowing out the entire cache during development
       delete require.cache[scriptLoaderPath]
-      scriptLoader = null;
-      sendTextToScript = () => { }
-      sendXMLeventToScript = () => { }
-      sendControlCommandToScript = () => { }
-      scriptLoader = require('./loadScript') // this needs to be reworked
-      const loadScript = scriptLoader
-      const scriptFunctions = await loadScript('script', sendCommand)
-      sendTextToScript = scriptFunctions.sendTextToScript;
-      sendXMLeventToScript = scriptFunctions.sendXMLeventToScript
-      sendControlCommandToScript = scriptFunctions.sendControlCommandToScript
-      sendXMLeventToScript("all", "", globals) // so that script initializes with variables - should wait for this in script
+      // scriptLoader = null;
+      // sendTextToScript = () => { }
+      // sendXMLeventToScript = () => { }
+      // sendControlCommandToScript = () => { }
+      const scriptName = command.match(/^\.(\S+)/);
+      const loadScript = require('./loadscript')
+
+      // const scriptFunctions = await loadScript('script', sendCommand) // be sure to capture command line vars in script... should I also send in scriptName here?
+      const scriptFunctions = loadScript('script', sendCommand) // be sure to capture command line vars in script... should I also send in scriptName here?
+      // todo: move this validation logic to loadscript.js
+      if (!scriptFunctions.parseText || typeof scriptFunctions.parseText !== "function") {
+        messageFrontEnd({ type: 'gametext', detail: 'Error loading script, function parseText not found or not function'})
+        return console.log('Error loading script, function parseText not found or not function')
+      }
+      if (!scriptFunctions.parseXML || typeof scriptFunctions.parseXML !== "function") {
+        messageFrontEnd({ type: 'gametext', detail: 'Error loading script, function parseXML not found or not function'})
+        return console.log('Error loading script, function parseXML not found or not function')
+      }
+      if (!scriptFunctions.parseEvent || typeof scriptFunctions.parseEvent !== "function") {
+        messageFrontEnd({ type: 'gametext', detail: 'Error loading script, function parseEvent not found or not function'})
+        return console.log('Error loading script, function parseEvent not found or not function')
+      }
+      if (!scriptFunctions.initializeScript || typeof scriptFunctions.initializeScript !== "function") {
+        messageFrontEnd({ type: 'gametext', detail: 'Error loading script, function initializeScript not found or not function'})
+        return console.log('Error loading script, function initializeScript not found or not function')
+      }
+      // initializeScript
+      runningScriptArr.push({
+        ...scriptFunctions, name: scriptName
+      })
+      scriptFunctions.parseXML('init', globals)
+      scriptFunctions.initializeScript()
+      // runningScriptArr.forEach(script => {
+      //   if (script.name === scriptName) {
+      //     script.parseXML('init', globals)
+      //   }
+      // })
+      // sendTextToScript = scriptFunctions.sendTextToScript;
+      // sendXMLeventToScript = scriptFunctions.sendXMLeventToScript
+      // sendControlCommandToScript = scriptFunctions.sendControlCommandToScript
+      // sendXMLeventToScript("all", "", globals) // so that script initializes with variables - should wait for this in script
       return
     } else if (command.startsWith("#abort")) {
       console.log('*** Abort signal received from client ***');
-      return sendControlCommandToScript("#abort")
+      runningScriptArr.forEach(script => {
+        // for now, just kill all scripts:
+        try {
+          script.parseEvent('abort')
+        } catch (err) {
+          console.log('Error caught: err')
+        }
+      })
+      runningScriptArr = []; // todo: filter and only kill specific one
+      // return sendControlCommandToScript("#abort")
     } else if (command.startsWith("#echo ")) {
       const detail = command.substring(6);
       // if (!detail) return console.error("Echo called with no text?")
@@ -81,7 +123,7 @@ function game(messageFrontEnd) {
     } else if (command.startsWith('#loadCharacters')) {
       const characters = await loadSavedCharacters()
       messageFrontEnd({ type: 'loadCharacters', detail: characters })
-    } else if (command.startsWith('#url')) {
+    } else if (command.startsWith('#url')) { // todo: should we just detect urls without the prefix?
       let url = command.substring(5)
       if (!url.startsWith('http')) url = 'https://' + url
       shell.openExternal(url)
@@ -129,18 +171,31 @@ function game(messageFrontEnd) {
     console.log('------------------------------')
     console.log(gameStr)
     // Parse XML for updates:
+    let text;
     try {
       parseXML(gameStr)
       // Send game data back to Main.js to pass on to client:
       const nonXMLtext = filterXML(gameStr)
       // Only send to front end if there is text to display:
-      if (nonXMLtext) {
-        gameLog(nonXMLtext);
-        sendTextToScript(nonXMLtext);
-        messageFrontEnd({ type: 'gametext', detail: nonXMLtext })
+      if (!nonXMLtext) {
+        return
       }
+      gameLog(nonXMLtext)
+      messageFrontEnd({ type: 'gametext', detail: nonXMLtext })
+      text = nonXMLtext // todo: use single var here
+      // sendTextToScript(nonXMLtext);
     } catch (err) {
       console.error('Uncaught error parsing xml:', err)
+    }
+    try {
+      runningScriptArr.forEach(script => {
+        // todo: include script name in error here
+        script.parseText(text);
+      })
+    } catch (err) {
+      console.error('Script error:', err)
+      // need to just kill the script that threw the error or I have a memory leak here:
+      runningScriptArr = []
     }
     try {
       rawLog(gameStr)
@@ -217,8 +272,11 @@ function game(messageFrontEnd) {
 
   function globalUpdated(global, detail = '') {
     // Forwards along the event and detail (hand or exp only for now) along with all global values:
-    sendXMLeventToScript(global, detail, globals)
     messageFrontEnd({ type: global, detail, globals })
+    // sendXMLeventToScript(global, detail, globals)
+    runningScriptArr.forEach(script => {
+      script.parseXML(global, globals)
+    })
   }
 
   function loadXMLparser() {

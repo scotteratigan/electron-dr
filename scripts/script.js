@@ -98,7 +98,7 @@ connection.on('message', message => {
   }
   if (event === "control") {
     const { command } = message;
-    if (command === "#abort") return process.exit(0); // this doesn't really unload it?
+    if (command === "#abort") process.exit(0); // this doesn't really unload it?
     else console.error("Unknown script command received:", command);
   }
   console.log('unhandled event to script:', event)

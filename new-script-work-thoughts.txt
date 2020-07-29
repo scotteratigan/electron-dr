@@ -1,0 +1,19 @@
+array for active scripts:
+runningScriptArr = []
+
+if command starts with .
+clear require cache
+load script means a function returns an object:
+{
+  parseXML: fn
+  parseText: fn
+  parseEvent: fn
+  initializeScript: fn
+} // ok, but is there a way we can abort a script even if the parseEvent function isn't working?
+
+runningScriptArr.push()
+
+ok, the throwing error thing seemed genius but it doesn't unload any timeouts or intervals from memory, and if you process.exit it kills the entire electron process
+so scripts have to be loaded in a worker thread or child process (I think worker thread), there is no choice
+but we can offload most of the logic of passing script events to the loadscript.js file
+I think we keep the hot reload logic but trigger it on something besides '.scriptname'

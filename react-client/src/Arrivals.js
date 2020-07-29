@@ -96,6 +96,7 @@ const arrivalsList = [
   { regex: /The ring of a battle horn echoes across the area heralding the arrival of (.+)\./, arrival: true },
   { regex: /Three plaintive bell-tolls carried on the wind harbinger (.+)'s arrival/, arrival: true },
   { regex: /A distant whistle signals (.+)'s departure from the adventure/, arrival: false },
+  { regex: /Zill Breaker (.+) arrives looking for more zills to break./, arrival: true },
 ]
 
 function extractPlayerNameAndTitleFromLoginStr(str) {

@@ -1,62 +1,46 @@
 const path = require('path')
 const { Worker } = require('worker_threads')
 let script;
-      // const scriptLoaderPath = path.join(__dirname, "loadscript.js")
-      // really might want to be blowing out the entire cache during development
-      // delete require.cache[scriptLoaderPath]
-      // scriptLoader = null;
+// todo: allow array of script workers
 
 function scriptRunner(sendCommand) {
   return function processScriptEvent(event, detail, globals = {}) {
-    console.log('attempting to process script event...')
     //event can be 'command' or 'text' or 'xml'
     if (event === 'command') {
       if (detail.startsWith('.')) {
-        console.log('script loading detected')
-        const scriptName = detail.match(/^\.(\S+)/)[1]; // todo: ensure match exists before extracting it
-        const scriptPath = path.join(__dirname, scriptName)
-        // todo: validate path exists
-        delete require.cache[scriptPath]
-        script = new Worker(scriptPath, { globals })
-        script.on('error', () => console.log('script error! aborting?!'))
-        // todo: allow multiple messages
-        script.on('message', message => sendCommand(message))
-        script.on('exit', () => console.log('script exited!'))
+        try {
+          console.log('script loading detected')
+          const scriptName = detail.match(/^\.(\S+)/)[1]; // todo: ensure match exists before extracting it
+          const scriptPath = path.join(__dirname, 'scripts', scriptName + '.js')
+          // todo: validate path exists
+          delete require.cache[scriptPath]
+          script = new Worker(scriptPath, { globals })
+          script.on('error', () => console.log('script error! aborting?!'))
+          // todo: allow multiple messages
+          script.on('message', message => sendCommand(message))
+          script.on('exit', () => console.log('script exited!'))
+          // initialize script with all global values:
+          script.postMessage({xml: true, detail: 'all', globals})
+        } catch (err) {
+          console.error('Script error:', err)
+        }
       } else if (detail.startsWith('#script abort')) {
         console.log('abort event')
         script.terminate()
       }
     } else if (event === 'text') {
-      console.log('loadscript received text from game, not handled yet')
+      // todo: why would we have text without detail here?
+      if (script && detail) script.postMessage({text: detail}) // must be passed as array or object
+      // console.log('loadscript received text from game, not handled yet')
     } else if (event === 'xml') {
-      console.log('loadscript received xml from game, not handled yet')
+      if (script) script.postMessage({xml: true, detail, globals})
+      // console.log('loadscript received xml from game, not handled yet') todo: deal with this once text is working
     } else {
       console.log('loadscript received unknown event from game, wtf?', command)
     }
   }
 }
 
-
-
-
-function runService(workerData) {
-  return new Promise((resolve, reject) => {
-    const script = new Worker('./script.js', { scriptData });
-    script.on('message', resolve);
-    script.on('error', reject);
-    script.on('exit', (code) => {
-      if (code !== 0)
-        reject(new Error(`Worker stopped with exit code ${code}`));
-    })
-  })
-}
-
-async function run() {
-  const result = await runService('world')
-  console.log(result);
-}
-
-run().catch(err => console.error(err))
 
 
 
@@ -68,13 +52,7 @@ detect .scriptname and run a script
   - when loaded, detect presence of each function (perhaps don't require function though, some scripts might not care about xml events)
 
 parse events in individual functions here
-
-
-
-
 */
-
-
 
 
 // function oldLoadScript(name, sendCommand) {

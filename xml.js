@@ -154,8 +154,11 @@ function setupXMLparser(globals, xmlUpdateEvent) {
     } while (m)
 
     let expParsed = false
+    let indicatorParsed = false
 
     Object.keys(tagsObj).forEach(key => {
+      // Note: str here is the entire string, line is really just a single tag, which may be more or less than 1 line
+      // todo: rename these vars
       // console.log('key:', key.substr(0, 250)) // uncomment to see xml parsing
       const line = tagsObj[key]
       // self-closing tags can use line, paired tags or multi-line tags need to use str
@@ -181,8 +184,10 @@ function setupXMLparser(globals, xmlUpdateEvent) {
         expParsed = true
         return parseExp(str, globals, xmlUpdateEvent)
       }
-      if (key.startsWith('indicator'))
+      if (key.startsWith('indicator') && !indicatorParsed) {
+        indicatorParsed = true
         return parseIndicator(str, globals, xmlUpdateEvent)
+      }
       if (key.startsWith('progressBar'))
         return parseVital(line, globals, xmlUpdateEvent)
       if (key.startsWith('prompt time'))
@@ -288,47 +293,49 @@ function parseSpellPrep(str, globals, xmlUpdateEvent) {
   xmlUpdateEvent('preparedSpell')
 }
 
-function parseIndicator(str, globals, xmlUpdateEvent) {
+function parseIndicator(line, globals, xmlUpdateEvent) {
+  console.log('parseIndicator called with line:', line)
   // <indicator id="IconKNEELING" visible="y"/><indicator id="IconPRONE" visible="n"/><indicator id="IconSITTING" visible="n"/>
   // '/><indicator id='IconHIDDEN' visible='y'/>'/><indicator id='IconINVISIBLE' visible='y'/>
-  const bodyPositionMatch = str.match(/<indicator.+id="Icon(STANDING|KNEELING|SITTING|PRONE)" visible="y"/)
+  const bodyPositionMatch = line.match(/<indicator.+id="Icon(STANDING|KNEELING|SITTING|PRONE)" visible="y"/)
   if (bodyPositionMatch) {
     const bodyPosition = bodyPositionMatch[1].toLowerCase()
     globals.bodyPosition = bodyPosition
     xmlUpdateEvent('bodyPosition')
   }
+
   // todo: check all in loop, this isn't very dry:
-  const bleedingMatch = str.match(/<indicator id='IconBLEEDING' visible='(y|n)'\/>/)
+  const bleedingMatch = line.match(/<indicator id='IconBLEEDING' visible='(y|n)'\/>/)
   if (bleedingMatch) {
     const bleeding = bleedingMatch[1] === 'y' ? true : false
     globals.bleeding = bleeding
     xmlUpdateEvent('bleeding')
   }
-  const deadMatch = str.match(/<indicator id='IconDEAD' visible='(y|n)'\/>/)
+  const deadMatch = line.match(/<indicator id='IconDEAD' visible='(y|n)'\/>/)
   if (deadMatch) {
     const dead = deadMatch[1] === 'y' ? true : false
     globals.dead = dead
     xmlUpdateEvent('dead')
   }
-  const hiddenMatch = str.match(/<indicator id='IconHIDDEN' visible='(y|n)'\/>/)
+  const hiddenMatch = line.match(/<indicator id='IconHIDDEN' visible='(y|n)'\/>/)
   if (hiddenMatch) {
     const hidden = hiddenMatch[1] === 'y' ? true : false
     globals.hidden = hidden
     xmlUpdateEvent('hidden')
   }
-  const invisibleMatch = str.match(/<indicator id='IconINVISIBLE' visible='(y|n)'\/>/)
+  const invisibleMatch = line.match(/<indicator id='IconINVISIBLE' visible='(y|n)'\/>/)
   if (invisibleMatch) {
     const invisible = invisibleMatch[1] === 'y' ? true : false
     globals.invisible = invisible
     xmlUpdateEvent('invisible')
   }
-  const joinedMatch = str.match(/<indicator id='IconJOINED' visible='(y|n)'\/>/)
+  const joinedMatch = line.match(/<indicator id='IconJOINED' visible='(y|n)'\/>/)
   if (joinedMatch) {
     const joined = joinedMatch[1] === 'y' ? true : false
     globals.joined = joined
     xmlUpdateEvent('joined')
   }
-  const stunnedMatch = str.match(/<indicator id='IconSTUNNED' visible='(y|n)'\/>/)
+  const stunnedMatch = line.match(/<indicator id='IconSTUNNED' visible='(y|n)'\/>/)
   if (stunnedMatch) {
     const stunned = stunnedMatch[1] === 'y' ? true : false
     globals.stunned = stunned

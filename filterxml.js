@@ -34,6 +34,7 @@ function setupXMLfilter() {
     str = str.replace(/<inv id=.\S+.>[^<]*<\/inv>/g, '')
     str = str.replace(/<d cmd="\S*">/g, '') // useful for later, this is a command link
     str = str.replace(/<roundTime value='\d+'\/>/g, '')
+    str = str.replace(/<indicator id="\w+" visible="\w"\/>/g, '')
     str = str.replace(/<dialogData id='minivitals'>[\s\S]+<\/dialogData>/g, '')
     str = str.replace(/<castTime value='\d+'\/>/g, '')
     str = str.replace(/<playerID id='\d+'\/>/g, '')
@@ -41,7 +42,7 @@ function setupXMLfilter() {
     str = str.replace(/<pushStream id="logons"\/>[^<]*<popStream\/>/g, '')
     str = str.replace(/^\s*$/gm, '') // empty lines
     str = str.replace(/^\s*&lt;/, '<') // beginning of attack
-    console.log('returning str:', str)
+    // console.log('returning str:', str)
     return str
   }
 }

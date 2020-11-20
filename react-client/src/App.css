@@ -11,16 +11,22 @@ html {
   font-family: 'Gelasio', serif;
   font-size: 12px;
   box-sizing: border-box;
+  background: black;
+  color: #a0a0a0;
 }
 
 h2 {
   font-family: 'Gelasio', serif;
   font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
 }
 
 h3 {
   font-family: 'Gelasio', serif;
   font-size: 1.3rem;
+  font-style: italic;
+  color: white;
 }
 
 .game-text {
@@ -63,6 +69,13 @@ strong {
   flex-shrink: 0;
   overflow: hidden;
   height: 100vh;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.clickable {
+  margin-bottom: 5px;
+  border-spacing: 0 5px;
 }
 
 .clickable:hover {
@@ -85,7 +98,7 @@ strong {
   flex-grow: 0;
   flex-shrink: 0;
 
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
 }
 
 .panel-window-content {
@@ -99,6 +112,10 @@ strong {
 
 .game-window {
   height: calc(90vh - 208px);
+}
+
+.hand-panel {
+  color: white;
 }
 
 /* ::-webkit-scrollbar {

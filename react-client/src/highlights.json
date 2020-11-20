@@ -1,0 +1,627 @@
+[
+  {
+    "regex": "\\b(Aaoskar)\\b",
+    "replace": "$1",
+    "style": "color: #FF8080"
+  },
+  {
+    "regex": "\\b(Ailunae)\\b",
+    "replace": "$1",
+    "style": "color: #FF80FF"
+  },
+  {
+    "regex": "\\b(Aislynn)\\b",
+    "replace": "$1",
+    "style": "color: #80FFFF"
+  },
+  {
+    "regex": "\\b(Angel)\\b",
+    "replace": "$1",
+    "style": "color: #8080C0"
+  },
+  {
+    "regex": "\\b(Asherasa)\\b",
+    "replace": "$1",
+    "style": "color: #8000FF"
+  },
+  {
+    "regex": "\\b(Ashunara)\\b",
+    "replace": "$1",
+    "style": "color: #0080FF"
+  },
+  {
+    "regex": "\\b(Atuen)\\b",
+    "replace": "$1",
+    "style": "color: #FF8040"
+  },
+  {
+    "regex": "\\b(Badarin)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Damiza)\\b",
+    "replace": "$1",
+    "style": "color: #0078F0"
+  },
+  {
+    "regex": "\\b(Dasheek)\\b",
+    "replace": "$1",
+    "style": "color: Red"
+  },
+  {
+    "regex": "\\b(Drekav)\\b",
+    "replace": "$1",
+    "style": "color: #008040"
+  },
+  {
+    "regex": "\\b(Elizzibiana)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Eludia)\\b",
+    "replace": "$1",
+    "style": "color: #804040"
+  },
+  {
+    "regex": "\\b(Enthien)\\b",
+    "replace": "$1",
+    "style": "color: Teal"
+  },
+  {
+    "regex": "\\b(Eyuve)\\b",
+    "replace": "$1",
+    "style": "color: #8000FF"
+  },
+  {
+    "regex": "\\b(Feizy)\\b",
+    "replace": "$1",
+    "style": "color: #004040"
+  },
+  {
+    "regex": "\\b(Fiasko)\\b",
+    "replace": "$1",
+    "style": "color: #FF8080"
+  },
+  {
+    "regex": "\\b(Fostisch)\\b",
+    "replace": "$1",
+    "style": "color: #0080FF"
+  },
+  {
+    "regex": "\\b(Garthic)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Gnimm)\\b",
+    "replace": "$1",
+    "style": "color: #004080"
+  },
+  {
+    "regex": "\\b(Gortik)\\b",
+    "replace": "$1",
+    "style": "color: #FF8000"
+  },
+  {
+    "regex": "\\b(Gypsierenee)\\b",
+    "replace": "$1",
+    "style": "color: #408080"
+  },
+  {
+    "regex": "\\b(Ifri)\\b",
+    "replace": "$1",
+    "style": "color: #FF8000"
+  },
+  {
+    "regex": "\\b(Imril)\\b",
+    "replace": "$1",
+    "style": "color: Maroon"
+  },
+  {
+    "regex": "\\b(Inauri)\\b",
+    "replace": "$1",
+    "style": "color: Olive"
+  },
+  {
+    "regex": "\\b(Isaaris)\\b",
+    "replace": "$1",
+    "style": "color: #0080FF"
+  },
+  {
+    "regex": "\\b(Isaish)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Jennek)\\b",
+    "replace": "$1",
+    "style": "color: #804000"
+  },
+  {
+    "regex": "\\b(Jondong)\\b",
+    "replace": "$1",
+    "style": "color: Red"
+  },
+  {
+    "regex": "\\b(Kaelie)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Kaldean)\\b",
+    "replace": "$1",
+    "style": "color: Red"
+  },
+  {
+    "regex": "\\b(Kiiri)\\b",
+    "replace": "$1",
+    "style": "color: #800040"
+  },
+  {
+    "regex": "\\b(Korya)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Kyoto)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Lansaahr)\\b",
+    "replace": "$1",
+    "style": "color: Gray"
+  },
+  {
+    "regex": "\\b(Lenaea)\\b",
+    "replace": "$1",
+    "style": "color: #FFB0B0"
+  },
+  {
+    "regex": "\\b(Levinas)\\b",
+    "replace": "$1",
+    "style": "color: Gray"
+  },
+  {
+    "regex": "\\b(Leyhan)\\b",
+    "replace": "$1",
+    "style": "color: Maroon"
+  },
+  {
+    "regex": "\\b(Liurilias)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Mazrian)\\b",
+    "replace": "$1",
+    "style": "color: #0080FF"
+  },
+  {
+    "regex": "\\b(Meiline)\\b",
+    "replace": "$1",
+    "style": "color: #FF8080"
+  },
+  {
+    "regex": "\\b(Miskton)\\b",
+    "replace": "$1",
+    "style": "color: #FF8000"
+  },
+  {
+    "regex": "\\b(Muskapo)\\b",
+    "replace": "$1",
+    "style": "color: #804000"
+  },
+  {
+    "regex": "\\b(Nahh)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Navesi)\\b",
+    "replace": "$1",
+    "style": "color: #8080C0"
+  },
+  {
+    "regex": "\\b(Pazhn)\\b",
+    "replace": "$1",
+    "style": "color: #C5C58B"
+  },
+  {
+    "regex": "\\b(Qihhth)\\b",
+    "replace": "$1",
+    "style": "color: #FF80FF"
+  },
+  {
+    "regex": "\\b(Qiszhar)\\b",
+    "replace": "$1",
+    "style": "color: #5E5E2F"
+  },
+  {
+    "regex": "\\b(Qizhmur)\\b",
+    "replace": "$1",
+    "style": "color: #8000FF"
+  },
+  {
+    "regex": "\\b(Qzadi)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Redwrex)\\b",
+    "replace": "$1",
+    "style": "color: #FF8080"
+  },
+  {
+    "regex": "\\b(Sakhhtaw)\\b",
+    "replace": "$1",
+    "style": "color: #30C420"
+  },
+  {
+    "regex": "\\b(Salubrie)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Saragos)\\b",
+    "replace": "$1",
+    "style": "color: #408080"
+  },
+  {
+    "regex": "\\b(Sarkranis)\\b",
+    "replace": "$1",
+    "style": "color: #FF80C0"
+  },
+  {
+    "regex": "\\b(Sarset)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Selesthiel)\\b",
+    "replace": "$1",
+    "style": "color: Olive"
+  },
+  {
+    "regex": "\\b(Simmish)\\b",
+    "replace": "$1",
+    "style": "color: #FF8080"
+  },
+  {
+    "regex": "\\b(Sorhhn)\\b",
+    "replace": "$1",
+    "style": "color: #5FAFAF"
+  },
+  {
+    "regex": "\\b(Ssarek)\\b",
+    "replace": "$1",
+    "style": "color: #0080C0"
+  },
+  {
+    "regex": "\\b(Talroon)\\b",
+    "replace": "$1",
+    "style": "color: #804000"
+  },
+  {
+    "regex": "\\b(Taurture)\\b",
+    "replace": "$1",
+    "style": "color: #80FFFF"
+  },
+  {
+    "regex": "\\b(Tunstall)\\b",
+    "replace": "$1",
+    "style": "color: Red"
+  },
+  {
+    "regex": "\\b(Tyrun)\\b",
+    "replace": "$1",
+    "style": "color: Teal"
+  },
+  {
+    "regex": "\\b(Uritel)\\b",
+    "replace": "$1",
+    "style": "color: Green"
+  },
+  {
+    "regex": "\\b(Valuta)\\b",
+    "replace": "$1",
+    "style": "color: #8080C0"
+  },
+  {
+    "regex": "\\b(Vaxis)\\b",
+    "replace": "$1",
+    "style": "color: #004080"
+  },
+  {
+    "regex": "\\b(Venshen)\\b",
+    "replace": "$1",
+    "style": "color: #008040"
+  },
+  {
+    "regex": "\\b(Wesdrolin)\\b",
+    "replace": "$1",
+    "style": "color: #FF8040"
+  },
+  {
+    "regex": "\\b(Xenris)\\b",
+    "replace": "$1",
+    "style": "color: #008040"
+  },
+  {
+    "regex": "\\b(Xomfor)\\b",
+    "replace": "$1",
+    "style": "color: #008040"
+  },
+  {
+    "regex": "\\b(Yraggahh)\\b",
+    "replace": "$1",
+    "style": "color: Purple"
+  },
+  {
+    "regex": "\\b(Ysei)\\b",
+    "replace": "$1",
+    "style": "color: #8080FF"
+  },
+  {
+    "regex": "\\b(Zehira)\\b",
+    "replace": "$1",
+    "style": "color: #804040"
+  },
+  {"regex": "(^\\[You're.*)", "replace":"$1", "style": "Gray"},
+  {"regex": "(^<.*)", "replace":"$1", "style": "Silver"},
+  {"regex": "(^Also here:.*)", "replace":"$1", "style": "Green"},
+  {"regex": "(^As your consciousness drifts amongst the currents of Fate.*)", "replace":"$1", "style": "color: #A6E22E"},
+  {"regex": "(Obvious exits:.*)", "replace":"$1", "style": "color: #B5621E"},
+  {"regex": "(^Obvious paths:.*)", "replace":"$1", "style": "color: #B5621E"},
+  {"regex": "(^Roundtime:.*)", "replace":"$1", "style": "color: #F92672"},
+  {"regex": "(^SEND.*)", "replace":"$1", "style": "color: #FFFF00"},
+  {"regex": "(^You also see.*)", "replace":"$1", "style": "Green"},
+  {"regex": "(^Your formation of a targeting pattern.*)", "replace":"$1", "style": "color: #FF8040"},
+  {"regex": "(^You've gained a new rank in.*)", "replace":"$1", "style": "color: #B2E6FF"},
+  {"regex": "(((?:2HB|2HE|Bow|Brawl|Brawling|Crossbow|Expert|Expertise|Heavy Thrown|HT|Large Blunt|Large Edged|LB|LE|Light Thrown|LT|Melee|Melee Mastery|Missile|Missile Mastery|Offhand|Offhand Weapon|Parry|Parry Ability|Polearm|Polearms|SB|SE|Sling|Slings|Small Blunt|Small Edged|Staves|Twohanded Blunt|Twohanded Edged|XBow):)\\s+\\d+)", "replace":"$1", "style": "color: #FF8080"},
+  {"regex": "(((?:Alchemy|App|Appraisal|Bardic Lore|BardLore|Empathy|Enchant|Enchanting|Engineer|Engineering|Forging|Outfit|Outfitting|Perform|Performance|Scholar|Scholarship|Tactics|Trading):)\\s+\\d+)", "replace":"$1", "style": "color: #ffcc00"},
+  {"regex": "(((?:Arcana|Arcane Magic|Astro|Astrology|Attune|Attunement|Augment|Augmentation|Debilit|Debilitation|Elemental Magic|Holy Magic|IF|Inner Fire|Inner Magic|Life Magic|Lunar Magic|Primary Magic|Magic|Sorcery|Summon|Summoning|Targeted Magic|Theurgy|TM|Utility|Warding):)\\s+\\d+)", "replace":"$1", "style": "color: #6600ff"},
+  {"regex": "(((?:Athletic|Athletics|Backstab|BS|Evade|Evasion|FA|First Aid|Locks|Locksmithing|Outdoor|Outdoorsmanship|Percep|Perception|Scout|Scouting|Skin|Skinning|Stealth|Than|Thanatology|Thievery):)\\s+\\d+)", "replace":"$1", "style": "color: #009933"},
+  {"regex": "(((?:Brigan|Brigandine|Chain|Chain Armor|Convict|Conviction|Defend|Defending|Light Armor|Lt Armor|Plate|Plate Armor|Shield|Shield Usage):)\\s+\\d+)", "replace":"$1", "style": "color: #0066cc"},
+  {"regex": "((a dark cedar frame house.*?),)", "replace":"$1", "style": "Lime"},
+  {"regex": "((warm|friendly|cold|neutral)\\s+(|somewhere in the lands|\\S+ and \\S+ of you)$)", "replace":"$1", "style": "Green"},
+  {"regex": "(.*eyes flare briefly and the blue-white hue intensifies\\.$)", "replace":"$1", "style": "color: #80FFFF"},
+  {"regex": "(\\% (absorbing|intrigued|scrutinizing|analyzing|studious))", "replace":"$1", "style": "color: #FF6F0F"},
+  {"regex": "(\\% (clear|dabbling|perusing))", "replace":"$1", "style": "color: #006633"},
+  {"regex": "(\\% (concentrating|attentive|deliberative))", "replace":"$1", "style": "color: #D2A800"},
+  {"regex": "(\\% (considering|pondering|ruminating))", "replace":"$1", "style": "color: #9CCA00"},
+  {"regex": "(\\% (enthralled|nearly locked|mind lock))", "replace":"$1", "style": "Maroon"},
+  {"regex": "(\\% (fascinated|captivated|engrossed|riveted|very riveted|rapt|very rapt))", "replace":"$1", "style": "color: #E2003B"},
+  {"regex": "(\\% (focused|very focused|engaged|very engaged|cogitating))", "replace":"$1", "style": "color: #FF8600"},
+  {"regex": "(\\% (interested|examining|understanding))", "replace":"$1", "style": "color: #FF9933"},
+  {"regex": "(\\% (learning|thoughtful|thinking))", "replace":"$1", "style": "color: #6C9B00"},
+  {"regex": "(\\b((?<=% )analyzing)\\b)", "replace":"$1", "style": "color: #FFE300"},
+  {"regex": "(\\b((?<=% )captivated)\\b)", "replace":"$1", "style": "color: #FF0000"},
+  {"regex": "(\\b((?<=% )cogitating)\\b)", "replace":"$1", "style": "color: #FF3900"},
+  {"regex": "(\\b((?<=% )engaged)\\b)", "replace":"$1", "style": "color: #FF7100"},
+  {"regex": "(\\b((?<=% )engrossed)\\b)", "replace":"$1", "style": "color: #EF0000"},
+  {"regex": "(\\b((?<=% )enthralled)\\b)", "replace":"$1", "style": "color: #A00000"},
+  {"regex": "(\\b((?<=% )fascinated)\\b)", "replace":"$1", "style": "color: #FF1C00"},
+  {"regex": "(\\b((?<=% )focused)\\b)", "replace":"$1", "style": "color: #FFAA00"},
+  {"regex": "(\\b((?<=% )mind lock)\\b)", "replace":"$1", "style": "color: #800000"},
+  {"regex": "(\\b((?<=% )nearly locked)\\b)", "replace":"$1", "style": "color: #900000"},
+  {"regex": "(\\b((?<=% )rapt)\\b)", "replace":"$1", "style": "color: #C00000"},
+  {"regex": "(\\b((?<=% )riveted)\\b)", "replace":"$1", "style": "color: #DF0000"},
+  {"regex": "(\\b((?<=% )scrutinizing)\\b)", "replace":"$1", "style": "color: #FFFF00"},
+  {"regex": "(\\b((?<=% )studious)\\b)", "replace":"$1", "style": "color: #FFC600"},
+  {"regex": "(\\b((?<=% )very engaged)\\b)", "replace":"$1", "style": "color: #FF5500"},
+  {"regex": "(\\b((?<=% )very focused)\\b)", "replace":"$1", "style": "color: #FF8E00"},
+  {"regex": "(\\b((?<=% )very rapt)\\b)", "replace":"$1", "style": "color: #B00000"},
+  {"regex": "(\\b((?<=% )very riveted)\\b)", "replace":"$1", "style": "color: #CF0000"},
+  {"regex": "(\\b((?<=Also here:.+)the body of)\\b} {corpse)", "replace":"$1", "style": "color: #FF8000"},
+  {"regex": "(\\b((a badly bruised and swollen|badly bruised and swollen) head|(a severely swollen and deeply bruised|severely swollen and deeply bruised) (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a severely swollen and bruised|severely swollen and bruised) (chest area|chest|abdomen|back|right eye|left eye)|(a severely swollen, bruised and crossed|severely swollen, bruised and crossed) (right|left) eye|(some difficulty|difficulty) controlling actions)\\b} {wounds)", "replace":"$1", "style": "color: #760082"},
+  {"regex": "(\\b((a blank|blank) stare|(a completely paralyzed|completely paralyzed) (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(an extremely painful|extremely painful) (chest area|chest) (and|with|while) gasping for breath in short shallow bursts|(a death pallor|death pallor) (and|with) extreme loss of weight|(an extremely painful and bizarrely twisted|extremely painful and bizarrely twisted) back making it nearly impossible to move|(a blind|blind) (right|left) eye|general numbness all over and (have|has) difficulty thinking)\\b} {wounds)", "replace":"$1", "style": "color: #664D66"},
+  {"regex": "(\\b((a bruised|bruised) head|(some minor swelling and bruising|minor swelling and bruising) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye)|(some minor|minor) (twitching|twitches))\\b} {wounds)", "replace":"$1", "style": "color: #C000C0"},
+  {"regex": "(\\b((a confused look|confused look) (and|with|while) sporadic twitching of the (head|forehead)|(a severely paralyzed|severely paralyzed) (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a severely painful|severely painful) (chest area|chest) (and|with|while) significant problems breathing|(a severely yellow pallor|severely yellow pallor) (and|with) a look of starvation|(a severely painful|severely painful) back (and|with|while) significant problems moving|(a completely clouded|completely clouded) (right|left) eye|general numbness all over)\\b} {wounds)", "replace":"$1", "style": "color: #735773"},
+  {"regex": "(\\b((a constant twitch|constant twitch|a constant twitching|constant twitching) (about|across|along|around|from|in|of|on|to) the (chest area|chest|abdomen|back)|(slight numbness in|slight difficulty moving) (your|his|her|the) arms and legs)\\b} {wounds)", "replace":"$1", "style": "color: #BF90BF"},
+  {"regex": "(\\b((a cracked skull with|cracked skull with) (some deep slashes|deep slashes)|(some gaping holes|gaping holes) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back)|(a broken|broken) (tail|(right|left) (arm|hand|leg)) with gaping holes|(a bruised, swollen and slashed|bruised, swollen and slashed) (right|left) eye|(a painful, enflamed|painful, enflamed) body rash)\\b} {wounds)", "replace":"$1", "style": "color: #C00000"},
+  {"regex": "(\\b((a crushed skull|crushed skull) with horrendous wounds|(a shattered|shattered) (neck|chest area|chest|back|tail|right arm|left arm|right hand|left hand|right leg|left leg) with gaping wounds|(an abdomen|abdomen) deeply gouged with gaping wounds|(a bruised, swollen and shattered|bruised, swollen and shattered) (right|left) eye|(some boils and sores|boils and sores) (about|across|along|around|from|in|of|on|to) the skin)\\b} {wounds)", "replace":"$1", "style": "color: #950000"},
+  {"regex": "(\\b((a deeply bruised|deeply bruised) head|(a severely swollen and bruised|severely swollen and bruised) (right|left) eye|(some severe|severe) (twitching|twitches))\\b} {wounds)", "replace":"$1", "style": "color: #950095"},
+  {"regex": "(\\b((a few nearly invisible scars|few nearly invisible scars|some faint scars|faint scars|some faint scarring|faint scarring) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye|skin))\\b} {wounds)", "replace":"$1", "style": "color: #FFFFBF"},
+  {"regex": "(\\b((a ghastly bloated|ghastly bloated) head with bleeding (about|across|along|around|from|in|of|on|to) the ears|(a severely swollen and deeply bruised|severely swollen and deeply bruised) (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg) with (bones protruding out (about|across|along|around|from|in|of|on|to)|odd protrusions under) the skin|odd protrusions under the skin|(a severely swollen and deeply bruised|severely swollen and deeply bruised) (chest area|chest) with ribs protruding out (about|across|along|around|from|in|of|on|to) the skin|(a severely bloated and discolored|severely bloated and discolored) abdomen with strange round lumps under the skin|(a severely swollen and deeply bruised|severely swollen and deeply bruised) back with ribs or vertebrae protruding out (about|across|along|around|from|in|of|on|to) the skin|(some severe|severe) paralysis of the entire body)\\b} {wounds)", "replace":"$1", "style": "color: #50008A"},
+  {"regex": "(\\b((a grotesquely bloated|grotesquely bloated) head with bleeding the eyes and ears|(a severely swollen and shattered|severely swollen and shattered) neck (which appears|appears) useless to hold up the head|(a severely swollen|severely swollen) (chest area|chest) with a shattered rib cage|(a severely bloated and discolored|severely bloated and discolored) abdomen (which appears|appears) oddly rearranged|(a severely swollen|severely swollen) back with a shattered spinal cord|(a severely swollen and shattered|severely swollen and shattered) (tail|(right|left) (arm|hand|leg)) (which appears|appears) completely useless|(a severely swollen, bruised and blind|severely swollen, bruised and blind) (right|left) eye|(some complete|complete) paralysis of the entire body)\\b} {wounds)", "replace":"$1", "style": "color: #46008C"},
+  {"regex": "(\\b((a mangled and malformed|mangled and malformed) head|(a severely scarred, mangled and malformed|severely scarred, mangled and malformed) (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a painfully mangled and malformed|painfully mangled and malformed) (right|left) eye|(some severely stiff and shriveled|severely stiff and shriveled) skin that seems to be peeling off the body)\\b} {wounds)", "replace":"$1", "style": "color: #737357"},
+  {"regex": "(\\b((a partially paralyzed|partially paralyzed) (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a painful|painful) (chest area|chest) (and|with|while) difficulty getting a breath without pain|(a definite greenish pallor|definite greenish pallor) and emaciated look|(a painful|painful) back (and|with|while) difficulty moving without pain|(a clouded|clouded) (right|left) eye|(numbness in|difficulty moving) (your|his|her|the) arms and legs)\\b} {wounds)", "replace":"$1", "style": "color: #8C6A8C"},
+  {"regex": "(\\b((a pulpy stump for|pulpy stump for) a head|(a completely useless|completely useless) neck with nearly all flesh and bone torn away|(a completely destroyed|completely destroyed) (chest area|chest|abdomen|back) with nearly all flesh and bone torn away revealing a gaping hole|(an ugly stump for a|ugly stump for a) (tail|(right|left) (arm|hand|leg))|(a pulpy cavity for|pulpy cavity for) a (right|left) eye|(some open and bleeding sores|open and bleeding sores) all over the skin)\\b} {wounds)", "replace":"$1", "style": "color: #800000"},
+  {"regex": "(\\b((a stump for a|stump for a) head|(an ugly flesh stump for a|ugly flesh stump for a) neck with little left to support the head|(a mostly non-existent|mostly non-existent) (chest area|chest|abdomen) filled with ugly chunks of scarred flesh|(a mostly non-existent|mostly non-existent) back filled with ugly chunks of scarred flesh and rearranged bone|(an ugly flesh stump for a|ugly flesh stump for a) (tail|(right|left) (arm|hand|leg))|(an empty|empty) (right|left) eye socket overgrown with bits of odd shaped flesh|(severe skin loss|skin loss) exposing bone and internal organs)\\b} {wounds)", "replace":"$1", "style": "color: #66664D"},
+  {"regex": "(\\b((an occasional twitch|occasional twitch|an occasional twitching|occasional twitching) (about|across|along|around|from|in|of|on|to) the (head|forehead)|(a constant twitch|constant twitch|a constant twitching|constant twitching) (about|across|along|around|from|in|of|on|to) the (neck|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye)|(a constant twitch|constant twitch|a constant twitching|constant twitching) (about|across|along|around|from|in|of|on|to) the (chest area|chest) (and|with|while) difficulty breathing|(a somewhat emaciated look |somewhat emaciated look)|(a constant twitch|constant twitch|a constant twitching|constant twitching) (about|across|along|around|from|in|of|on|to) the back (and|with|while) difficulty moving in general|(numbness in|difficulty moving) (your|his|her|the) fingers and toes)\\b} {wounds)", "replace":"$1", "style": "color: #A67DA6"},
+  {"regex": "(\\b((an occasional twitch|occasional twitch|an occasional twitching|occasional twitching) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye)|(slight numbness in|slight difficulty moving) (your|his|her|the) fingers and toes)\\b} {wounds)", "replace":"$1", "style": "color: #D9A3D9"},
+  {"regex": "(\\b((some cuts and bruises|cuts and bruises) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a black and blue|black and blue) (right|left) eye|(a small|small) skin rash)\\b} {wounds)", "replace":"$1", "style": "color: #FF8000"},
+  {"regex": "(\\b((some deep slashes|deep slashes) and cuts (about|across|along|around|from|in|of|on|to) the head|(some deep slashes|deep slashes) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a bruised, swollen and bleeding|bruised, swollen and bleeding) (right|left) eye|(a body|body) rash)\\b} {wounds)", "replace":"$1", "style": "color: #EA0000"},
+  {"regex": "(\\b((some major swelling and bruising|major swelling and bruising) (about|across|along|around|from|in|of|on|to) the head|(a severely swollen and deeply bruised|severely swollen and deeply bruised) (neck|chest area|chest|back) with odd protrusions under the skin|(a severely swollen, bruised and cloudy|severely swollen, bruised and cloudy) (right|left) eye|(some partial|partial) paralysis of the entire body)\\b} {wounds)", "replace":"$1", "style": "color: #630086"},
+  {"regex": "(\\b((some minor abrasions|minor abrasions|some faint scuffing|faint scuffing) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye|skin))\\b} {wounds)", "replace":"$1", "style": "color: #D9D9A3"},
+  {"regex": "(\\b((some minor scars|minor scars|some minor scarring|minor scarring) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye)|(some loss of|loss of) skin tone)\\b} {wounds)", "replace":"$1", "style": "color: #D9D9A3"},
+  {"regex": "(\\b((some missing chunks out of|missing chunks out of) the head|(some severe scarring and chunks of flesh missing|severe scarring and chunks of flesh missing) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a punctured and shriveled|punctured and shriveled) (right|left) eye|(some shriveled and oddly folded|shriveled and oddly folded) skin)\\b} {wounds)", "replace":"$1", "style": "color: #8C8C6A"},
+  {"regex": "(\\b((some moderately deep cuts|moderately deep cuts) (about|across|along|around|from|in|of|on|to) the head|(some (?<!moderately )deep cuts|(?<!moderately )deep cuts) (about|across|along|around|from|in|of|on|to) the (neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(a bruised and swollen|bruised and swollen) (right|left) eye|(a large|large) skin rash)\\b} {wounds)", "replace":"$1", "style": "color: #FF2B00"},
+  {"regex": "(\\b((some severe scarring and ugly gashes|severe scarring and ugly gashes) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg)|(some deeply scarred gashes|deeply scarred gashes) (about|across|along|around|from|in|of|on|to) the (right|left) eye|(some severe|severe) skin discoloration)\\b} {wounds)", "replace":"$1", "style": "color: #A6A67D"},
+  {"regex": "(\\b((some severe scarring|severe scarring|some severe scars|severe scars) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye)|(some minor|minor) skin discoloration)\\b} {wounds)", "replace":"$1", "style": "color: #BFBF90"},
+  {"regex": "(\\b((some tiny scars|tiny scars) (about|across|along|around|from|in|of|on|to) the (head|neck|chest area|chest|abdomen|back|tail|right arm|left arm|right hand|left hand|right leg|left leg|right eye|left eye|skin))\\b} {wounds)", "replace":"$1", "style": "color: #F2F2B6"},
+  {"regex": "(\\b(compounded by)\\b} {wounds)", "replace":"$1", "style": "color: #494949"},
+  {"regex": "(\\b(Fresh External:(.*)-- damaging)\\b} {touch)", "replace":"$1", "style": "color: #FF0000"},
+  {"regex": "(\\b(Fresh External:(.*)-- devastating)\\b} {touch)", "replace":"$1", "style": "color: #AA0000"},
+  {"regex": "(\\b(Fresh External:(.*)-- harmful)\\b} {touch)", "replace":"$1", "style": "color: #FF5500"},
+  {"regex": "(\\b(Fresh External:(.*)-- insignificant)\\b} {touch)", "replace":"$1", "style": "color: #FFFF00"},
+  {"regex": "(\\b(Fresh External:(.*)-- minor)\\b} {touch)", "replace":"$1", "style": "color: #FFAA00"},
+  {"regex": "(\\b(Fresh External:(.*)-- more than minor)\\b} {touch)", "replace":"$1", "style": "color: #FF8000"},
+  {"regex": "(\\b(Fresh External:(.*)-- negligible)\\b} {touch)", "replace":"$1", "style": "color: #FFD500"},
+  {"regex": "(\\b(Fresh External:(.*)-- severe)\\b} {touch)", "replace":"$1", "style": "color: #D50000"},
+  {"regex": "(\\b(Fresh External:(.*)-- useless)\\b} {touch)", "replace":"$1", "style": "color: #800000"},
+  {"regex": "(\\b(Fresh External:(.*)-- very damaging)\\b} {touch)", "replace":"$1", "style": "color: #EA0000"},
+  {"regex": "(\\b(Fresh External:(.*)-- very devastating)\\b} {touch)", "replace":"$1", "style": "color: #950000"},
+  {"regex": "(\\b(Fresh External:(.*)-- very harmful)\\b} {touch)", "replace":"$1", "style": "color: #FF2B00"},
+  {"regex": "(\\b(Fresh External:(.*)-- very severe)\\b} {touch)", "replace":"$1", "style": "color: #C00000"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- damaging)\\b} {touch)", "replace":"$1", "style": "color: #800080"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- devastating)\\b} {touch)", "replace":"$1", "style": "color: #590088"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- harmful)\\b} {touch)", "replace":"$1", "style": "color: #AA00AA"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- insignificant)\\b} {touch)", "replace":"$1", "style": "color: #FF00FF"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- minor)\\b} {touch)", "replace":"$1", "style": "color: #D500D5"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- more than minor)\\b} {touch)", "replace":"$1", "style": "color: #C000C0"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- negligible)\\b} {touch)", "replace":"$1", "style": "color: #EA00EA"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- severe)\\b} {touch)", "replace":"$1", "style": "color: #6D0084"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- useless)\\b} {touch)", "replace":"$1", "style": "color: #46008C"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- very damaging)\\b} {touch)", "replace":"$1", "style": "color: #760082"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- very devastating)\\b} {touch)", "replace":"$1", "style": "color: #50008A"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- very harmful)\\b} {touch)", "replace":"$1", "style": "color: #950095"},
+  {"regex": "(\\b(Fresh Internal:(.*)-- very severe)\\b} {touch)", "replace":"$1", "style": "color: #630086"},
+  {"regex": "(\\b(Game(Host|Master)s?|G[HM]s?)\\b} {rp)", "replace":"$1", "style": "color: #FF0000"},
+  {"regex": "(\\b(Scars External:(.*)-- damaging)\\b} {touch)", "replace":"$1", "style": "color: #B3B386"},
+  {"regex": "(\\b(Scars External:(.*)-- devastating)\\b} {touch)", "replace":"$1", "style": "color: #808060"},
+  {"regex": "(\\b(Scars External:(.*)-- harmful)\\b} {touch)", "replace":"$1", "style": "color: #CCCC99"},
+  {"regex": "(\\b(Scars External:(.*)-- insignificant)\\b} {touch)", "replace":"$1", "style": "color: #FFFFBF"},
+  {"regex": "(\\b(Scars External:(.*)-- minor)\\b} {touch)", "replace":"$1", "style": "color: #E6E6AC"},
+  {"regex": "(\\b(Scars External:(.*)-- more than minor)\\b} {touch)", "replace":"$1", "style": "color: #D9D9A3"},
+  {"regex": "(\\b(Scars External:(.*)-- negligible)\\b} {touch)", "replace":"$1", "style": "color: #F2F2B6"},
+  {"regex": "(\\b(Scars External:(.*)-- severe)\\b} {touch)", "replace":"$1", "style": "color: #999973"},
+  {"regex": "(\\b(Scars External:(.*)-- useless)\\b} {touch)", "replace":"$1", "style": "color: #66664D"},
+  {"regex": "(\\b(Scars External:(.*)-- very damaging)\\b} {touch)", "replace":"$1", "style": "color: #A6A67D"},
+  {"regex": "(\\b(Scars External:(.*)-- very devastating)\\b} {touch)", "replace":"$1", "style": "color: #737357"},
+  {"regex": "(\\b(Scars External:(.*)-- very harmful)\\b} {touch)", "replace":"$1", "style": "color: #BFBF90"},
+  {"regex": "(\\b(Scars External:(.*)-- very severe)\\b} {touch)", "replace":"$1", "style": "color: #8C8C6A"},
+  {"regex": "(\\b(Scars Internal:(.*)-- damaging)\\b} {touch)", "replace":"$1", "style": "color: #B386B3"},
+  {"regex": "(\\b(Scars Internal:(.*)-- devastating)\\b} {touch)", "replace":"$1", "style": "color: #806080"},
+  {"regex": "(\\b(Scars Internal:(.*)-- harmful)\\b} {touch)", "replace":"$1", "style": "color: #CC99CC"},
+  {"regex": "(\\b(Scars Internal:(.*)-- insignificant)\\b} {touch)", "replace":"$1", "style": "color: #FFBFFF"},
+  {"regex": "(\\b(Scars Internal:(.*)-- minor)\\b} {touch)", "replace":"$1", "style": "color: #E6ACE6"},
+  {"regex": "(\\b(Scars Internal:(.*)-- more than minor)\\b} {touch)", "replace":"$1", "style": "color: #D9A3D9"},
+  {"regex": "(\\b(Scars Internal:(.*)-- negligible)\\b} {touch)", "replace":"$1", "style": "color: #F2B6F2"},
+  {"regex": "(\\b(Scars Internal:(.*)-- severe)\\b} {touch)", "replace":"$1", "style": "color: #997399"},
+  {"regex": "(\\b(Scars Internal:(.*)-- useless)\\b} {touch)", "replace":"$1", "style": "color: #664D66"},
+  {"regex": "(\\b(Scars Internal:(.*)-- very damaging)\\b} {touch)", "replace":"$1", "style": "color: #A67DA6"},
+  {"regex": "(\\b(Scars Internal:(.*)-- very devastating)\\b} {touch)", "replace":"$1", "style": "color: #735773"},
+  {"regex": "(\\b(Scars Internal:(.*)-- very harmful)\\b} {touch)", "replace":"$1", "style": "color: #BF90BF"},
+  {"regex": "(\\b(Scars Internal:(.*)-- very severe)\\b} {touch)", "replace":"$1", "style": "color: #8C6A8C"},
+  {"regex": "(^((You|He|She|It) (is|are) bleeding.*|You have a dormant infection|.*wounds are infected|\\s+(head|neck|chest|abdomen|back|(right|left) (eye|arm|hand|leg)|tail|skin)\\s+(clotted|slight|light|moderate|bad|very bad|heavy|very heavy|severe|very severe|profuse|very profuse|gushing|massive stream|uncontrollable|unbelievable|beyond measure|death awaits))} {wounds)", "replace":"$1", "style": "color: #FF0000"},
+  {"regex": "(^(.*\\(1/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #005555"},
+  {"regex": "(^(.*\\(1/3\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #005555"},
+  {"regex": "(^(.*\\(1/5\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #005555"},
+  {"regex": "(^(.*\\(1/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #005555"},
+  {"regex": "(^(.*\\(10/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00A272"},
+  {"regex": "(^(.*\\(11/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00AA76"},
+  {"regex": "(^(.*\\(12/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00B379"},
+  {"regex": "(^(.*\\(13/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00BB7C"},
+  {"regex": "(^(.*\\(14/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00C47F"},
+  {"regex": "(^(.*\\(15/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00CC82"},
+  {"regex": "(^(.*\\(16/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00D586"},
+  {"regex": "(^(.*\\(17/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00DD89"},
+  {"regex": "(^(.*\\(18/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00E68C"},
+  {"regex": "(^(.*\\(19/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00EE90"},
+  {"regex": "(^(.*\\(2/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #005E58"},
+  {"regex": "(^(.*\\(2/3\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00AA76"},
+  {"regex": "(^(.*\\(2/5\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #008065"},
+  {"regex": "(^(.*\\(2/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #006A5D"},
+  {"regex": "(^(.*\\(20/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00F793"},
+  {"regex": "(^(.*\\(21/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00FF96"},
+  {"regex": "(^(.*\\(3/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00665C"},
+  {"regex": "(^(.*\\(3/3\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00FF96"},
+  {"regex": "(^(.*\\(3/5\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00AA76"},
+  {"regex": "(^(.*\\(3/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #008065"},
+  {"regex": "(^(.*\\(4/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #006E5F"},
+  {"regex": "(^(.*\\(4/5\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00D586"},
+  {"regex": "(^(.*\\(4/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00956D"},
+  {"regex": "(^(.*\\(5/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #007762"},
+  {"regex": "(^(.*\\(5/5\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00FF96"},
+  {"regex": "(^(.*\\(5/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00AA76"},
+  {"regex": "(^(.*\\(6/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #008065"},
+  {"regex": "(^(.*\\(6/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00BF7E"},
+  {"regex": "(^(.*\\(7/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #008868"},
+  {"regex": "(^(.*\\(7/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00D586"},
+  {"regex": "(^(.*\\(8/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00906C"},
+  {"regex": "(^(.*\\(8/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00EA8E"},
+  {"regex": "(^(.*\\(9/21\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00996F"},
+  {"regex": "(^(.*\\(9/9\\) (streams|mana).*)$} {mana)", "replace":"$1", "style": "color: #00FF96"},
+  {"regex": "(^(\\[\\d+:\\d+\\] Chatter\\[.*)$)", "replace":"$1", "style": "color: #E3FFE3"},
+  {"regex": "(^(\\[Change your DEMEANOR or BEFRIEND \\w+ to avoid this\\.\\]|\\[You are currently AVOIDing attemps to touch you\\.\\]|Your .+ falls? to the ground\\.)$} {} {Error.wav)", "replace":"$1", "style": "color: #800080"},
+  {"regex": "(^(A subtle pain tingles along your nerves, and you realize you will be unable to cast this spell while suffering Empathic shock\\.|You are unable to take any more wounds from the.*|You close your eyes, centering your thoughts on your own life essence, but feel only an aching emptiness\\.|\\w+'s features are too difficult to alter at this time\\.$)$} {} {Error.wav)", "replace":"$1", "style": "color: #408080"},
+  {"regex": "(^(Pale yellow sparks flicker around your torso\\.\\s+Your possessions suddenly feel lighter and easier to carry\\.|^An? .+ mist briefly appears around your arms and spreads imperceptibly around you to form your ward\\.|^The air around you shimmers with an? .+ yellow .+\\.\\s+The scintillating light writhes and twists, abruptly coalescing into a translucent field before blinking out of sight\\.|^A distracting flurry of .+ momentarily blinds you\\.\\s+As your eyes adjust, you notice local fluctuations in mana are being represented by .+ graphs and sigils in the corners of your sight\\.)$} {magic)", "replace":"$1", "style": "color: #00FF96"},
+  {"regex": "(^(Rutilant sparks of light encircle you, bathing you in a warm glow as your body begins to tingle with energy\\.|A sudden sensation of warmth spreads through your body, settling itself between your shoulders\\.|A sudden wave of heat washes over you as your spell attempts to flush poison from your body but finds no toxins\\.\\s+Since you don't seem to be poisoned, you use your knowledge of Adaptive Curing to set a reactive ward\\.\\s+You feel the pattern center itself in the small of your back, a lingering warmth reminding you of its protective presence\\.|A wave of vertigo washes over you as your spell seeks out disease in your body\\.\\s+However, you don't seem to be so afflicted\\.\\s+Instead, you use your knowledge of Adaptive Curing to set a reactive ward\\.\\s+You feel the pattern sink into your body, a lingering warmth just beneath your \\w+ reminding you of its protective presence\\.|You reach out and touch \\w+, linking your heart's rhythm with \\w+'s\\.\\s+You feel (his|her) heart shudder as its natural beat is forced to match your own\\.|Your head swims and you feel considerably more numb, as though your mind was somehow disconnected from your body\\.\\s+The world with all its colors and sensual character seems a step removed from you now\\.|Soft waves of a gentle, warm peach color flicker around you\\.|A surge of renewed strength runs through you\\.|You are already being bolstered by a more powerful cast of the refresh spell\\.|You feel completely spent as your life force pours into the land\\.|New life flows into your body, sharpening your Empathic senses and increasing your sense of wellness\\.|You close your eyes, drawing on the vitality of your surroundings to enhance yourself\\.\\s+You settle into a graceful stance, able to act quicker and firmer than usual\\.|Tapering ribbons of soft yellow extend across the area, pausing to dance in swirls and eddies\\.|Life energy floods through your veins, burning without consuming\\.\\s+Time seems to slow as it flows into your muscles and nerves, increasing your reaction speed\\.|Your heart skips a beat as your spell sends a subtle jingling call outward from you in all directions\\.|The pattern secretes a liquid, dusky light which cascades down your body like thick honey, numbing your \\S+ as it covers you from head to toe before thinning out\\.|Your body tenses with a burning, stressful ache as you take on a physiological stance better prepared for combat\\.|You take a few calming breaths, allowing the pattern settle deep within you, creating an inner reserve of vitality\\.|A diminutive .+ tree of phantasmal blue rises up from the ground, its golden leaves stretching out into the air\\.|The world around you seems to slow as the spell grips your mind\\.\\s+You feel centered and steady, your concentration honed to a keen edge\\.|A newfound fluidity of your mind imparts you with enhanced awareness of every nerve in your body\\.|The vivacious energies of your spell focalize around your head\\.\\s+As the pattern reaches deeply beyond your conscious mind, you are pervaded by a feeling of sobered vigilance\\.)$} {magic)", "replace":"$1", "style": "color: #80FFFF"},
+  {"regex": "(^(The .+ absorbs all of the energy\\.|You harness.+amount of energy and attempt to channel it into your .+\\.|You are able to channel.+the energy into the .+\\.|The .+ pulses with \\S+ energy\\.  You reach for its center and forge a magical link to it, readying.+of its mana for your use\\.|Your .+ emits a loud *snap* as it discharges all its power to aid your spell\\.|Your .+ emits a loud \\*snap\\* as it discharges as much power as necessary, leaving a small amount left for future use\\.|You tap into the mana from .+ of the surrounding streams and attempt to keep it channeling in a stream around you\\.|You tap into the mana from .+ of the surrounding streams and add it to the.+amount already streaming around you\\.)$} {magic)", "replace":"$1", "style": "Gray"},
+  {"regex": "(^(The spell pattern resists the influx of unstable mana.*)$} {} {Error.wav)", "replace":"$1", "style": "color: #990505"},
+  {"regex": "(^(The tingling across your body diminishes as you feel the motes of energy fade away\\.|You feel the warmth between your shoulders dissipate\\.|You feel the heat at the small of your back fade away\\.|You feel the protective warmth just under your \\S+ fade away\\.|You feel your Heart Link with \\w+ fade away\\.|A brief spike of raw sensation hits you, taking your breath away\\.\\s+The ritual pattern dampening your Empathy is coming undone\\.|As the Absolution spell fails, you feel your connection to the world renew and sharpen once again\\.|You feel the surge of energy within you ebb away\\.|Your increased sense of wellness gradually ebbs as the Gift of Life spell ends\\.|You sense the Vigor spell fade away, returning your body to a weaker, more clumsy state\\.|The lingering effects of your Innocence spell fade away\\.|Aesandry Darlaeth loses cohesion, returning your reaction time to normal\\.|You sense your hold on your Guardian Spirit weaken, then evaporate entirely\\.|Your \\S+ loses its protective numbness\\.|You sense the Aggressive Stance spell fade away, returning your body to a state more sluggish and serene\\.|Your? feel the Perseverance of Peri'el pattern diminish and fade away\\.|The leafless .+ tree fades like a drifting mist into oblivion\\.|The Mental Focus spell fades away, releasing its grip on your mind\\.\\s+You feel briefly confused and stupid as your senses return to their normal state\\.|The fluidity of your mind expires\\.|You no longer feel the insomnious solace of Awaken\\.)$} {magic)", "replace":"$1", "style": "color: #408080"},
+  {"regex": "(^(You (are|feel) certain that (an?|it|some|the).*)$} {appraise)", "replace":"$1", "style": "color: #AB8B5C"},
+  {"regex": "(^(You (recognize the familiar mnemonics|decipher the telltale signs) of the.*)$} {magic)", "replace":"$1", "style": "color: #8686C4"},
+  {"regex": "(^(You analyze every minute detail of (an?|it|some|the).*)$)", "replace":"$1", "style": "color: #AB8B5C"},
+  {"regex": "(^(You are also fairly sure that the people are convinced you are a necromancer\\.|You believe that broadcasting on a public channel is only increasing the amount of heat you face\\.)$} {} {Evil.wav)", "replace":"$1", "style": "color: #990505"},
+  {"regex": "(^(You are unable to make mental contact and your thought fails to project\\.|You try to cram all that into one burst of thought, but can't\\.|Your attempt to make mental contact is thwarted\\.)$} {} {Error.wav)", "replace":"$1", "style": "color: #AA1137"},
+  {"regex": "(^(You begin to lecture \\w+ on the proper use of the .+ skill\\.|You continue to instruct your student on.*|\\w+ begins to listen to you teach the .+ skill\\.|You are teaching a class on .+ which is still open to new students\\.|\\w+ begins to lecture you on the proper usage of the .+ skill\\.|You begin to listen to \\w+ teach the .+ skill\\.|\\w+ is teaching a class on.*You are in this class!)$)", "replace":"$1", "style": "color: #71D0FF"},
+  {"regex": "(^(You falter for a moment as your extra courage slips away\\.|You feel your righteous rage dissipate\\.|Your profound inspiration wanes and expires as thin, wispy lines of light alternately appear and disappear near your head\\.|Truffenyi's Rally ends, leaving behind a momentary sensation of something stuck in your throat\\.|Your sense of protection leaves you\\.|The dull orange glow fades from you\\.|Your extra strength deserts you as the glistening net unravels from your body\\.|The power of the Soldier's Prayer slips away from you, fused elements of its pattern falling away like brittle metal\\.|Your .+ returns? to (its|their) normal condition\\.|You falter for a moment as your inner faculties return to normal\\.|Your previous bond with an? .+ breaks\\.|The ghostly banner fades out of sight\\.|Your zeal for justice wanes as you realize the divine guidance of Chadatru has faded\\.|You sense the Rutilor's Edge spell fade away\\.|The holy golden radiance of your soul subsides, retreating into your body\\.|You seem to lose the clarity of your mind\\.|You feel your resolve in the face of superior numbers weaken as the blessings of Crusader's Challenge fade\\.|You sense the invisible magic guarding you fade\\.)$} {magic)", "replace":"$1", "style": "color: #53516C"},
+  {"regex": "(^(You feel a weight settle over you, and realize the magic that has been easing your burden has faded\\.|^You sense your invisible ward give away, leaving you more vulnerable\\.|^The air around you shimmers with a weak yellow light that quickly disperses\\.|^Your eyes briefly darken\\.\\s+When you regain sight, the graphs and sigils previously impressed upon your vision have disappeared\\.)$} {magic)", "replace":"$1", "style": "color: #774309"},
+  {"regex": "(^(You feel the link between you and \\w+ suddenly fade away.*You turn toward (him|her) and notice that (his|her) appearance has changed\\.)$} {} {Done.wav)", "replace":"$1", "style": "color: #80FFFF"},
+  {"regex": "(^(You feel your courage (bolstered|renewed) by \\S+ faith and determination\\.|Your blood begins to boil and with a mighty shout you allow the rage within to flow outward for all to see\\.|Brilliant, hair-like threads of light form a wispy crown around your head, bringing with them an epiphany of thought and knowledge\\.|You speak a few words of righteousness in Truffenyi's name\\.|You sense an? \\S+ wave of righteousness lend its protection to you.*|A dull orange glow settles around you\\.|A glistening net of coiling tendrils interlaces itself across your muscles, outlining each vein and contour with sparkles of white light\\.|You weave a simple barrier out of invisible strands of Holy energy and then focus inward\\.\\s+Spiritual heat surges from your refined soul, tempering the pattern\\.|Your .+ feels?.+more substantial\\.|You sense a righteous awakening, leaving you \\S+ more in tune with your body, mind and spirit\\.|Tendrils of translucent white writhe around your .+\\.|You sense a new bond forged between you and your .+\\.|A ghostly white banner fades into view overhead\\.|Your hands glow briefly with a pristine white light as you feel your dedication to the pursuit of justice strengthened!|A soft silver glow envelops your .+ and is slowly absorbed into it\\.|You clap your hands once in an august gesture of piety\\.|You feel your holy inclinations strengthen your senses, allowing a clearer perspective on the world\\.|A faint silvery aura glistens around you, bolstering your confidence in the face of superior numbers\\.|A comforting opalescent glow momentarily illuminates you before sinking into your \\S+\\.)$} {magic)", "replace":"$1", "style": "color: #A6A3D9"},
+  {"regex": "(^(You sense the .+ spell upon you, which.*)$} {magic)", "replace":"$1", "style": "color: #C400FF"},
+  {"regex": "(^(You stop teaching\\.|\\w+ stops listening to you\\.|Because you have no more students, your class ends\\.|You are teaching a class on .+ which you have currently closed to new students\\.|You stop listening to \\w+\\.)$)", "replace":"$1", "style": "color: #3297FC"},
+  {"regex": "(^(Your body feels at full strength\\.|(You|\\w+) (have|has) normal vitality\\.|Your spirit feels full of life\\.|You are (strangely|unusually) full of extra energy\\.|You have no significant injuries\\. ?|\\.\\.\\. ?no injuries to speak of\\.|You sense nothing wrong with \\w+\\.|\\s+(head|neck|chest|abdomen|back|(right|left) (eye|arm|hand|leg)|tail|skin).+\\(tended\\)|The (external|internal) (wounds|scars) on your .* appear completely healed\\.|Your (wounds|scars) are completely healed\\.)$)", "replace":"$1", "style": "color: #00C400"},
+  {"regex": "(^(Your death cry echoes in your brain as it quickly dawns on you that you have just died!.*| \\* \\w+ is slain before your eyes!)$} {} {Body.wav)", "replace":"$1", "style": "color: #FF0000"},
+  {"regex": "(^.*collapses as if dead\\.$)", "replace":"$1", "style": "color: #A665FE"},
+  {"regex": "(^.*shakes (?:its|his|her|their) head in pain!$)", "replace":"$1", "style": "color: #A665FE"},
+  {"regex": "(^\\[Personal\\]\\[\\S+\\].*)", "replace":"$1", "style": "Fuchsia"},
+  {"regex": "(^\\[Roundtime.*)", "replace":"$1", "style": "Silver"},
+  {"regex": "(^\\S+ (.*a good strike \\(3/23\\).*)$)", "replace":"$1", "style": "color: #FF9D55"},
+  {"regex": "(^\\S+ removes \\S+ hand from the Darkbox and with it.*$)", "replace":"$1", "style": "color: #007D7D"},
+  {"regex": "(^\\S+(.*\\(15/23\\).*)$)", "replace":"$1", "style": "color: #FF6715"},
+  {"regex": "(^\\S+(.*\\(16/23\\).*)$)", "replace":"$1", "style": "color: #BF3000"},
+  {"regex": "(^\\S+(.*\\(17/23\\).*)$)", "replace":"$1", "style": "color: #BF3000"},
+  {"regex": "(^\\S+(.*\\(18/23\\).*)$)", "replace":"$1", "style": "color: #BF3000"},
+  {"regex": "(^\\S+(.*\\(19/23\\).*)$)", "replace":"$1", "style": "color: #BF3000"},
+  {"regex": "(^\\S+(.*\\(20/23\\).*)$)", "replace":"$1", "style": "color: #801600"},
+  {"regex": "(^\\S+(.*\\(21/23\\).*)$)", "replace":"$1", "style": "color: #801600"},
+  {"regex": "(^\\S+(.*\\(22/23\\).*)$)", "replace":"$1", "style": "color: #801600"},
+  {"regex": "(^\\S+(.*\\(23/23\\).*)$)", "replace":"$1", "style": "color: #801600"},
+  {"regex": "(^\\S+(.*a good hit \\(2/23\\).*)$)", "replace":"$1", "style": "color: #FFC295"},
+  {"regex": "(^\\S+(.*a hard hit \\(5/23\\).*)$)", "replace":"$1", "style": "color: #FF9D55"},
+  {"regex": "(^\\S+(.*a heavy strike \\(7/23\\).*)$)", "replace":"$1", "style": "color: #FF8C4F"},
+  {"regex": "(^\\S+(.*a light hit \\(1/23\\).*)$)", "replace":"$1", "style": "color: #FFC89F"},
+  {"regex": "(^\\S+(.*a massive strike \\(11/23\\).*)$)", "replace":"$1", "style": "color: #FF6715"},
+  {"regex": "(^\\S+(.*a powerful strike \\(10/23\\).*)$)", "replace":"$1", "style": "color: #FF8C4F"},
+  {"regex": "(^\\S+(.*a solid hit \\(4/23\\).*)$)", "replace":"$1", "style": "color: #FF9D55"},
+  {"regex": "(^\\S+(.*a strong hit \\(6/23\\).*)$)", "replace":"$1", "style": "color: #FF8C4F"},
+  {"regex": "(^\\S+(.*a very heavy hit \\(8/23\\).*)$)", "replace":"$1", "style": "color: #FF8C4F"},
+  {"regex": "(^\\S+(.*a vicious strike \\(13/23\\).*)$)", "replace":"$1", "style": "color: #FF6715"},
+  {"regex": "(^\\S+(.*an awesome strike \\(12/23\\).*)$)", "replace":"$1", "style": "color: #FF6715"},
+  {"regex": "(^\\S+(.*an earth-shaking strike \\(14/23\\).*)$)", "replace":"$1", "style": "color: #FF6715"},
+  {"regex": "(^\\S+(.*an extremely heavy hit \\(9/23\\).*)$)", "replace":"$1", "style": "color: #FF8C4F"},
+  {"regex": "(^\\w+ leaves you behind because you're in the middle of things\\.$} {} {Error.wav)", "replace":"$1", "style": "color: #405B54"},
+  {"regex": "(^\\w+'s .+ emits a loud \\*snap\\*\\.$} {magic)", "replace":"$1", "style": "Gray"},
+  {"regex": "(^A jolt of psychic energy discharges from your pattern and grounds into.*mind.$)", "replace":"$1", "style": "color: #A665FE"},
+  {"regex": "(^A quartz gargoyle grumbles and falls over.*$)", "replace":"$1", "style": "color: #B8B870"},
+  {"regex": "(^A storm bull drums its silvery hooves upon the ground.$)", "replace":"$1", "style": "Gray"},
+  {"regex": "(^A warm, soothing sensation washes over your soul\\.$} {} {Soul.wav)", "replace":"$1", "style": "color: #A6A3D9"},
+  {"regex": "(^As you press the \\S+ orb against your chest, it glows slightly more intensely and you feel a strange tugging, as if something has been moved from you to the orb.  You sense, though, that your sacrifice is not yet fully prepared.)", "replace":"$1", "style": "color: #FFFF93"},
+  {"regex": "(^As you press the \\S+ orb against your chest, it glows slightly more intensely and you feel a strange tugging, as if something has been moved from you to the orb\\.\\s+You sense that your sacrifice is properly prepared\\.$|^The \\S+ orb feels warm to your touch and has a strong, steady glow\\.\\s+The strange tugging sensation is gone, leading you to believe that your sacrifice is properly prepared\\.$} {} {Soul.wav)", "replace":"$1", "style": "color: #FFC500"},
+  {"regex": "(^As you remove your hand from the Darkbox you see.*)", "replace":"$1", "style": "Olive"},
+  {"regex": "(^As your ritual ebbs away, you find yourself returned to a world of immutable, indisputable facts.  Things that are, are, and things that are not, are not.  A faint dissatisfaction lingers with you, for you are still alone, infinitesimal.)", "replace":"$1", "style": "color: #930000"},
+  {"regex": "(^Awareness enfolds you like the embrace of a loving parent as your attunement to \\S+ mana returns.$)", "replace":"$1", "style": "color: #FF0080"},
+  {"regex": "(^Balance reduction|Armor reduction|A chance for a stun can be inflicted upon the enemy by landing.*)", "replace":"$1", "style": "color: #0080FF"},
+  {"regex": "(^Breakthrough!$)", "replace":"$1", "style": "color: #B2E6FF"},
+  {"regex": "(^Pain blossoms within you, your delicate empathic senses singing with agony} {} {Evil.wav)", "replace":"$1", "style": "color: #408080"},
+  {"regex": "(^The air around you solidifies.*)", "replace":"$1", "style": "color: #FF1C00"},
+  {"regex": "(^The air takes on a sudden chill as a.* sphere.*$)", "replace":"$1", "style": "color: #FFB871"},
+  {"regex": "(^The artificial fragments of prophecy fade from your mind, leaving your connection to the Plane of Probability mostly as it once was.$)", "replace":"$1", "style": "color: #AE0000"},
+  {"regex": "(^The world dulls almost imperceptibly as the last remnants of the Read the Ripples ritual fade from your mind's eye.)", "replace":"$1", "style": "color: #8080FF"},
+  {"regex": "(^The.* lodges itself.*into the.*!$)", "replace":"$1", "style": "color: #BAEFEF"},
+  {"regex": "(^Utilizing \\S+ tactics)", "replace":"$1", "style": "color: #55A6FF"},
+  {"regex": "(^You begin to target.*$)", "replace":"$1", "style": "color: #FFC5A8"},
+  {"regex": "(^You can no longer see openings in)", "replace":"$1", "style": "color: #FF8080"},
+  {"regex": "(^You fail to find any holes.*)", "replace":"$1", "style": "color: #0080C0"},
+  {"regex": "(^You feel sufficiently recovered to craft another major manifestation of offensive magic.)", "replace":"$1", "style": "color: #66D9EF"},
+  {"regex": "(^You gesture.*)", "replace":"$1", "style": "color: #FF40FF"},
+  {"regex": "(^You no longer feel as strong a connection to the web of fate.)", "replace":"$1", "style": "color: #FF8080"},
+  {"regex": "(^You quickly recoil, sensing the antithetical necromantic taint running through} {} {Evil.wav)", "replace":"$1", "style": "color: #990505"},
+  {"regex": "(^You raise one hand before you and concentrate.*)", "replace":"$1", "style": "color: #8000FF"},
+  {"regex": "(^You think you have your best shot possible now\\.$)", "replace":"$1", "style": "color: #FF8040"},
+  {"regex": "(^Your \\S+ cage flares.*)", "replace":"$1", "style": "color: #FF8000"},
+  {"regex": "(^Your cage* vanishes.$)", "replace":"$1", "style": "color: #FF8000"},
+  {"regex": "(^Your concentration slips for a moment, and your spell is lost$)", "replace":"$1", "style": "color: #8080C0"},
+  {"regex": "(^Your frigid blast lands)", "replace":"$1", "style": "color: #1192A8"},
+  {"regex": "(^Your mind has recovered from the revelations of Tezirah's Veil\\.$)", "replace":"$1", "style": "color: #FF8080"},
+  {"regex": "(^Your target pattern has finished forming around the area.)", "replace":"$1", "style": "color: #FF40FF"},
+  {"regex": "(^Your.*falls to your feet.)", "replace":"$1", "style": "color: #408080"},
+  {"regex": "(A storm bull stares at your hands for a moment, but nothing happens.$)", "replace":"$1", "style": "Gray"},
+  {"regex": "(You feel fully attuned to the mana streams again.)", "replace":  "$1", "style": "color: #FF00FF"}
+]

@@ -68,16 +68,29 @@ export default class GameWindow extends Component {
 
     // todo: line highlight vs text highlight
 
-    const highlights = [
+    /*const highlights = [
       {
         regex: /\b(rat)\b/ig,
         replace: "$1",
         style: "background-color: pink; font-weight: bold;"
+      },
+      {
+        regex: /\b(Qizhmur)\b/ig,
+        replace: "$1",
+        style: "color: purple; font-weight: bold;"
       }
-    ]
+    ]*/
+    var highlights = require("./highlights.json")
+
+    highlights.push({
+      regex: "(You feel fully)",
+      replace: "$1",
+      style: "color: purple; font-weight: bold;"
+    })
+
 
     highlights.forEach(highlight => {
-      highlighted = highlighted.replace(highlight.regex, `<span style="${highlight.style}">$1</span>`)
+      highlighted = highlighted.replace(new RegExp(highlight.regex, "g"), `<span style="${highlight.style}">$1</span>`)
     })
 
     return <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: highlighted }} />
@@ -92,7 +105,7 @@ export default class GameWindow extends Component {
   render() {
     return (
       <>
-        <div style={{ border: "1px solid rgba(0, 0, 0, .2)", height: "100%", width: "100%", overflow: "hidden" }} ref={this.containerRef}>
+        <div style={{ border: "1px solid rgba(255, 255, 255, .2)", height: "100%", width: "100%", overflow: "hidden" }} ref={this.containerRef}>
           <List
             ref={this.gameTextRef}
             width={this.state.width}

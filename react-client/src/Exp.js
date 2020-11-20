@@ -22,7 +22,7 @@ function ExpItem({ skill, sendCommand }) {
   return (
     <tr>
       <td className="clickable" onClick={() => sendCommand(`exp ${displayName}`)}>{displayName}</td>
-      <td style={{ textAlign: "right" }}>{parseFloat(rank).toFixed(2)}%</td>
+      <td style={{ textAlign: "right", "padding-right":"5px" }}>{parseFloat(rank).toFixed(2)}%</td>
       <td>{rate.toString().padStart(2, '0')}/34</td>
     </tr>
   )

@@ -12,9 +12,9 @@ export default function Stowed({ stowed, sendCommand }) {
     <div className="panel-window">
       <h2>In the {containerName}</h2>
       {/* <h3>  {items.length} items, {uniqueItemKeys.length} unique</h3> */}
-      <h3>{StowTextHeader(items.length, uniqueItemKeys.length)}</h3>
+      <h3>{StowTextHeader(items.length, uniqueItemKeys.length)}:</h3>
         <div className="panel-window-content">
-            <table style={{width: "100%"}}>
+            <table style={{width: "100%", "border-spacing": "5px"}}>
                 <tbody>
                 {uniqueItemKeys.map(itemKey => <StowItem key={itemKey} name={itemKey} qty={uniqueItems[itemKey]}
                                                          sendCommand={sendCommand} activeKeys={activeKeys}/>)}

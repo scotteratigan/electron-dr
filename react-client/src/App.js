@@ -244,16 +244,18 @@ class App extends React.Component {
       <KeyboardProvider value={keyState}>
         <div className="App" style={{ display: "flex" }}>
           <div className="left-column">
-            <Exp exp={this.state.exp} sendCommand={this.sendCommand} />
-            <Stowed stowed={this.state.stowed} sendCommand={this.sendCommand} />
-            <Worn worn={this.state.worn} sendCommand={this.sendCommand} />
-            <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
+            <div style={{ display: "flex", "flex-direction": "column", "min-height": "100%" }}>
+              <Exp exp={this.state.exp} sendCommand={this.sendCommand} />
+              <Stowed stowed={this.state.stowed} sendCommand={this.sendCommand} />
+              <Worn worn={this.state.worn} sendCommand={this.sendCommand} />
+              <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
+            </div>
           </div>
           <div className="main-column">
             <div style={{ height: "10vh", overflowY: "auto" }}>
               <RoomWindow room={this.state.room} sendCommand={this.sendCommand} />
             </div>
-            <div style={{ height: "80vh" }}>
+            <div className="game-window">
               {this.state.splitScreen ? (
                 <>
                   <div style={{ height: "50%" }}>

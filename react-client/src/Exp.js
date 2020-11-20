@@ -2,13 +2,15 @@ import React from 'react'
 
 export default function Exp({ exp, sendCommand }) {
   return (
-    <div className="monospace">
+    <div className="monospace panel-window">
       <h2>Exp:</h2>
-      <table style={{ width: "100%" }}>
-        <tbody>
-          {Object.keys(exp).map(skill => <ExpItem key={exp[skill].displayName} skill={exp[skill]} sendCommand={sendCommand} />)}
-        </tbody>
-      </table>
+      <div className="panel-window-content">
+        <table style={{ width: "100%" }}>
+          <tbody>
+            {Object.keys(exp).map(skill => <ExpItem key={exp[skill].displayName} skill={exp[skill]} sendCommand={sendCommand} />)}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

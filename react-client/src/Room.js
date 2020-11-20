@@ -4,7 +4,7 @@ import { getObjNoun, getPlayerName } from './utils'
 export default function Room({ room, sendCommand }) {
   const { description, exits, items, mobs, name, playersArray } = room //monstercount and playersString also available
   return (
-    <div>
+    <div className="room-window">
       <h3>{name}</h3>
       <RoomDescription description={description} sendCommand={sendCommand} />
       {!!items.length && <RoomItems items={items} sendCommand={sendCommand} />}

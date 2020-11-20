@@ -6,22 +6,23 @@ import React from 'react'
 export default function Spells({ activeSpells, sendCommand }) {
   // console.log(activeSpells)
   return (
-    <div>
+    <div className="panel-window">
       <h2>Active Spells:</h2>
-      <table>
-        <thead>
-          <tr>
-            <td>Spell Name</td>
-            <td>Mins</td>
-          </tr>
-        </thead>
-        <tbody>
-          {Object.keys(activeSpells).map(spellName => (
-            <SpellDisplay key={spellName} name={spellName} remaining={activeSpells[spellName]} sendCommand={sendCommand} />
-          ))}
-        </tbody>
-      </table>
-
+        <div className="panel-window-content">
+          <table>
+            <thead>
+              <tr>
+                <td>Spell Name</td>
+                <td>Mins</td>
+              </tr>
+            </thead>
+              <tbody>
+              {Object.keys(activeSpells).map(spellName => (
+                  <SpellDisplay key={spellName} name={spellName} remaining={activeSpells[spellName]} sendCommand={sendCommand} />
+              ))}
+              </tbody>
+          </table>
+        </div>
     </div>
   )
 }

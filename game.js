@@ -53,7 +53,8 @@ function game(messageFrontEnd) {
     } else if (command.startsWith("#echo ")) {
       const detail = command.substring(6);
       // if (!detail) return console.error("Echo called with no text?")
-      return messageFrontEnd({ type: 'gametext', detail })
+      //return messageFrontEnd({ type: 'gametext', detail })
+      return messageFrontEnd({ type: 'echotext', detail })
     } else if (command.startsWith('#log ')) {
       const logText = command.substring(4) // strips out '#log '
       try {

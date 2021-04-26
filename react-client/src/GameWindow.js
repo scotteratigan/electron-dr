@@ -12,6 +12,19 @@ import { List } from "react-virtualized";
 
 const SCROLLBAR_WIDTH = 16.667
 
+var highlights = require("./config/highlights.json");
+
+highlights.push({
+  regex: "^(\\[.*\\])",
+  replace: "$1",
+  style: "color: #00FFFF; background-color: #840084;"
+})
+
+
+highlights.forEach(highlight => {
+  highlight.regex = new RegExp(highlight.regex);
+})
+
 export default class GameWindow extends Component {
 
   constructor(props) {
@@ -68,29 +81,8 @@ export default class GameWindow extends Component {
 
     // todo: line highlight vs text highlight
 
-    /*const highlights = [
-      {
-        regex: /\b(rat)\b/ig,
-        replace: "$1",
-        style: "background-color: pink; font-weight: bold;"
-      },
-      {
-        regex: /\b(Qizhmur)\b/ig,
-        replace: "$1",
-        style: "color: purple; font-weight: bold;"
-      }
-    ]*/
-    var highlights = require("./highlights.json")
-
-    highlights.push({
-      regex: "(You feel fully)",
-      replace: "$1",
-      style: "color: purple; font-weight: bold;"
-    })
-
-
     highlights.forEach(highlight => {
-      highlighted = highlighted.replace(new RegExp(highlight.regex, "g"), `<span style="${highlight.style}">$1</span>`)
+      highlighted = highlighted.replace(highlight.regex, `<span style="${highlight.style}">$1</span>`)
     })
 
     return <div key={key} style={style} className="game-text" dangerouslySetInnerHTML={{ __html: highlighted }} />

@@ -103,6 +103,7 @@ class App extends React.Component {
     }
 
     if (type === "gametext") return this.addGameText(detail)
+    if (type === "echotext") return this.addEchoText(detail)
 
     // Following cases need globals var:
     const { globals } = message;
@@ -203,6 +204,13 @@ class App extends React.Component {
     gameString = gameString.replace(/<popBold\/>/g, "</strong>")
     gameString = gameString.replace(/<output class="mono"\/>\r?\n?/g, "<span class='monospace'>")
     gameString = gameString.replace(/\r?\n?<output class=""\/>/g, "</span>")
+    return this.setState({ gameText: [...this.state.gameText, gameString] })
+  }
+
+  addEchoText = gameString => {
+    console.log('echoText gameString is:', gameString)
+    // gameString = gameString.replace(/^\s*\r\n/g, "")
+    gameString = '<span class="echo" style="color: #00FFFF">' + gameString + "</span>";
     return this.setState({ gameText: [...this.state.gameText, gameString] })
   }
 

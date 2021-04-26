@@ -3,7 +3,17 @@
 const { parentPort: connection } = require('worker_threads')
 let globals = {};
 const send = command => connection.postMessage(command)
+/*const send = function (command) {
+  connection.postMessage("#echo " + text)
+  connection.postMessage(command)
+}*/
 const echo = text => send("#echo " + text);
+
+const sendCommand = function (command) {
+  echo(command);
+  send(command);
+}
+
 // const forever = () => new Promise(r => setInterval(() => {}, 1000));
 const sleep = seconds => new Promise(r => setTimeout(() => r(), seconds * 1000))
 const globalHasVal = (xmlVar, value) => new Promise((res, rej) => {
@@ -70,16 +80,18 @@ const waitFor = (regex) => new Promise(
 
 async function script() {
   await globalsLoaded()
-  await waitFor(/Roundtime/)
-  send("mind")
+  //await waitFor(/Roundtime/)
+  sendCommand("mind")
   await sleep(3)
   // await southToXing()
   // await northFromXing()
 
-  // send("forage")
-  // await rt()
-  // send("forage")
-  // await rt()
+   sendCommand("forage")
+   await sleep(.5)
+   await rt()
+   send("forage")
+  await sleep(.5)
+   await rt()
   echo("*** SCRIPT EXITING ***")
   // await globalHasVal("roundTime", 0)
   process.exit(0)

@@ -102,7 +102,7 @@ export default class CommandInput extends Component {
   render() {
     return (
       <div>
-        <input type="text" value={this.state.currentCommand} onChange={e => this.handleChange(e.target.value)} onKeyDown={this.handleKeyPress} ref="commandInput" />
+        <input style={{ width: "90%"}} type="text" value={this.state.currentCommand} onChange={e => this.handleChange(e.target.value)} onKeyDown={this.handleKeyPress} ref="commandInput" />
       </div>
     )
   }

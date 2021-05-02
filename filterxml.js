@@ -20,6 +20,7 @@ function setupXMLfilter() {
     str = str.replace(/<spell.*<\/spell>/g, '')
     str = str.replace(/<component.*\/component>/g, '')
     str = str.replace(/<resource picture="\d+"\/>/g, '')
+    // Comment this for roomnames!
     str = str.replace(/<style id="roomName" \/>/g, '')
     str = str.replace(/<style id=""\/>/g, '')
     str = str.replace(/<preset id='roomDesc'>/g, '')

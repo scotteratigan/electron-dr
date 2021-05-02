@@ -5,7 +5,7 @@ export default function Hand({ whichHand, heldItem, sendCommand }) {
   const { id, item } = heldItem; // noun also available
   const activeKeys = useContext(KeyboardContext)
   return (
-    <div className="clickable" onClick={() => handleHandClick(id, sendCommand, activeKeys)}>
+    <div className="hand-panel clickable" onClick={() => handleHandClick(id, sendCommand, activeKeys)}>
       {whichHand} hand: {item}
     </div>
   )

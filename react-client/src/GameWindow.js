@@ -12,6 +12,19 @@ import { List } from "react-virtualized";
 
 const SCROLLBAR_WIDTH = 16.667
 
+var highlights = require("./config/highlights.json");
+
+highlights.push({
+  regex: "^(\\[.*\\])",
+  replace: "$1",
+  style: "color: #00FFFF; background-color: #840084;"
+})
+
+
+highlights.forEach(highlight => {
+  highlight.regex = new RegExp(highlight.regex);
+})
+
 export default class GameWindow extends Component {
 
   constructor(props) {
@@ -68,14 +81,6 @@ export default class GameWindow extends Component {
 
     // todo: line highlight vs text highlight
 
-    const highlights = [
-      {
-        regex: /\b(rat)\b/ig,
-        replace: "$1",
-        style: "background-color: pink; font-weight: bold;"
-      }
-    ]
-
     highlights.forEach(highlight => {
       highlighted = highlighted.replace(highlight.regex, `<span style="${highlight.style}">$1</span>`)
     })
@@ -92,7 +97,7 @@ export default class GameWindow extends Component {
   render() {
     return (
       <>
-        <div style={{ border: "1px solid rgba(0, 0, 0, .2)", height: "100%", width: "100%", overflow: "hidden" }} ref={this.containerRef}>
+        <div style={{ border: "1px solid rgba(255, 255, 255, .2)", height: "100%", width: "100%", overflow: "hidden" }} ref={this.containerRef}>
           <List
             ref={this.gameTextRef}
             width={this.state.width}

@@ -11,16 +11,22 @@ html {
   font-family: 'Gelasio', serif;
   font-size: 12px;
   box-sizing: border-box;
+  background: black;
+  color: #a0a0a0;
 }
 
 h2 {
   font-family: 'Gelasio', serif;
   font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
 }
 
 h3 {
   font-family: 'Gelasio', serif;
   font-size: 1.3rem;
+  font-style: italic;
+  color: white;
 }
 
 .game-text {
@@ -54,6 +60,7 @@ strong {
   flex-basis: 200px;
   flex-grow: 0;
   flex-shrink: 0;
+  height: 100vh;
 }
 
 .main-column {
@@ -61,6 +68,14 @@ strong {
   flex-grow: 0;
   flex-shrink: 0;
   overflow: hidden;
+  height: 100vh;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.clickable {
+  margin-bottom: 5px;
+  border-spacing: 0 5px;
 }
 
 .clickable:hover {
@@ -75,6 +90,32 @@ strong {
 .form-group {
   margin: 5px;
   padding: 10px;
+}
+
+.panel-window {
+  width: 100%;
+  flex-basis: 25vh;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  border-bottom: 1px solid white;
+}
+
+.panel-window-content {
+  height: calc(25vh - 50px);
+  overflow-y: scroll;
+}
+
+.room-window {
+  height: 10vh;
+}
+
+.game-window {
+  height: calc(90vh - 208px);
+}
+
+.hand-panel {
+  color: white;
 }
 
 /* ::-webkit-scrollbar {

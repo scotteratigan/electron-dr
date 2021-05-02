@@ -5,9 +5,12 @@ import KeyboardContext from './KeyboardContext'
 export default function Worn({ worn: items, sendCommand }) {
   const activeKeys = useContext(KeyboardContext)
   return (
-    <div>
-      <h2>Wearing {items.length} items:</h2>
-      {items.map(item => <WornItem key={item} item={item} sendCommand={sendCommand} activeKeys={activeKeys} />)}
+    <div className="panel-window">
+        <h2>Wearing</h2>
+        <h3>{items.length} items:</h3>
+        <div className="panel-window-content">
+          {items.map(item => <WornItem key={item} item={item} sendCommand={sendCommand} activeKeys={activeKeys} />)}
+        </div>
     </div>
   )
 }

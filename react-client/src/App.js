@@ -103,6 +103,7 @@ class App extends React.Component {
     }
 
     if (type === "gametext") return this.addGameText(detail)
+    if (type === "echotext") return this.addEchoText(detail)
 
     // Following cases need globals var:
     const { globals } = message;
@@ -206,6 +207,13 @@ class App extends React.Component {
     return this.setState({ gameText: [...this.state.gameText, gameString] })
   }
 
+  addEchoText = gameString => {
+    console.log('echoText gameString is:', gameString)
+    // gameString = gameString.replace(/^\s*\r\n/g, "")
+    gameString = '<span class="echo" style="color: #00FFFF">' + gameString + "</span>";
+    return this.setState({ gameText: [...this.state.gameText, gameString] })
+  }
+
   sendCommand = str => {
     this.addGameText(">" + str)
     window.ipcRenderer.send('asynchronous-message', str)
@@ -244,16 +252,18 @@ class App extends React.Component {
       <KeyboardProvider value={keyState}>
         <div className="App" style={{ display: "flex" }}>
           <div className="left-column">
-            <Exp exp={this.state.exp} sendCommand={this.sendCommand} />
-            <Stowed stowed={this.state.stowed} sendCommand={this.sendCommand} />
-            <Worn worn={this.state.worn} sendCommand={this.sendCommand} />
-            <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
+            <div style={{ display: "flex", "flex-direction": "column", "min-height": "100%" }}>
+              <Exp exp={this.state.exp} sendCommand={this.sendCommand} />
+              <Stowed stowed={this.state.stowed} sendCommand={this.sendCommand} />
+              <Worn worn={this.state.worn} sendCommand={this.sendCommand} />
+              <Spells activeSpells={this.state.activeSpells} sendCommand={this.sendCommand} />
+            </div>
           </div>
           <div className="main-column">
             <div style={{ height: "10vh", overflowY: "auto" }}>
               <RoomWindow room={this.state.room} sendCommand={this.sendCommand} />
             </div>
-            <div style={{ height: "80vh" }}>
+            <div className="game-window">
               {this.state.splitScreen ? (
                 <>
                   <div style={{ height: "50%" }}>
@@ -279,7 +289,7 @@ class App extends React.Component {
                   <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
                   <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
                   <PreparedSpell preparedSpell={this.state.preparedSpell} />
-                  <div style={{ display: "flex" }}>
+                  <div style={{ display: "flex", background: "white", color: "black"  }}>
                     <BodyPosition bodyPosition={this.state.bodyPosition} />
                     <Indicators bleeding={this.state.bleeding} dead={this.state.dead} hidden={this.state.hidden} invisible={this.state.invisible} joined={this.state.joined} stunned={this.state.stunned} />
                   </div>

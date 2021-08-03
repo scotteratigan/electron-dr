@@ -289,7 +289,7 @@ class App extends React.Component {
                   <RoundTime roundTime={roundTime} totalRoundTime={totalRoundTime} />
                   <PrepTime prepTime={prepTime} totalPrepTime={totalPrepTime} />
                   <PreparedSpell preparedSpell={this.state.preparedSpell} />
-                  <div style={{ display: "flex", background: "white", color: "black"  }}>
+                  <div style={{ display: "flex" }}>
                     <BodyPosition bodyPosition={this.state.bodyPosition} />
                     <Indicators bleeding={this.state.bleeding} dead={this.state.dead} hidden={this.state.hidden} invisible={this.state.invisible} joined={this.state.joined} stunned={this.state.stunned} />
                   </div>

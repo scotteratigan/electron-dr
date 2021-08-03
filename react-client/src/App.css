@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Gelasio:400,400i,600,600i|Roboto:400,400i,600,600i|Roboto Mono:100,100i,400,400i,600,600i|Source+Code+Pro:400,400i,600,600i&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Gelasio:400,400i,600,600i|Source+Code+Pro:400,400i,600,600i&display=swap');
 
 * {
   box-sizing: inherit;
@@ -8,7 +8,7 @@
 
 body,
 html {
-  font-family: 'Verdana', 'Helvetica';
+  font-family: 'Gelasio', serif;
   font-size: 12px;
   box-sizing: border-box;
   background: black;
@@ -16,48 +16,17 @@ html {
 }
 
 h2 {
-  font-family: 'Verdana', 'Helvetica';
+  font-family: 'Gelasio', serif;
   font-size: 1.5rem;
   font-weight: bold;
   color: white;
 }
 
 h3 {
-  font-family: 'Verdana', 'Helvetica';
+  font-family: 'Gelasio', serif;
   font-size: 1.3rem;
   font-style: italic;
   color: white;
-}
-
-circle {
-    fill: white;
-}
-
-.clickable {
-  margin-bottom: 5px;
-  border-spacing: 0 5px;
-}
-
-.clickable:hover {
-  text-decoration: underline;
-  cursor: default;
-}
-
-.compass-square {
-    width: 15;
-    height: 15;
-    textAlign: "center";
-    fill: white;
-}
-
-.form-group {
-  margin: 5px;
-  padding: 10px;
-}
-
-.hand-panel {
-  color: white;
-  background: gray;
 }
 
 .game-text {
@@ -66,16 +35,32 @@ circle {
   margin-right: 3px;
 }
 
-.game-window {
-  height: calc(90vh - 208px);
+.monospace {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.85rem;
 }
 
-.left-column {
+strong {
+  font-weight: 600;
+}
+
+.preserve-space {
+  white-space: pre-wrap;
+}
+
+#measurer-div {
+  /* visibility: hidden; */
+  /* white-space: pre-wrap; */
+  position: absolute;
+  top: -9999px;
+}
+
+.left-column,
+.right-column {
   flex-basis: 200px;
   flex-grow: 0;
   flex-shrink: 0;
   height: 100vh;
-  padding-left: .5em;
 }
 
 .main-column {
@@ -88,32 +73,23 @@ circle {
   padding-right: 10px;
 }
 
-#measurer-div {
-  /* visibility: hidden; */
-  /* white-space: pre-wrap; */
-  position: absolute;
-  top: -9999px;
+.clickable {
+  margin-bottom: 5px;
+  border-spacing: 0 5px;
 }
 
-.monospace {
-  font-family: 'Source Code Pro', monospace;
-  font-size: 0.85rem;
+.clickable:hover {
+  text-decoration: underline;
+  cursor: default;
 }
 
-path {
-    fill: white;
+.unavailable {
+  background-color: grey;
 }
 
-.preserve-space {
-  white-space: pre-wrap;
-}
-
-.right-column {
-  flex-basis: 200px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  height: 100vh;
-  padding-right: .5em;
+.form-group {
+  margin: 5px;
+  padding: 10px;
 }
 
 .panel-window {
@@ -121,6 +97,7 @@ path {
   flex-basis: 25vh;
   flex-grow: 0;
   flex-shrink: 0;
+
   border-bottom: 1px solid white;
 }
 
@@ -133,12 +110,12 @@ path {
   height: 10vh;
 }
 
-strong {
-  font-weight: 600;
+.game-window {
+  height: calc(90vh - 208px);
 }
 
-.unavailable {
-  background-color: grey;
+.hand-panel {
+  color: white;
 }
 
 /* ::-webkit-scrollbar {

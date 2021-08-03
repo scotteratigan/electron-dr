@@ -1,6 +1,6 @@
 import React from 'react'
 
-const bodyPositionContainerStyle = { width: 25, height: 25, background: "black", color: "white"}
+const bodyPositionContainerStyle = { width: 25, height: 25}
 
 // standing, sitting, kneeling, prone
 export default function BodyPosition({ bodyPosition }) {
